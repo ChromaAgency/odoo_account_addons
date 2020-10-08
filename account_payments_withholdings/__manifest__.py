@@ -20,13 +20,10 @@
     'version': '0.1',
     'installable': True,
     # any module necessary for this one to work correctly
-    'depends': [],
+    'depends': ['account'],
     # always loaded
     'data': [
-        'report/report_templates.xml',
-        'report/report_invoice_document.xml',
-        'report/paper_format.xml',
-        'report/ir_actions_report.xml',
-        'report/custom_header.xml',
+       'views/views.xml',
+       'data/data.xml'
     ]
 }
