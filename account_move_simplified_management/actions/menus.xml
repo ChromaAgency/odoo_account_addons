@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="account_move_simplified_management_menu"
+        name="Caja"
+        sequence="10"
+        action="action_account_journal_view_kanban_simplified_management"
+        /> 
+
+</odoo>
