@@ -6,4 +6,4 @@ class AccountPayment(Model):
 
     check_number = Char(string="Número de cheque")
     check_date = Date(string="Fecha de pago")
-    issuing_bank = Many2one('res.partner.bank',string="Banco Emisor")
+    issuing_bank = Many2one('res.bank',string="Banco Emisor")
