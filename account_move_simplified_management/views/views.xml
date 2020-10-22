@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_journal_view_kanban_simplified_management" model="ir.ui.view">
+        <field name="name">account.journal.view.kanban.simplified</field>
+        <field name="model">account.journal</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="color"/>
+                <field name="kanban_dashboard"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}">
+                            <t t-value="JSON.parse(record.kanban_dashboard.raw_value)" t-set="dashboard"/>
+                            <t t-value="record.type.raw_value" t-set="journal_type"/>
+                            <t t-call="JournalTop"/>
+                            <div t-att-class="'container o_kanban_card_content' + (dashboard.is_sample_data ? '' : '')">
+                                <div class="row">
+                                    <div class="col overflow-hidden text-left">
+                                        <span title="Balance in General Ledger">Balance</span>
+                                    </div>
+                                    <div class="col-auto text-right">
+                                        <span>
+                                            <t t-esc="dashboard.account_balance"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <button type="object" class="btn btn-primary" name="add_new_moves_simplified" string="Añadir movimientos">Añadir movimientos</button>
+                                    <button type="object" class="btn btn-primary" name="view_moves_simplified" string="Ver movimientos">Ver movimientos</button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-name="JournalTop">
+                        <div t-attf-class="o_kanban_card_header">
+                            <div class="o_kanban_card_header_title">
+                                <div class="o_primary">
+                                    <a type="object" name="view_moves_simplified">
+                                        <field name="name"/>
+                                    </a>
+                                </div>
+                                <div class="o_secondary" t-att-title="dashboard.title">
+                                    <field name="type"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="account_move_line_view_search_simplified_inherit" model="ir.ui.view">
+        <field name="name">account.move.line.view.search.inherit</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_account_move_line_filter" />
+        <field name="arch" type="xml">
+            <xpath expr='//filter[@name="date"]' position="replace">
+                <filter string="Date" name="date" date="date" />
+            </xpath>
+        </field>
+    </record>
+    <record id="account_move_line_view_tree_simplified" model="ir.ui.view">
+        <field name="name">account.move.line.view.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="arch" type="xml">
+            <tree string="Movimientos" edit="false" create="false" import="false">
+                <field name="date" />
+                <field name="name" />
+                <field name="balance" sum="Balance"/>
+            </tree>
+        </field>
+    </record>
+    <record id="account_move_simplified_view_form" model="ir.ui.view">
+        <field name="name">account.move.simplified.view.form</field>
+        <field name="model">account.move.simplified</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date" />
+                            <field name="name" />
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="move_type"/>
+                            <field name="journal_id"/>
+                            <field name="currency_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="create_move_lines" type="object" class="btn btn-primary" string="Añadir Movimimento"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
