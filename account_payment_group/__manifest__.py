@@ -20,8 +20,9 @@
     'version': '0.1',
     'installable': True,
     # any module necessary for this one to work correctly
-    'depends': ['account'],
+    'depends': ['account','l10n_ar'],
     # always loaded
     'data': [
+        'views/views.xml'
     ]
 }

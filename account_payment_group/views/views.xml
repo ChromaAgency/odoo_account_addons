@@ -6,18 +6,58 @@
         <field name="model">account.payment.group</field>
         <field name="arch" type="xml">
             <form string="Grupo de pagos">
+                <header>
+                    <button name="post" type="object" class="btn btn-primary" string="Publicar" states='draft'/>
+                    <button name="cancel" type="object" string="Cancelar" states='posted'/>
+                    <button name="to_draft" type="object" string="Restablecer a borrador" states='canceled'/>
+                    <field name="state" widget="statusbar"/>
+                </header>
                 <sheet>
+                    <div class="oe-title">
+                        <field name="name" />
+                    </div>
                     <group>
-                        <field name="payment_lines_ids" />
-                        <field name="move_line_ids" />
-                        <field name="company_id" />
-                        <field name="partner_id" />
-                        <field name="payment_date" />
-                        <field name="observations" />
-                        <field name="payments_total" />
-                        <field name="matched_amount" />
-                        <field name="unmatched_amount" />
+                        <group>
+                            <field name="payment_date" />
+                            <field name="company_id" invisible="1"/>
+                            <field name="partner_id" />
+                        </group>
+                        <group>
+                            <field name="observations" />
+                            <field name="payments_total" />
+                        </group>
+                        <group>
+                            <field name="matched_amount" />
+                            <field name="unmatched_amount" />
+                        </group>
                     </group>
+                    <notebook>
+                        <page name="payments" string="Pagos">
+
+                            <field name="payment_lines_ids" context="{'default_partner_id':partner_id}" domain="[('partner_id','=',partner_id)]">
+                                <tree>
+                                    <field name="payment_date" />
+                                    <field name="partner_id" />
+                                    <field name="amount" />
+                                    <field name="communication" />
+                                    <field name="state" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="moves" string="Comprobantes imputados">
+                            <field name="move_ids" context="{'default_partner_id':partner_id}" create="0" domain="[('partner_id','=',partner_id),'|','&',('amount_residual','>',0),('state','=','posted'),'&',('amount_residual','>',0),('state','=','posted')]">
+                                <tree>
+                                    <field name="state" invisible="1"/>
+                                    <field name="invoice_date" />
+                                    <field name="partner_id" />
+                                    <!-- <field name="l10n_latam_document_number" /> -->
+                                    <field name="amount_total" />
+                                    <field name="amount_residual" sum="1"/>
+                                </tree>
+                            </field>
+                            <button name="add_all_moves" type="object" string="Agregar comprobantes no imputados"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
