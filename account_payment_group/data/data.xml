@@ -8,6 +8,18 @@
             <field name="prefix">0001-</field>
             <field name="padding" eval="8" />
         </record>
+        <record id= "payment_group_window" model="ir.actions.act_window">
+            <field name="name">Recibos</field>
+            <field name="res_model">account.payment.group</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            id="account_payment_group_menu"
+            name="Recibos"
+            sequence="10"
+            action="account_payment_group.payment_group_window"
+            parent="account.menu_finance_receivables"
+            />
     </data>
 
 </odoo>
