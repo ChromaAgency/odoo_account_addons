@@ -13,30 +13,50 @@ class PaymentGroup(Model):
     _name = 'account.payment.group'
     _description = 'Groups different lines of account.payment and relates them with account.move lines (invoices, and other)'
     _inherit = 'mail.thread'
-    _order = "payment_date desc"
+    _order = "date desc"
     
-    name = Char(string="Nombre")
-    sequence_id = Many2one('ir.sequence',string="Secuencia")
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        index=True,
+        change_default=True,
+        default=lambda self: self.env.company,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
+    name = Char(string="Nombre", readonly=1)
+    sequence_id = Many2one('ir.sequence',string="Secuencia", default=lambda self: self.env.ref('account_payment_group.ir_sequence_account_payment_group'))
     state = Selection([('draft','Borrador'),('posted','Validado'),('canceled','Cancelado')],default="draft", string="Estado")
     payment_lines_ids = One2many('account.payment','payment_group_id', string="Pagos")
-    move_ids = Many2many('account.move',string="Movimientos imputados", states={'posted':[('readonly',True)]}) 
-    company_id = Many2one('res.company',string="Compañia")
-    partner_id = Many2one('res.partner', string="Contacto")
-    payment_date = Date(string='Fecha de pago')
+    move_line_ids = Many2many('account.move.line',string="Comprobantes imputados", states={'posted':[('readonly',True)]}) 
+    company_id = Many2one('res.company',string="Compañia", default=lambda self: self.env.company, required=True)
+    partner_id = Many2one('res.partner', string="Contacto", required=True)
+    date = Date(string='Fecha',required=True, default=Date.today())
     observations = Text(string='Observaciones')
     payments_total = Float(string="Monto pago",compute="_compute_payments_total")
-    unpaid_amount = Float(string="Monto adeudado",compute="_onchange_partner_id")
-    matched_amount = Float(string="Importe imputado", compute="_compute_matched_amount")
-    unmatched_amount = Float(string="Importe no imputado", compute="_compute_matched_amount")
+    unpaid_amount = Float(string="Monto adeudado",compute="_compute_matched_amount", store=True)
+    matched_amount = Float(string="Importe imputado", compute="_compute_matched_amount", store=True)
+    unmatched_amount = Float(string="Importe no imputado", compute="_compute_matched_amount", store=True)
 
     def post(self):
         for rec in self:
-            for move_ids in rec.move_ids:
-                continue
+            payments = rec.payment_lines_ids
+            payments.post()
+            move_lines = payments.mapped('move_line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile) + rec.move_line_ids
+            move_lines.reconcile()
+            name = rec.name
+            if not name:
+                name = rec.sequence_id.next_by_id()
+                rec.name = name
+            for p in payments:
+                p.communication = name
             rec.state = 'posted'
 
     def cancel(self):
         for rec in self:
+            payments = rec.payment_lines_ids
+            payments.action_draft()
             rec.state = 'canceled'
     
     def to_draft(self):
@@ -44,31 +64,48 @@ class PaymentGroup(Model):
             rec.state = 'draft'
 
     @returns('account.move')
-    def _get_unconcilied_move_ids(self):
-        account_moves = self.env['account.move'].search([('partner_id','=',self.partner_id.id),('amount_residual','>',0),('state','=','posted')])
+    def _get_unconcilied_move_line_ids(self):
+        account_moves = self.env['account.move.line'].search([('partner_id','=',self.partner_id.id),('move_id.state','=','posted'),'|',('amount_residual','!=',0),('amount_residual_currency', '!=', 0.0),('account_id.reconcile', '=', True),('reconciled', '=', False)])
         return account_moves
+        
 
-    def add_all_moves(self):
+    def add_all_unreconcilied_moves(self):
         for rec in self:
-            move_ids = rec._get_unconcilied_move_ids().ids
-            rec.move_ids = [(6,0,move_ids)]
+            move_line_ids = rec._get_unconcilied_move_line_ids().ids
+            rec.move_line_ids = [(6,0,move_line_ids)]
 
     @onchange('partner_id')
     def _onchange_partner_id(self):
         for rec in self:
             if rec.partner_id:
-                rec.unpaid_amount = sum(rec.partner_id.invoice_ids.mapped('amount_residual'))
-                rec.move_ids = False
+                rec.add_all_unreconcilied_moves()
                 rec.payment_lines_ids = False
+                
+
     @depends('payment_lines_ids')
     def _compute_payments_total(self):
         for rec in self:
             rec.payments_total = sum(rec.payment_lines_ids.mapped('amount'))
-    @depends('payments_total','move_ids')
+    @depends('payments_total','move_line_ids')
     def _compute_matched_amount(self):
         for rec in self:
-            amount_residual = sum(rec.move_ids.mapped('amount_residual'))
+            unreconciled_partner_amls = self.env['account.move.line']\
+                                        .search([
+                                            ('reconciled', '=', False),
+                                            ('account_id.deprecated', '=', False),
+                                            ('account_id.internal_type', '=', 'receivable'),
+                                            ('move_id.state', '=', 'posted'),
+                                            ('partner_id','=',rec.partner_id.id)
+                                            ])
+            unpaid_amount = sum(unreconciled_partner_amls.mapped('amount_residual'))
+            rec.unpaid_amount = unpaid_amount
+            amls = rec.move_line_ids
+            amount_residual = sum(amls.mapped('amount_residual'))
+            rec.unmatched_amount = amount_residual
             payments = rec.payments_total
-            matched_amount = payments if payments <= amount_residual else amount_residual
+            balance = sum(amls.mapped('balance'))
+            if rec.state == 'posted':
+                matched_amount = rec.matched_amount
+            else:
+                matched_amount = payments if payments <= amount_residual else amount_residual
             rec.matched_amount = matched_amount
-            rec.unmatched_amount = amount_residual - payments  if amount_residual > 0 else 0

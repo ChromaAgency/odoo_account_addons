@@ -18,7 +18,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="payment_date" />
+                            <field name="date" />
                             <field name="company_id" invisible="1"/>
                             <field name="partner_id" />
                         </group>
@@ -34,7 +34,12 @@
                     <notebook>
                         <page name="payments" string="Pagos">
 
-                            <field name="payment_lines_ids" context="{'default_partner_id':partner_id}" domain="[('partner_id','=',partner_id)]">
+                            <field name="payment_lines_ids" context="{
+                                            'default_partner_id':partner_id,
+                                            'default_payment_type':'inbound',
+                                            'default_amount':unmatched_amount,
+                                            }" 
+                                            domain="[('partner_id','=',partner_id)]">
                                 <tree>
                                     <field name="payment_date" />
                                     <field name="partner_id" />
@@ -45,17 +50,20 @@
                             </field>
                         </page>
                         <page name="moves" string="Comprobantes imputados">
-                            <field name="move_ids" context="{'default_partner_id':partner_id}" create="0" domain="[('partner_id','=',partner_id),'|','&',('amount_residual','>',0),('state','=','posted'),'&',('amount_residual','>',0),('state','=','posted')]">
-                                <tree>
-                                    <field name="state" invisible="1"/>
-                                    <field name="invoice_date" />
-                                    <field name="partner_id" />
-                                    <!-- <field name="l10n_latam_document_number" /> -->
-                                    <field name="amount_total" />
+                            <field name="move_line_ids" context="{'default_partner_id':partner_id}" domain="[('partner_id','=',partner_id),('move_id.state','=','posted'),'|',('amount_residual','!=',0),('amount_residual_currency', '!=', 0.0),('account_id.reconcile', '=', True),('reconciled', '=', False)]">
+                                <tree  >
+                                    <field name="name" string="Punto de emision"/>
+                                    <field name="date" invisible="1"/>
+                                    <field name="date_maturity" />
+                                    <field name="move_id" string="Comprobante"/>
+                                    <field name="journal_id" string="Punto de emision"/>
+                                    <field name="balance" />
                                     <field name="amount_residual" sum="1"/>
+                                    <field name="amount_currency" sum="1"/>
+                                    <field name="amount_residual_currency" sum="1"/>
                                 </tree>
                             </field>
-                            <button name="add_all_moves" type="object" string="Agregar comprobantes no imputados"/>
+                            <button name="add_all_unreconcilied_moves" type="object" string="Agregar comprobantes no imputados"/>
                         </page>
                     </notebook>
                 </sheet>

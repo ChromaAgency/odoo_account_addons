@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate='1'>
+        <record id="ir_sequence_account_payment_group" model="ir.sequence">
+            <field name="name">Grupo de pagos</field>
+            <field name="number_next_actual" eval="1" />
+            <field name="prefix">0001-</field>
+            <field name="padding" eval="8" />
+        </record>
+    </data>
+
+</odoo>
