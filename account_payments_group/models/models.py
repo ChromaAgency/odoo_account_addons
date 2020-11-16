@@ -26,7 +26,7 @@ class PaymentGroup(Model):
         states={'draft': [('readonly', False)]},
     )
     name = Char(string="Nombre", readonly=1)
-    sequence_id = Many2one('ir.sequence',string="Secuencia", default=lambda self: self.env.ref('account_payment_group.ir_sequence_account_payment_group'))
+    sequence_id = Many2one('ir.sequence',string="Secuencia", default=lambda self: self.env.ref('account_payments_group.ir_sequence_account_payments_group'))
     state = Selection([('draft','Borrador'),('posted','Validado'),('canceled','Cancelado')],default="draft", string="Estado")
     payment_lines_ids = One2many('account.payment','payment_group_id', string="Pagos")
     move_line_ids = Many2many('account.move.line',string="Comprobantes imputados", states={'posted':[('readonly',True)]}) 

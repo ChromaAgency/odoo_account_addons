@@ -13,12 +13,12 @@
         </t>
     </template>
     <report
-        id="action_report_account_payment_group"
+        id="action_report_account_payments_group"
         model="account.payment.group"
         string="Payment Group"
         report_type="qweb-pdf"
-        name="account_payment_group.payment_group_report"
-        file="account_payment_group.payment_group_report"
+        name="account_payments_group.payment_group_report"
+        file="account_payments_group.payment_group_report"
     />
 
 </odoo>
