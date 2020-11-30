@@ -9,6 +9,24 @@ class AccountPayment(Model):
     _inherit = 'account.payment'
     
     payment_group_id = Many2one('account.payment.group', string="Payment Group")
+
+    def action_register_payment(self):
+        ctx = self.env.context.copy()
+        active_ids = ctx.get('active_ids')
+        if not active_ids:
+            return ''
+        invoices = self.env['account.move'].browse(active_ids).filtered(lambda move: move.is_invoice(include_receipts=True))
+        ctx.update({
+            'default_partner_id':invoices[0].commercial_partner_id.id
+        })
+        action = self.env.ref('account_payments_group.payments_group_window').read()[0]
+        action.update({
+            'view_mode': 'form',
+            'context': ctx,
+            'views':[(False,'form'),(False,'tree')]
+        })
+        return action
+
 class PaymentGroup(Model):
     _name = 'account.payment.group'
     _description = 'Groups different lines of account.payment and relates them with account.move lines (invoices, and other)'
