@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Retenciones en Pagos",
+    'name': "Conversiones de tipo de cambio",
 
     'summary': """
-    Modulo para adaptar las retenciones a pagos
+    Modulo para realizar cambios en el tipo de cambio de manera facil en las vistas de pagos 
     """,
 
     'description': """
-    Modulo para adaptar las retenciones a pagos
+    Modulo para realizar cambios en el tipo de cambio de manera facil en las vistas de pagos 
     """,
 
     'author': "Making Argentina",
@@ -23,10 +23,6 @@
     'depends': [],
     # always loaded
     'data': [
-        'report/report_templates.xml',
-        'report/report_invoice_document.xml',
-        'report/paper_format.xml',
-        'report/ir_actions_report.xml',
-        'report/custom_header.xml',
+        
     ]
 }
