@@ -8,6 +8,16 @@
 
     'description': """
     Modulo para realizar cambios en el tipo de cambio de manera facil en las vistas de pagos 
+    
+    Historias de usuario que motivan a este modulo:
+
+    Como administrativo quiero actualizar la moneda de mis facturas mientras cambio los valores de los precios para no tener que hacerlo manualmente si hace falta.
+
+    Como administrativo quiero actualizar el tipo de cambio de una moneda especifica de manera facil y con los valores que uso habitualmente
+
+    Como administrativo me gustaria actualizar la moneda de mis pagos en diferente moneda a la de la factura
+
+
     """,
 
     'author': "Making Argentina",
