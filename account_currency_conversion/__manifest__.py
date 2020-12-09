@@ -30,9 +30,10 @@
     'version': '0.1',
     'installable': True,
     # any module necessary for this one to work correctly
-    'depends': [],
+    'depends': ['account'],
     # always loaded
     'data': [
-        
+        'views/views.xml',
+        'wizard/currency_conversion_wizard.xml',
     ]
 }
