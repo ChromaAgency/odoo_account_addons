@@ -140,20 +140,12 @@ class PaymentCurrencyConversion(TransientModel):
     self.ensure_one()
     ctx = self._context
     active_ids = ctx.get('active_ids')
-    # account_moves = self.env['account.move'].browse(active_ids).with_context(check_move_validity=False)
-    # for am in account_moves:
-    #   if am.state == 'posted':
+    super(PaymentCurrencyConversion,self).confirm()
+    payments = self.env['account.payment'].browse(active_ids)
+    # for payment in payments:
+    #   if payment.state in ['posted','sent','reconciled']:
     #     raise UserError(_('You cant change an already posted invoice'))
-    #   message = _("Currency changed from %s to %s with rate %s") % (
-    #           am.currency_id.name, self.target_currency.name,
-    #           self.exchange_rate)
-    #   for aml in am.line_ids:
-    #     _logger.info(aml.exclude_from_invoice_tab)
-    #     aml.price_unit = aml.price_unit * self.exchange_rate
-    #   am.currency_id = self.target_currency.id
-    #   am._onchange_currency()
-    #   am.message_post(body=message)
-    #   super(InvoiceCurrencyConversion,self).confirm()
+    
     return {'type': 'ir.actions.act_window_close'}
 
 
