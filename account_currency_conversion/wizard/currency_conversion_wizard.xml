@@ -20,7 +20,7 @@
                 <sheet>
                     <group>
                         <field name="source_currency" />
-                        <field name="target_currency" domain="[('id','!=',source_currency.id)]"/>
+                        <field name="target_currency" domain="[('id','!=',source_currency)]"/>
                         <field name="exchange_rate" />
                     </group>
                 </sheet>
