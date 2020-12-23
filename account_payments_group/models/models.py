@@ -17,9 +17,12 @@ class AccountPayment(Model):
             return ''
         invoices = self.env['account.move'].browse(active_ids).filtered(lambda move: move.is_invoice(include_receipts=True))
         ctx.update({
-            'default_partner_id':invoices[0].commercial_partner_id.id
+            'default_partner_id':invoices[0].commercial_partner_id.id,
+            'active_ids':False,
+            'active_id':False,
+            'active_model':False,
         })
-        del ctx['active_ids']
+        
         action = self.env.ref('account_payments_group.payments_group_window').read()[0]
         action.update({
             'view_mode': 'form',
