@@ -105,7 +105,7 @@ class PaymentGroup(Model):
     def _compute_payments_total(self):
         for rec in self:
             rec.payments_total = sum(rec.payment_lines_ids.mapped('amount'))
-    @depends('payments_total','move_line_ids')
+    @depends('payments_total','move_line_ids','state')
     def _compute_matched_amount(self):
         for rec in self:
             unreconciled_partner_amls = self.env['account.move.line']\
