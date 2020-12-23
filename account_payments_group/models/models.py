@@ -19,6 +19,7 @@ class AccountPayment(Model):
         ctx.update({
             'default_partner_id':invoices[0].commercial_partner_id.id
         })
+        del ctx['active_ids']
         action = self.env.ref('account_payments_group.payments_group_window').read()[0]
         action.update({
             'view_mode': 'form',
