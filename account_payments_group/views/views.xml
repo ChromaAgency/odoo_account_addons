@@ -24,9 +24,9 @@
                         </group>
                         <group>
                             <field name="observations" />
-                            <field name="payments_total" />
                         </group>
                         <group>
+                            <field name="payments_total" />
                             <field name="matched_amount" />
                             <field name="unmatched_amount" />
                         </group>
