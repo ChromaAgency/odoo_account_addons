@@ -59,11 +59,7 @@ class AccountJournal(Model):
         action = self.env.ref('account_move_simplified_management.action_account_move_line_view_list_simplified_management').read()[0]
         
         context = self._context.copy()
-        # context.update({'search_default_my_appointments':1})
-        if 'context' in action and type(action['context']) == str and len(action['context'])>0:
-            context.update(ast.literal_eval(action.get('context', {})))
-        else:
-            context.update(action.get('context', {}))
+        context.update({'search_default_posted':1})
         context.update(safe_eval(action.get('context', {})))
         action['context'] = context
         domain = [('journal_id','=',self.id),('account_id','in',[self.default_debit_account_id.id, self.default_credit_account_id.id])]
