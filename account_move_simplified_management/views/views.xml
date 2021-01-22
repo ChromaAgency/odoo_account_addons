@@ -78,7 +78,12 @@
             <tree string="Movimientos" edit="false" create="false" import="false">
                 <field name="date" />
                 <field name="name" />
+                <field name="payment_id" invisible="1"/>
+                <field name="partner_id" string="Empresa"/>
                 <field name="balance" sum="Balance"/>
+                <button string="Ver pago" attrs="{'invisible':[('payment_id','=',False)]}" type="object" name="action_view_payment"/>
+                <button string="Cancelar" type="object" name="button_simplified_cancel"/>
+                
             </tree>
         </field>
     </record>
