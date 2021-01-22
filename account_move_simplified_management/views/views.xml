@@ -28,8 +28,16 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <button type="object" class="btn btn-primary" name="add_new_moves_simplified" string="Añadir movimientos">Añadir movimientos</button>
-                                    <button type="object" class="btn btn-primary" name="view_moves_simplified" string="Ver movimientos">Ver movimientos</button>
+                                    <div class="col-md-12 mb-3">
+                                        <button type="object" class="btn btn-primary" name="add_new_incomes_simplified" string="Añadir Ingresos">Añadir Ingresos</button>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <button type="object" class="btn btn-primary" name="add_new_expenses_simplified" string="Añadir Egresos">Añadir Egresos</button>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+
+                                        <button type="object" class="btn btn-primary" name="view_moves_simplified" string="Ver movimientos">Ver movimientos</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
