@@ -1,8 +1,45 @@
 # -*- coding: utf-8 -*-
 from odoo import _
-from odoo.api import onchange,model
+from odoo.api import depends, model, onchange
 from odoo.fields import Boolean, Char, Many2many, Many2one
-from odoo.models import Model
+from odoo.models import Model, AbstractModel
+
+class PaymentConditionMixin(AbstractModel):
+  _name = "account.payment.condition.mixin"
+
+  payment_condition_id = Many2one('account.payment.condition', string=_("Condicion de pago"))
+  possible_payment_terms = Many2many(related="payment_condition_id.payment_terms_ids")
+  is_payment_term_id_visible = Boolean(string=_("Terminos de pago visibles"), compute="_compute_is_payment_term_id_visible")
+  possible_payment_acquirers = Many2many(related="payment_condition_id.payment_acquirer_ids")
+  payment_acquirer_id = Many2one('payment.acquirer', string=_("Metodo de pago"))
+  is_payment_acquirer_id_visible = Boolean(string=_("Es metodo de pago visible") , compute="_compute_is_payment_acquirer_id_visible")
+
+  @depends('possible_payment_acquirers', 'payment_condition_id')
+  def _compute_is_payment_acquirer_id_visible(self):
+    for rec in self:
+      rec.is_payment_acquirer_id_visible = False
+      if rec.payment_condition_id != False and len(rec.possible_payment_acquirers) > 1:
+        rec.is_payment_acquirer_id_visible = True
+        if len(rec.possible_payment_acquirers) == 1:
+          rec.payment_acquirer_id = rec.possible_payment_acquirers.id
+
+  @depends('possible_payment_terms', 'payment_condition_id')
+  def _compute_is_payment_term_id_visible(self):
+    if self._name == 'res.partner':
+      payment_term_field_name = 'property_payment_term_id'  
+    elif self._name == 'account.move':
+      payment_term_field_name = 'invoice_payment_term_id'  
+    else:
+      payment_term_field_name = 'payment_term_id'
+      
+    for rec in self:
+      rec.is_payment_term_id_visible = False
+      if rec.payment_condition_id != False and len(rec.possible_payment_terms) > 1:
+        rec.is_payment_term_id_visible = True
+      elif len(rec.possible_payment_terms) == 1:
+        setattr(rec, payment_term_field_name, rec.possible_payment_terms.id)
+      else:
+        setattr(rec, payment_term_field_name, False)
 
 class PaymentConditions(Model):
   _name = "account.payment.condition"

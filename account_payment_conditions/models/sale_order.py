@@ -2,41 +2,35 @@
 from odoo import _
 from odoo.api import depends, model, onchange
 from odoo.fields import Boolean, Char, Many2many, Many2one
-from odoo.models import Model
+from odoo.models import Model, TransientModel
 
 class SaleOrder(Model):
-  _inherit = "sale.order"
-
-  payment_condition_id = Many2one('account.payment.condition', string=_("Condicion de pago"))
-  possible_payment_terms = Many2many(related="payment_condition_id.payment_terms_ids")
-  is_payment_term_id_visible = Boolean(string=_("Terminos de pago visibles"), compute="_compute_is_payment_term_id_visible")
-  possible_payment_acquirers = Many2many(related="payment_condition_id.payment_acquirer_ids")
-  payment_acquirer_id = Many2one('payment.acquirer', string=_("Metodo de pago"))
-  is_payment_acquirer_id_visible = Boolean(string=_("Es metodo de pago visible") , compute="_compute_is_payment_acquirer_id_visible")
-
-  @depends('possible_payment_acquirers', 'payment_condition_id')
-  def _compute_is_payment_acquirer_id_visible(self):
-    for rec in self:
-      rec.is_payment_acquirer_id_visible = False
-      if rec.payment_condition_id != False and len(rec.possible_payment_acquirers) > 1:
-        rec.is_payment_acquirer_id_visible = True
-        if len(rec.possible_payment_acquirers) == 1:
-          rec.payment_acquirer_id = rec.possible_payment_acquirers.id
-
-  @depends('possible_payment_terms', 'payment_condition_id')
-  def _compute_is_payment_term_id_visible(self):
-    for rec in self:
-      rec.is_payment_term_id_visible = False
-      if rec.payment_condition_id != False and len(rec.possible_payment_terms) > 1:
-        rec.is_payment_term_id_visible = True
-      elif len(rec.possible_payment_terms) == 1:
-        rec.payment_term_id = rec.possible_payment_terms.id
-      else:
-        rec.payment_term_id = False
+  _name = "sale.order"
+  _inherit = ["sale.order", "account.payment.condition.mixin"]
 
   @onchange('partner_id')
   def onchange_partner_id(self):
     super(SaleOrder, self).onchange_partner_id()
     self.payment_condition_id = self.partner_id.payment_condition_id
     self.payment_acquirer_id = self.partner_id.payment_acquirer_id
+  def _prepare_invoice(self):
+    invoice_vals = super(SaleOrder, self)._prepare_invoice()
+
+    invoice_vals.update({
+      'payment_condition_id':self.payment_condition_id.id,
+      'payment_acquirer_id':self.payment_acquirer_id.id
+    })
+    return invoice_vals
+    
+class SaleAdvancePaymentInv(TransientModel):
+  _inherit = "sale.advance.payment.inv"
+
+  def _prepare_invoice_values(self, order, name, amount, so_line):
+    invoice_vals = super(SaleAdvancePaymentInv, self)._prepare_invoice_values(order, name, amount, so_line)
+
+    invoice_vals.update({
+      'payment_condition_id':order.payment_condition_id.id,
+      'payment_acquirer_id':order.payment_acquirer_id.id
+    })
+    return invoice_vals
     
