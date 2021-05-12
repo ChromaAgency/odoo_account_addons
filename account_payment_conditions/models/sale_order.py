@@ -34,6 +34,7 @@ class SaleOrder(Model):
       else:
         rec.payment_term_id = False
 
+  @onchange('partner_id')
   def onchange_partner_id(self):
     super(SaleOrder, self).onchange_partner_id()
     self.payment_condition_id = self.partner_id.payment_condition_id

@@ -31,3 +31,7 @@ class ResPartner(Model):
         rec.is_property_payment_term_id_visible = True
       elif len(rec.possible_payment_terms) == 1:
         rec.property_payment_term_id = rec.possible_payment_terms.id
+  
+  @api.model
+  def _commercial_fields(self):
+    return super(ResPartner, self)._commercial_fields() + ['payment_acquirer_id', 'payment_condition_id']
