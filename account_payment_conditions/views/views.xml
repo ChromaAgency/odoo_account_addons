@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="account_payment_condition_view_form" model="ir.ui.view">
+    <field name="name">account.payment.condition.view.form</field>
+    <field name="model">account.payment.condition</field>
+    <field name="arch" type="xml">
+      <form string="Condiciones de pago">
+        <sheet>
+          <group>
+            <field name="name" />
+            <field name="payment_terms_ids" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_partner_form_inherit_account_payment_conditions" model="ir.ui.view">
+    <field name="name">res.partner.view.form.inherit</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form" />
+    <field name="arch" type="xml">
+      <field name="property_payment_term_id" position="before">
+        <field name="payment_condition_id" />
+        <field name="possible_payment_terms" invisible="1" />
+        <field name="is_property_payment_term_id_visible" invisible="1" />
+      </field>
+      <field name="property_payment_term_id" position="attributes">
+        <attribute name="domain">[('id','in',possible_payment_terms)]</attribute>
+        <attribute name="attrs">{'invisible':[('is_property_payment_term_id_visible','=',False)]}</attribute>
+      </field>
+    </field>
+  </record>
+  <record id="view_order_form_inherit_account_payment_condition" model="ir.ui.view">
+    <field name="name">sale.order.view.form.inherit</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <field name="payment_term_id" position="before">
+        <field name="payment_condition_id" />
+        <field name="possible_payment_terms" invisible="1" />
+        <field name="is_payment_term_id_visible" invisible="1" />
+      </field>
+      <field name="payment_term_id" position="attributes">
+        <attribute name="domain">[('id','in',possible_payment_terms)]</attribute>
+        <attribute name="attrs">{'invisible':[('is_payment_term_id_visible','=',False)]}</attribute>
+      </field>
+    </field>
+  </record>
+</odoo>
