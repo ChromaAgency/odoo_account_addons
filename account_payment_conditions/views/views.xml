@@ -9,6 +9,7 @@
           <group>
             <field name="name" />
             <field name="payment_terms_ids" />
+            <field name="payment_acquirer_ids" />
           </group>
         </sheet>
       </form>
@@ -23,6 +24,11 @@
         <field name="payment_condition_id" />
         <field name="possible_payment_terms" invisible="1" />
         <field name="is_property_payment_term_id_visible" invisible="1" />
+        <field name="possible_payment_acquirers" invisible="1" />
+        <field name="is_payment_acquirer_id_visible" invisible="1" />
+      </field>
+      <field name="property_payment_term_id" position="after">
+        <field name="payment_acquirer_id" domain="[('id','in',possible_payment_acquirers)]" widget="selection" options="{'no_create_edit':True}" attrs="{'invisible':[('is_payment_acquirer_id_visible','=',False)]}"/>
       </field>
       <field name="property_payment_term_id" position="attributes">
         <attribute name="domain">[('id','in',possible_payment_terms)]</attribute>
@@ -39,6 +45,11 @@
         <field name="payment_condition_id" />
         <field name="possible_payment_terms" invisible="1" />
         <field name="is_payment_term_id_visible" invisible="1" />
+        <field name="possible_payment_acquirers" invisible="1" />
+        <field name="is_payment_acquirer_id_visible" invisible="1" />
+      </field>
+      <field name="payment_term_id" position="after">
+        <field name="payment_acquirer_id" domain="[('id','in',possible_payment_acquirers)]" attrs="{'invisible':[('is_payment_acquirer_id_visible','=',False)]}" widget="selection" options="{'no_create_edit':True}"/>
       </field>
       <field name="payment_term_id" position="attributes">
         <attribute name="domain">[('id','in',possible_payment_terms)]</attribute>
