@@ -43,7 +43,7 @@
       </field>
       <field name="property_payment_term_id" position="attributes">
         <attribute name="domain">[('id','in',possible_payment_terms)]</attribute>
-        <attribute name="attrs">{'invisible':[('is_payment_term_id_visible','=',False)], 'required':[('is_payment_term_id_visible','=',False)]}</attribute>
+        <attribute name="attrs">{'invisible':[('is_payment_term_id_visible','=',False)], 'required':[('is_payment_term_id_visible', '=', True)]}</attribute>
       </field>
     </field>
   </record>
@@ -60,11 +60,11 @@
         <field name="is_payment_acquirer_id_visible" invisible="1" />
       </field>
       <field name="payment_term_id" position="after">
-        <field name="payment_acquirer_id" domain="[('id','in',possible_payment_acquirers)]" attrs="{'invisible':[('is_payment_acquirer_id_visible','=',False)],'required':[('is_payment_acquirer_id_visible','=',False)]}" widget="selection" options="{'no_create_edit':True}"/>
+        <field name="payment_acquirer_id" domain="[('id', 'in', possible_payment_acquirers)]" attrs="{'invisible':[('is_payment_acquirer_id_visible','=', False)],'required':[('is_payment_acquirer_id_visible','=', True)]}" widget="selection" options="{'no_create_edit':True}"/>
       </field>
       <field name="payment_term_id" position="attributes">
         <attribute name="domain">[('id','in',possible_payment_terms)]</attribute>
-        <attribute name="attrs">{'invisible':[('is_payment_term_id_visible','=',False)],'required':[('is_payment_term_id_visible','=',False)]}</attribute>
+        <attribute name="attrs">{'invisible':[('is_payment_term_id_visible','=',False)],'required':[('is_payment_term_id_visible', '=', True)]}</attribute>
       </field>
     </field>
   </record>
