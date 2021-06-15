@@ -1,9 +1,34 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
-from odoo.fields import One2many, Many2many,Many2one,Date,Float,Char,Text,Selection
+from odoo import models, fields, api, _
+from odoo.fields import Integer, One2many, Many2many,Many2one,Date,Float,Char,Text,Selection
 from odoo.api import depends,onchange,returns
 from odoo.models import Model
 from odoo.exceptions import UserError
+
+class AccountMove(Model):
+    _inherit = 'account.move'
+
+    payment_group_ids = Many2many(string="Grupos de pagos", compute="_compute_payment_group_ids")
+    payment_group_count = Integer(string="Pagos", compute="_compute_payment_group_ids")
+
+    def open_payment_groups(self):
+        return  {
+            'name': _('Grupos de pagos'),
+            'res_model': 'account.payment.group',
+            'view_mode': 'list,form',
+            'context': self.env.context,
+            'target': 'current',
+            'domain': [('id','in',self.payment_group_ids.ids)],
+            'type': 'ir.actions.act_window',
+        }
+
+    @depends('state','invoice_payments_widget')
+    def _compute_payment_group_ids(self):
+        for rec in self:
+            payment_groups = self.env['account.payment.group'].search([('move_line_ids','in',rec.line_ids.ids)]).ids
+            rec.payment_group_ids = payment_groups
+            rec.payment_group_count = len(payment_groups)
+
 
 class AccountPayment(Model):
     _inherit = 'account.payment'
@@ -16,6 +41,8 @@ class AccountPayment(Model):
         if not active_ids:
             return ''
         invoices = self.env['account.move'].browse(active_ids).filtered(lambda move: move.is_invoice(include_receipts=True))
+        if any([invoice.type == 'in_invoice' for invoice in invoices]):
+            return super(AccountPayment, self).action_register_payment()
         ctx.update({
             'default_partner_id':invoices[0].commercial_partner_id.id,
             'active_ids':False,
@@ -108,6 +135,7 @@ class PaymentGroup(Model):
     def _compute_payments_total(self):
         for rec in self:
             rec.payments_total = sum(rec.payment_lines_ids.mapped('amount'))
+            
     @depends('payments_total','move_line_ids','state')
     def _compute_matched_amount(self):
         for rec in self:
