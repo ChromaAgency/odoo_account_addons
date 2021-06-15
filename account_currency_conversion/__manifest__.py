@@ -3,7 +3,7 @@
     'name': "Conversiones de tipo de cambio",
 
     'summary': """
-    Modulo para realizar cambios en el tipo de cambio de manera facil en las vistas de pagos 
+    Modulo para realizar cambios en el tipo de cambio de manera facil en las vistas de pagos y facturacion
     """,
 
     'description': """

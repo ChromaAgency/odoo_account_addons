@@ -9,9 +9,19 @@
             <xpath expr="//field[@name='currency_id']" position="after">
                 <button string="Convertir Moneda" name="action_convert_currency" type="object" class="oe_highlight"/> 
             </xpath>
+            <xpath expr="//field[@name='currency_id']" position="replace">
+                <label for="currency_id" />
+                <div class="oe_inline">
+                    <field name="currency_id" />
+                    <span>
+                        TC
+                        <field name="exchange_rate" />
+                    </span>
+                </div>
+            </xpath>
         </field>
     </record>
-    <record id="view_move_form_inherit_account_currency_conversion" model="ir.ui.view">
+    <record id="view_payment_form_inherit_account_currency_conversion" model="ir.ui.view">
         <field name="name">account.payment.view.form.inherit</field>
         <field name="model">account.payment</field>
         <field name="inherit_id" ref="account.view_account_payment_form"/>

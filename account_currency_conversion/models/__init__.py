@@ -8,6 +8,12 @@ _logger = logging.getLogger(__name__)
 class AccountMove(Model):
     _inherit = "account.move"
     
+    exchange_rate = Float(string="Tipo de cambio", compute="_compute_currency_rate")
+
+    def _compute_currency_rate(self):
+        for rec in self:
+            rec.exchange_rate = 1/rec.currency_id.rate
+
     def action_convert_currency(self):
         self.ensure_one()
         action = self.env.ref('account_currency_conversion.currency_conversion_invoice_wizard_action').read()[0]
