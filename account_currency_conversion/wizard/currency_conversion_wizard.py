@@ -50,6 +50,7 @@ class CurrencyConversion(AbstractModel):
   
 class CurrencyConversionWizard(TransientModel):
   _name="res.currency.conversion.wizard"
+  _description = "Popup de conversion de moneda"
   _inherit = "res.currency.conversion"
 
   def _currencies_to_change(self):
@@ -111,6 +112,7 @@ class CurrencyConversionWizard(TransientModel):
     
 class InvoiceCurrencyConversion(TransientModel):
   _name="res.currency.conversion.invoice.wizard"
+  _description = "Conversion de moneda en factura"
   _inherit = "res.currency.conversion.wizard"
   
   def confirm(self):
@@ -134,6 +136,7 @@ class InvoiceCurrencyConversion(TransientModel):
 
 class PaymentCurrencyConversion(TransientModel):
   _name="res.currency.conversion.payment.wizard"
+  _description = "Conversion de moneda en pago"
   _inherit = "res.currency.conversion.wizard"
   
   def confirm(self):
