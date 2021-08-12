@@ -34,6 +34,8 @@ class AccountPayment(Model):
     _inherit = 'account.payment'
     
     payment_group_id = Many2one('account.payment.group', string="Payment Group")
+    communication = fields.Char(string='Memo', readonly=True, states={'draft': [('readonly', False)]})
+
 
     def action_register_payment(self):
         ctx = self.env.context.copy()
