@@ -52,7 +52,7 @@
                                             }" 
                                             domain="[('partner_id','=',partner_id)]">
                                 <tree>
-                                    <field name="payment_date" />
+                                    <field name="date" />
                                     <field name="partner_id" />
                                     <field name="amount" />
                                     <field name="communication" />
