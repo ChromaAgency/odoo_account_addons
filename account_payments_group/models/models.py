@@ -8,7 +8,7 @@ from odoo.exceptions import UserError
 class AccountMove(Model):
     _inherit = 'account.move'
 
-    payment_group_ids = Many2many(string="Grupos de pagos", compute="_compute_payment_group_ids")
+    payment_group_ids = Many2many('account.payment.group',string="Grupos de pagos", compute="_compute_payment_group_ids")
     payment_group_count = Integer(string="Pagos", compute="_compute_payment_group_ids")
 
     def open_payment_groups(self):
