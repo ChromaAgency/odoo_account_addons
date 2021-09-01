@@ -6,6 +6,7 @@ from odoo.models import Model, AbstractModel
 
 class PaymentConditionMixin(AbstractModel):
   _name = "account.payment.condition.mixin"
+  _description = 'Mixin de condiciones de pago'
 
   payment_condition_id = Many2one('account.payment.condition', string=_("Condicion de pago"))
   possible_payment_terms = Many2many(related="payment_condition_id.payment_terms_ids")
@@ -43,6 +44,7 @@ class PaymentConditionMixin(AbstractModel):
 
 class PaymentConditions(Model):
   _name = "account.payment.condition"
+  _description = 'Condiciones de pago'
 
   name = Char(string=_("Nombre"))
   payment_terms_ids = Many2many('account.payment.term', string=_("Terminos de pago"))
