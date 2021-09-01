@@ -10,6 +10,7 @@ class AccountTaxTemplate(Model):
             ('customer', 'Customer Payment'),
             ('supplier', 'Supplier Payment'),
         ],
+        ondelete="set default"
     )
 
 class AccountTax(Model):
@@ -20,6 +21,7 @@ class AccountTax(Model):
             ('customer', 'Customer Payment'),
             ('supplier', 'Supplier Payment'),
         ],
+        ondelete="set default"
     )   
 
 class AccountPayment(models.Model):
