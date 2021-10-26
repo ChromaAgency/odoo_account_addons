@@ -34,7 +34,6 @@ class AccountPayment(Model):
     _inherit = 'account.payment'
     
     payment_group_id = Many2one('account.payment.group', string="Payment Group")
-    communication = fields.Char(string='Memo', readonly=True, states={'draft': [('readonly', False)]})
 
 
     def action_register_payment(self):
@@ -101,7 +100,7 @@ class PaymentGroup(Model):
                 name = rec.sequence_id.next_by_id()
                 rec.name = name
             for p in payments:
-                p.communication = name
+                p.ref = name
             rec.state = 'posted'
 
     def cancel(self):

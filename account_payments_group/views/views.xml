@@ -55,7 +55,6 @@
                                     <field name="date" />
                                     <field name="partner_id" />
                                     <field name="amount" />
-                                    <field name="communication" />
                                     <field name="state" invisible="1"/>
                                 </tree>
                             </field>

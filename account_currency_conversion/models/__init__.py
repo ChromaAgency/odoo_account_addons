@@ -2,7 +2,7 @@
 from odoo.models import Model
 from odoo.fields import Char,Float
 from odoo.api import depends
-from odoo.tools import safe_eval
+from ast import literal_eval
 import logging
 _logger = logging.getLogger(__name__)
 class AccountMove(Model):
@@ -17,7 +17,7 @@ class AccountMove(Model):
     def action_convert_currency(self):
         self.ensure_one()
         action = self.env.ref('account_currency_conversion.currency_conversion_invoice_wizard_action').read()[0]
-        new_context = dict(safe_eval(action.get('context',{})),active_ids=self.ids,default_source_currency=self.currency_id.id)
+        new_context = dict(literal_eval(action.get('context',{})),active_ids=self.ids,default_source_currency=self.currency_id.id)
         action.update({'context':new_context})
         return action
 
@@ -36,6 +36,6 @@ class AccountPayment(Model):
     def action_convert_currency(self):
         self.ensure_one()
         action = self.env.ref('account_currency_conversion.currency_conversion_payment_wizard_action').read()[0]
-        new_context = dict(safe_eval(action.get('context',{})),active_ids=self.ids,default_source_currency=self.currency_id.id)
+        new_context = dict(literal_eval(action.get('context',{})),active_ids=self.ids,default_source_currency=self.currency_id.id)
         action.update({'context':new_context})
         return action
