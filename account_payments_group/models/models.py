@@ -21,28 +21,13 @@ class AccountMove(Model):
             'domain': [('id','in',self.payment_group_ids.ids)],
             'type': 'ir.actions.act_window',
         }
-
-    @depends('state','invoice_payments_widget')
-    def _compute_payment_group_ids(self):
-        for rec in self:
-            payment_groups = self.env['account.payment.group'].search([('move_line_ids','in',rec.line_ids.ids)]).ids
-            rec.payment_group_ids = payment_groups
-            rec.payment_group_count = len(payment_groups)
-
-
-class AccountPayment(Model):
-    _inherit = 'account.payment'
-    
-    payment_group_id = Many2one('account.payment.group', string="Payment Group")
-
-
     def action_register_payment(self):
         ctx = self.env.context.copy()
         active_ids = ctx.get('active_ids')
         if not active_ids:
             return ''
         invoices = self.env['account.move'].browse(active_ids).filtered(lambda move: move.is_invoice(include_receipts=True))
-        if any([invoice.type == 'in_invoice' for invoice in invoices]):
+        if any([invoice.move_type == 'in_invoice' for invoice in invoices]):
             return super(AccountPayment, self).action_register_payment()
         ctx.update({
             'default_partner_id':invoices[0].commercial_partner_id.id,
@@ -58,6 +43,22 @@ class AccountPayment(Model):
             'views':[(False,'form'),(False,'tree')]
         })
         return action
+
+    @depends('state','invoice_payments_widget')
+    def _compute_payment_group_ids(self):
+        for rec in self:
+            payment_groups = self.env['account.payment.group'].search([('move_line_ids','in',rec.line_ids.ids)]).ids
+            rec.payment_group_ids = payment_groups
+            rec.payment_group_count = len(payment_groups)
+
+
+class AccountPayment(Model):
+    _inherit = 'account.payment'
+    
+    payment_group_id = Many2one('account.payment.group', string="Payment Group")
+
+
+    
 
 class PaymentGroup(Model):
     _name = 'account.payment.group'
