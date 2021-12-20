@@ -128,6 +128,7 @@ class InvoiceCurrencyConversion(TransientModel):
               self.exchange_rate)
       for aml in am.line_ids:
         aml.price_unit = aml.price_unit * self.exchange_rate
+        aml._onchange_price_subtotal()
       am.currency_id = self.target_currency.id
       am._onchange_currency()
       am.message_post(body=message)

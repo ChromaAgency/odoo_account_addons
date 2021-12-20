@@ -16,7 +16,7 @@ class AccountMove(Model):
 
     def action_convert_currency(self):
         self.ensure_one()
-        action = self.env.ref('account_currency_conversion.currency_conversion_invoice_wizard_action').read()[0]
+        action = self.env.ref('account_currency_conversion.currency_conversion_invoice_wizard_action').sudo().read()[0]
         new_context = dict(literal_eval(action.get('context',{})),active_ids=self.ids,default_source_currency=self.currency_id.id)
         action.update({'context':new_context})
         return action
@@ -35,7 +35,7 @@ class AccountPayment(Model):
 
     def action_convert_currency(self):
         self.ensure_one()
-        action = self.env.ref('account_currency_conversion.currency_conversion_payment_wizard_action').read()[0]
+        action = self.env.ref('account_currency_conversion.currency_conversion_payment_wizard_action').sudo().read()[0]
         new_context = dict(literal_eval(action.get('context',{})),active_ids=self.ids,default_source_currency=self.currency_id.id)
         action.update({'context':new_context})
         return action
