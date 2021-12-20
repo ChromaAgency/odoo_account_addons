@@ -96,8 +96,8 @@ class PaymentGroup(Model):
         for rec in self:
             payments = rec.payment_lines_ids
             payments.action_post()
-            _logger.info(payments.mapped('line_ids').read())
-            move_lines = payments.mapped('line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable') + rec.move_line_ids
+            # TODO add payable accounts also to get both of them
+            move_lines = payments.mapped('line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable') + rec.move_line_ids.filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable')
             move_lines.reconcile()
             name = rec.name
             if not name:
