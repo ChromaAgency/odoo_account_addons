@@ -126,11 +126,15 @@ class InvoiceCurrencyConversion(TransientModel):
       message = _("Currency changed from %s to %s with rate %s") % (
               am.currency_id.name, self.target_currency.name,
               self.exchange_rate)
-      for aml in am.line_ids:
-        aml.price_unit = aml.price_unit * self.exchange_rate
+      for aml in am._get_lines_onchange_currency():     
+        aml.write({
+            'price_unit': aml.price_unit * self.exchange_rate,
+            'currency_id':self.target_currency.id
+        })
         aml._onchange_price_subtotal()
       am.currency_id = self.target_currency.id
       am._onchange_currency()
+
       am.message_post(body=message)
       super(InvoiceCurrencyConversion,self).confirm()
     return {'type': 'ir.actions.act_window_close'}

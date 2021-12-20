@@ -4,7 +4,8 @@ from odoo.fields import Integer, One2many, Many2many,Many2one,Date,Float,Char,Te
 from odoo.api import depends,onchange,returns
 from odoo.models import Model
 from odoo.exceptions import UserError
-
+import logging
+_logger = logging.getLogger(__name__)
 class AccountMove(Model):
     _inherit = 'account.move'
 
@@ -21,14 +22,15 @@ class AccountMove(Model):
             'domain': [('id','in',self.payment_group_ids.ids)],
             'type': 'ir.actions.act_window',
         }
+    
     def action_register_payment(self):
         ctx = self.env.context.copy()
-        active_ids = ctx.get('active_ids')
+        active_ids = self.ids
         if not active_ids:
-            return ''
+            raise UserError('Por alguna razon el emisor/receptor del pago no pudo ser determinado')
         invoices = self.env['account.move'].browse(active_ids).filtered(lambda move: move.is_invoice(include_receipts=True))
         if any([invoice.move_type == 'in_invoice' for invoice in invoices]):
-            return super(AccountPayment, self).action_register_payment()
+            return super(AccountMove, self).action_register_payment()
         ctx.update({
             'default_partner_id':invoices[0].commercial_partner_id.id,
             'active_ids':False,
@@ -36,7 +38,7 @@ class AccountMove(Model):
             'active_model':False,
         })
         
-        action = self.env.ref('account_payments_group.payments_group_window').read()[0]
+        action = self.env.ref('account_payments_group.payments_group_window').sudo().read()[0]
         action.update({
             'view_mode': 'form',
             'context': ctx,
@@ -93,8 +95,9 @@ class PaymentGroup(Model):
     def post(self):
         for rec in self:
             payments = rec.payment_lines_ids
-            payments.post()
-            move_lines = payments.mapped('move_line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile) + rec.move_line_ids
+            payments.action_post()
+            _logger.info(payments.mapped('line_ids').read())
+            move_lines = payments.mapped('line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable') + rec.move_line_ids
             move_lines.reconcile()
             name = rec.name
             if not name:
