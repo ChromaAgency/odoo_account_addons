@@ -24,7 +24,7 @@ class AccountMove(Model):
 class AccountPayment(Model):
     _inherit = "account.payment"
 
-    currency_id_rate = Float(related="currency_id.rate",string="Tipo de cambio actual")
+    currency_id_rate = Float(related="currency_id.rate",string="Tipo de cambio de la moneda actual")
     exchange_rate = Float(string="Tipo de cambio actual",compute="_compute_exchange_rate")
 
     @depends('currency_id_rate')
