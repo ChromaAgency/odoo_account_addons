@@ -44,13 +44,8 @@
                     </group>
                     <notebook>
                         <page name="payments" string="Pagos">
-
-                            <field name="payment_lines_ids" context="{
-                                            'default_partner_id':partner_id,
-                                            'default_payment_type':'inbound',
-                                            'default_amount':unmatched_amount                                           
-                                            }" 
-                                            domain="[('partner_id','=',partner_id)]">
+                            <field name="payment_lines_ids" 
+                                            domain="[('partner_id','=',partner_id)]" attrs="{'invisible':[('state','!=','posted')]}">
                                 <tree>
                                     <field name="date" />
                                     <field name="partner_id" />
@@ -60,8 +55,10 @@
                             </field>
                         </page>
                         <page name="moves" string="Comprobantes imputados">
+                            <button name="remove_all_moves" type="object" string="Vaciar lista de comprobantes"/>
+                            <button name="add_all_unreconcilied_moves" type="object" string="Agregar comprobantes no imputados"/>
                             <field name="move_line_ids" context="{'default_partner_id':partner_id}" domain="[('partner_id','=',partner_id),('move_id.state','=','posted'),'|',('amount_residual','!=',0),('amount_residual_currency', '!=', 0.0),('account_id.reconcile', '=', True),('reconciled', '=', False)]">
-                                <tree  >
+                                <tree >
                                     <field name="name" string="Punto de emision"/>
                                     <field name="date" invisible="1"/>
                                     <field name="date_maturity" />
@@ -73,7 +70,6 @@
                                     <field name="amount_residual_currency" sum="1"/>
                                 </tree>
                             </field>
-                            <button name="add_all_unreconcilied_moves" type="object" string="Agregar comprobantes no imputados"/>
                         </page>
                     </notebook>
                 </sheet>
