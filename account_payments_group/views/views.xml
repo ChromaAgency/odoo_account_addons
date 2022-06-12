@@ -48,7 +48,7 @@
                             <field name="payment_lines_ids" context="{
                                             'default_partner_id':partner_id,
                                             'default_payment_type':'inbound',
-                                            'default_amount':unmatched_amount,
+                                            'default_amount':unmatched_amount                                           
                                             }" 
                                             domain="[('partner_id','=',partner_id)]">
                                 <tree>
