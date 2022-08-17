@@ -53,18 +53,18 @@
     <field name="inherit_id" ref="sale.view_order_form"/>
     <field name="arch" type="xml">
       <field name="payment_term_id" position="before">
-        <field name="payment_condition_id" attrs="{'required':True}"/>
+        <field name="payment_condition_id" attrs="{'required':True, 'readonly':[('state','in',['done'])]}"/>
         <field name="possible_payment_terms" invisible="1" />
         <field name="is_payment_term_id_visible" invisible="1" />
         <field name="possible_payment_acquirers" invisible="1" />
         <field name="is_payment_acquirer_id_visible" invisible="1" />
       </field>
       <field name="payment_term_id" position="after">
-        <field name="payment_acquirer_id" domain="[('id', 'in', possible_payment_acquirers)]" attrs="{'invisible':[('is_payment_acquirer_id_visible','=', False)],'required':[('is_payment_acquirer_id_visible','=', True)]}" widget="selection" options="{'no_create_edit':True}"/>
+        <field name="payment_acquirer_id" domain="[('id', 'in', possible_payment_acquirers)]" attrs="{'invisible':[('is_payment_acquirer_id_visible','=', False)],'required':[('is_payment_acquirer_id_visible','=', True)],'readonly':[('state','in',['done'])]}" widget="selection" options="{'no_create_edit':True}"/>
       </field>
       <field name="payment_term_id" position="attributes">
         <attribute name="domain">[('id','in',possible_payment_terms)]</attribute>
-        <attribute name="attrs">{'invisible':[('is_payment_term_id_visible','=',False)],'required':[('is_payment_term_id_visible', '=', True)]}</attribute>
+        <attribute name="attrs">{'invisible':[('is_payment_term_id_visible','=',False)],'required':[('is_payment_term_id_visible', '=', True)], 'readonly':[('state','in',['sale','done'])]}</attribute>
       </field>
     </field>
   </record>
