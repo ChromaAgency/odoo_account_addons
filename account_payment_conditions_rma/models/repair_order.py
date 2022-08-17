@@ -18,7 +18,7 @@ class RepairOrder(Model):
     self.payment_acquirer_id = self.partner_id.payment_acquirer_id
 
   def _create_invoices(self, group=False):
-    repair_invoice_dict = super(RepairOrder, self)._create_invoices(group=False)
+    repair_invoice_dict = super(RepairOrder, self)._create_invoices(group=group)
     for repair, invoice in repair_invoice_dict.items():
           repair_order = self.browse([repair])
           self.env['account.move'].browse([invoice]).write({
