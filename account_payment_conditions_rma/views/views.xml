@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_repair_order_form_inherit_account_payment_condition" model="ir.ui.view">
+    <field name="name">repair.order.view.form.inherit</field>
+    <field name="model">repair.order</field>
+    <field name="inherit_id" ref="repair.view_repair_order_form"/>
+    <field name="arch" type="xml">
+      <field name="pricelist_id" position="after">
+        <field name="payment_term_id" domain="[('id','in',possible_payment_terms)]" attrs="{'invisible':[('is_payment_term_id_visible','=',False)],'required':[('is_payment_term_id_visible', '=', True)], 'readonly':[('state','in',['sale','done'])]}"></field>
+        <field name="payment_condition_id" attrs="{'required':True, 'readonly':[('state','in',['done'])]}"/>
+        <field name="possible_payment_terms" invisible="1" />
+        <field name="is_payment_term_id_visible" invisible="1" />
+        <field name="possible_payment_acquirers" invisible="1" />
+        <field name="is_payment_acquirer_id_visible" invisible="1" />
+        <field name="payment_acquirer_id" domain="[('id', 'in', possible_payment_acquirers)]" attrs="{'invisible':[('is_payment_acquirer_id_visible','=', False)],'required':[('is_payment_acquirer_id_visible','=', True)],'readonly':[('state','in',['done'])]}" widget="selection" options="{'no_create_edit':True}"/>
+      </field>
+    </field>
+  </record>
+</odoo>
