@@ -68,17 +68,17 @@ class PaymentGroup(Model):
 
     def post(self):
         for rec in self:
-            register_payments = rec.with_context({ 'active_model': 'account.move.line',
-                                'active_ids': rec.move_line_ids.ids}).payment_register_line_ids
-            register_payments.line_ids = [(6, 0, self.move_line_ids.ids)]
-            register_payments.action_create_payments()
             payments = rec.payment_lines_ids
+            payments.action_post()
+            # TODO add payable accounts also to get both of them
+            move_lines = payments.mapped('line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable') + rec.move_line_ids.filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable')
+            move_lines.reconcile()
             name = rec.name
             if not name:
                 name = rec.sequence_id.next_by_id()
                 rec.name = name
             for p in payments:
-                p.ref = f"{p.ref or ''} - {name}"
+                p.ref = name
             rec.state = 'posted'
 
     def cancel(self):
