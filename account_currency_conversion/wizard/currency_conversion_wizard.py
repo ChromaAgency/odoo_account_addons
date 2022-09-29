@@ -132,9 +132,10 @@ class InvoiceCurrencyConversion(TransientModel):
             'currency_id':self.target_currency.id
         })
         aml._onchange_mark_recompute_taxes()
-        
+        aml._onchange_currency()
       am.currency_id = self.target_currency.id
       am._recompute_tax_lines()
+      am._onchange_currency()
       am.message_post(body=message)
       super(InvoiceCurrencyConversion,self).confirm()
     return {'type': 'ir.actions.act_window_close'}
