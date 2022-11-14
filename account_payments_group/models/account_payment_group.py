@@ -13,7 +13,24 @@ _logger = logging.getLogger(__name__)
 class AccountPayment(Model):
     _inherit = 'account.payment'
     
-    payment_group_id = Many2one('account.payment.group', string="Payment Group")    
+    payment_group_id = Many2one('account.payment.group', string="Payment Group")
+    
+    def _add_partner_id_to_vals(self, vals):
+        if 'payment_group_id' not in vals or vals.get('partner_id' ):
+            return vals
+        partner_id = self.env['account.payment.group'].browse([vals.get('payment_group_id')]).partner_id.id
+        vals.update({
+            'partner_id':partner_id
+        })
+        return vals
+
+    def _add_partner_id_from_group_id(self, vals_list):
+        return [self._add_partner_id_to_vals(vals) for vals in vals_list] if isinstance(vals_list, list) else self._add_partner_id_to_vals(vals_list)
+
+    @model
+    def create(self, vals_list):
+        self._add_partner_id_from_group_id(vals_list)
+        return super().create(vals_list)
 
 class PaymentGroup(Model):
     """Group payments into one model many payments can be reconciled to many invoices and print it in the same report.
@@ -118,6 +135,7 @@ class PaymentGroup(Model):
         for rec in self:
             if rec.partner_id:
                 rec.add_all_unreconcilied_moves()
+                rec.add_all_payment_move_lines()
                 rec.payment_lines_ids = False
                 
 
