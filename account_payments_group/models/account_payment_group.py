@@ -135,7 +135,6 @@ class PaymentGroup(Model):
         for rec in self:
             if rec.partner_id:
                 rec.add_all_unreconcilied_moves()
-                rec.add_all_payment_move_lines()
                 rec.payment_lines_ids = False
                 
 
