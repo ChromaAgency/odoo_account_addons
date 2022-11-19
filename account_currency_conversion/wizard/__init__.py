@@ -1,1 +1,1 @@
-from . import currency_conversion_wizard
+from . import currency_conversion_wizard, invoice_currency_conversion_wizard, payment_conversion_wizard

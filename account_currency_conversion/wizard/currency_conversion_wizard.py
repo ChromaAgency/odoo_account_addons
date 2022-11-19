@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo.models import Model, TransientModel, AbstractModel
-from odoo.fields import Char,Float,Many2one,Date
+from odoo.models import TransientModel, AbstractModel
+from odoo.fields import Float, Many2one, Date
 from odoo.exceptions import UserError
 from odoo.api import onchange
 from odoo.tools import float_is_zero
@@ -27,16 +27,15 @@ class CurrencyConversion(AbstractModel):
   company_currency_id = Many2one('res.currency', related='company_id.currency_id')
   source_currency = Many2one('res.currency',string="Moneda actual",required=True,readonly=True)
   target_currency = Many2one('res.currency',string="Moneda Destino",required=True)
-  exchange_rate = Float(string="Tipo de cambio",readonly=False,default=get_exchange_rate,digits=(100,10) )
+  exchange_rate = Float(string="Tipo de cambio", default=get_exchange_rate,digits=(100,10) )
 
   @onchange('target_currency')
   def _onchange_target_currency(self):
-    _logger.info(self._context.get('active_ids'))
     self.exchange_rate = self.get_exchange_rate()
 
   def confirm(self):
     if(self.target_currency.id == self.source_currency.id):
-      raise UserError(_('You should be converting a currency to a different currency'))
+          raise UserError(_('You should be converting a currency to a different currency'))
     ctx = self._context
     active_ids = ctx.get('active_ids')
     if not active_ids:
@@ -67,25 +66,24 @@ class CurrencyConversionWizard(TransientModel):
     updated_rate = 0
     source_currency_id = self.source_currency.id
     currency_id = currency.id
-    _logger.info(currency.name)
     if(currency_id != self.company_currency_id.id):
       if(source_currency_id != currency.id):
-        updated_rate = target_currency_rate = self.source_currency.rate*self.exchange_rate
+        updated_rate = self.source_currency.rate*self.exchange_rate
       else:
         if(not float_is_zero(self.exchange_rate,precision_rounding=currency.rounding or 0.00001)):
-          updated_rate = source_currency_rate = self.target_currency.rate/self.exchange_rate
+          updated_rate = self.target_currency.rate/self.exchange_rate
         else:
           raise UserError(_('Exchange rate cannot be 0'))
     else:
       updated_rate = 1
     return updated_rate
+
   def _currency_update_value(self,currency):
     today = Date.today()
     todays_rate = currency.rate_ids.filtered(lambda r: r.name == today)
-    todays_rate_exists = bool(todays_rate)
     #TODO change this to represent the new rate
     updated_rate = self._get_updated_rate(currency)
-    if(todays_rate_exists):
+    if(todays_rate):
       update_value = [(1,todays_rate.id,{'rate':updated_rate})]
     else:
       update_value = [(0,0,{'rate':updated_rate,'name':today})]
@@ -105,55 +103,7 @@ class CurrencyConversionWizard(TransientModel):
     # ahora si el tipo de cambio EUR/USD fuese 1.21 deberia dar  donde ARS/EUR = 0.010 | EUR/ARS = 98.77
     super(CurrencyConversionWizard,self).confirm()
     ctx = self._context
-    if('update_company_exchange_rate' in ctx and ctx.get('update_company_exchange_rate')):
-      _logger.info('changing_rate')
+    if ctx.get('update_company_exchange_rate'):
       self._change_currency_rate_ids()
 
     
-class InvoiceCurrencyConversion(TransientModel):
-  _name="res.currency.conversion.invoice.wizard"
-  _description = "Conversion de moneda en factura"
-  _inherit = "res.currency.conversion.wizard"
-  
-  def confirm(self):
-    self.ensure_one()
-    ctx = self._context
-    active_ids = ctx.get('active_ids')
-    account_moves = self.env['account.move'].browse(active_ids).with_context(check_move_validity=False)
-    for am in account_moves:
-      if am.state == 'posted':
-        raise UserError(_('You cant change an already posted invoice'))
-      message = _("Currency changed from %s to %s with rate %s") % (
-              am.currency_id.name, self.target_currency.name,
-              self.exchange_rate)
-      for aml in am._get_lines_onchange_currency().filtered(lambda r: not r.exclude_from_invoice_tab): 
-        aml.write({
-            'price_unit': Float.round(aml.price_unit * self.exchange_rate, precision_rounding=self.target_currency.rounding),
-            'currency_id':self.target_currency.id
-        })
-        aml._onchange_mark_recompute_taxes()
-        
-      am.currency_id = self.target_currency.id
-      am._recompute_tax_lines()
-      am.message_post(body=message)
-      super(InvoiceCurrencyConversion,self).confirm()
-    return {'type': 'ir.actions.act_window_close'}
-
-class PaymentCurrencyConversion(TransientModel):
-  _name="res.currency.conversion.payment.wizard"
-  _description = "Conversion de moneda en pago"
-  _inherit = "res.currency.conversion.wizard"
-  
-  def confirm(self):
-    self.ensure_one()
-    ctx = self._context
-    active_ids = ctx.get('active_ids')
-    super(PaymentCurrencyConversion,self).confirm()
-    payments = self.env['account.payment'].browse(active_ids)
-    # for payment in payments:
-    #   if payment.state in ['posted','sent','reconciled']:
-    #     raise UserError(_('You cant change an already posted invoice'))
-    
-    return {'type': 'ir.actions.act_window_close'}
-
-

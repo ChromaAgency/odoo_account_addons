@@ -13,7 +13,24 @@ _logger = logging.getLogger(__name__)
 class AccountPayment(Model):
     _inherit = 'account.payment'
     
-    payment_group_id = Many2one('account.payment.group', string="Payment Group")    
+    payment_group_id = Many2one('account.payment.group', string="Payment Group")
+    
+    def _add_partner_id_to_vals(self, vals):
+        if 'payment_group_id' not in vals or vals.get('partner_id' ):
+            return vals
+        partner_id = self.env['account.payment.group'].browse([vals.get('payment_group_id')]).partner_id.id
+        vals.update({
+            'partner_id':partner_id
+        })
+        return vals
+
+    def _add_partner_id_from_group_id(self, vals_list):
+        return [self._add_partner_id_to_vals(vals) for vals in vals_list] if isinstance(vals_list, list) else self._add_partner_id_to_vals(vals_list)
+
+    @model
+    def create(self, vals_list):
+        self._add_partner_id_from_group_id(vals_list)
+        return super().create(vals_list)
 
 class PaymentGroup(Model):
     """Group payments into one model many payments can be reconciled to many invoices and print it in the same report.
@@ -68,17 +85,17 @@ class PaymentGroup(Model):
 
     def post(self):
         for rec in self:
-            register_payments = rec.with_context({ 'active_model': 'account.move.line',
-                                'active_ids': rec.move_line_ids.ids}).payment_register_line_ids
-            register_payments.line_ids = [(6, 0, self.move_line_ids.ids)]
-            register_payments.action_create_payments()
             payments = rec.payment_lines_ids
+            payments.action_post()
+            # TODO add payable accounts also to get both of them
+            move_lines = payments.mapped('line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable') + rec.move_line_ids.filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable')
+            move_lines.reconcile()
             name = rec.name
             if not name:
                 name = rec.sequence_id.next_by_id()
                 rec.name = name
             for p in payments:
-                p.ref = f"{p.ref or ''} - {name}"
+                p.ref = name
             rec.state = 'posted'
 
     def cancel(self):

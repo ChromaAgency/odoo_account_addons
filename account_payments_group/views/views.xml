@@ -45,7 +45,7 @@
                     <notebook>
                         <page name="payments" string="Pagos">
                             <field name="payment_lines_ids" 
-                                            domain="[('partner_id','=',partner_id)]" >
+                                            domain="[('partner_id','=',partner_id)]" context="{'default_partner_id':partner_id}" >
                                 <tree>
                                     <field name="date" />
                                     <field name="partner_id" />
