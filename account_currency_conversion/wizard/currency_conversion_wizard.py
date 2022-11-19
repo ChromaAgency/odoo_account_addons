@@ -27,16 +27,15 @@ class CurrencyConversion(AbstractModel):
   company_currency_id = Many2one('res.currency', related='company_id.currency_id')
   source_currency = Many2one('res.currency',string="Moneda actual",required=True,readonly=True)
   target_currency = Many2one('res.currency',string="Moneda Destino",required=True)
-  exchange_rate = Float(string="Tipo de cambio",readonly=False,default=get_exchange_rate,digits=(100,10) )
+  exchange_rate = Float(string="Tipo de cambio", default=get_exchange_rate,digits=(100,10) )
 
   @onchange('target_currency')
   def _onchange_target_currency(self):
-    _logger.info(self._context.get('active_ids'))
     self.exchange_rate = self.get_exchange_rate()
 
   def confirm(self):
     if(self.target_currency.id == self.source_currency.id):
-      raise UserError(_('You should be converting a currency to a different currency'))
+          raise UserError(_('You should be converting a currency to a different currency'))
     ctx = self._context
     active_ids = ctx.get('active_ids')
     if not active_ids:
@@ -67,25 +66,24 @@ class CurrencyConversionWizard(TransientModel):
     updated_rate = 0
     source_currency_id = self.source_currency.id
     currency_id = currency.id
-    _logger.info(currency.name)
     if(currency_id != self.company_currency_id.id):
       if(source_currency_id != currency.id):
-        updated_rate = target_currency_rate = self.source_currency.rate*self.exchange_rate
+        updated_rate = self.source_currency.rate*self.exchange_rate
       else:
         if(not float_is_zero(self.exchange_rate,precision_rounding=currency.rounding or 0.00001)):
-          updated_rate = source_currency_rate = self.target_currency.rate/self.exchange_rate
+          updated_rate = self.target_currency.rate/self.exchange_rate
         else:
           raise UserError(_('Exchange rate cannot be 0'))
     else:
       updated_rate = 1
     return updated_rate
+
   def _currency_update_value(self,currency):
     today = Date.today()
     todays_rate = currency.rate_ids.filtered(lambda r: r.name == today)
-    todays_rate_exists = bool(todays_rate)
     #TODO change this to represent the new rate
     updated_rate = self._get_updated_rate(currency)
-    if(todays_rate_exists):
+    if(todays_rate):
       update_value = [(1,todays_rate.id,{'rate':updated_rate})]
     else:
       update_value = [(0,0,{'rate':updated_rate,'name':today})]
@@ -105,8 +103,7 @@ class CurrencyConversionWizard(TransientModel):
     # ahora si el tipo de cambio EUR/USD fuese 1.21 deberia dar  donde ARS/EUR = 0.010 | EUR/ARS = 98.77
     super(CurrencyConversionWizard,self).confirm()
     ctx = self._context
-    if('update_company_exchange_rate' in ctx and ctx.get('update_company_exchange_rate')):
-      _logger.info('changing_rate')
+    if ctx.get('update_company_exchange_rate'):
       self._change_currency_rate_ids()
 
     

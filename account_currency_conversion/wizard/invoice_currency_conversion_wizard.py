@@ -3,7 +3,6 @@ from odoo.models import TransientModel
 from odoo.fields import Float
 from odoo.exceptions import UserError
 from odoo import _
-import logging
 
 class InvoiceCurrencyConversion(TransientModel):
   _name="res.currency.conversion.invoice.wizard"
@@ -18,7 +17,6 @@ class InvoiceCurrencyConversion(TransientModel):
     for am in account_moves:
       if am.state == 'posted':
         raise UserError(_('You cant change an already posted invoice'))
-      message = _("Currency changed from %s to %s with rate %s") % (am.currency_id.name, self.target_currency.name, self.exchange_rate)
       for aml in am.line_ids: 
         aml.write({
             'price_unit': Float.round(aml.price_unit * self.exchange_rate, precision_rounding=self.target_currency.rounding),
@@ -27,6 +25,7 @@ class InvoiceCurrencyConversion(TransientModel):
         aml._onchange_mark_recompute_taxes()
         aml._onchange_currency()
       am.currency_id = self.target_currency.id
+      message = _("Currency changed from %s to %s with rate %s") % (am.currency_id.name, self.target_currency.name, self.exchange_rate)
       am.message_post(body=message)
       super(InvoiceCurrencyConversion,self).confirm()
     return {'type': 'ir.actions.act_window_close'}

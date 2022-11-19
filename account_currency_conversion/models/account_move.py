@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo.models import Model
-from odoo.fields import Char,Float
-from odoo.api import depends
+from odoo.fields import Float
 from ast import literal_eval
-import logging
-_logger = logging.getLogger(__name__)
+
 class AccountMove(Model):
     _inherit = "account.move"
     
@@ -17,6 +15,10 @@ class AccountMove(Model):
     def action_convert_currency(self):
         self.ensure_one()
         action = self.env.ref('account_currency_conversion.currency_conversion_invoice_wizard_action').sudo().read()[0]
-        new_context = dict(literal_eval(action.get('context',{})),active_ids=self.ids,default_source_currency=self.currency_id.id)
-        action.update({'context':new_context})
+        context = literal_eval(action.get('context', '{}'))
+        context.update({  
+            'active_ids':self.ids,
+            'default_source_currency':self.currency_id.id
+        })
+        action.update({'context':context})
         return action
