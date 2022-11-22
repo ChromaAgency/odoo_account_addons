@@ -32,6 +32,7 @@
                             <field name="date" />
                             <field name="company_id" invisible="1"/>
                             <field name="partner_id" />
+                            <field name="currency_id" />
                         </group>
                         <group>
                             <field name="observations" />
@@ -41,11 +42,17 @@
                             <field name="matched_amount" />
                             <field name="unmatched_amount" />
                         </group>
+                        <group>
+                            <field name="payment_difference_handling" widget="radio"/>
+                            <field name="writeoff_account_id" />
+                            <field name="writeoff_journal_id" />
+                            <field name="writeoff_label" />
+                        </group>
                     </group>
                     <notebook>
                         <page name="payments" string="Pagos">
                             <field name="payment_lines_ids" 
-                                            domain="[('partner_id','=',partner_id)]" context="{'default_partner_id':partner_id}" >
+                                            domain="[('partner_id','=',partner_id)]" context="{'default_partner_id':partner_id, 'default_currency_id':currency_id}" >
                                 <tree>
                                     <field name="date" />
                                     <field name="partner_id" />
