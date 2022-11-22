@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from sqlite3 import adapt
 from odoo import  fields, _
 from odoo.fields import  One2many, Many2many, Many2one, Date, Float, Char, Text, Selection
 from odoo.api import depends, onchange, returns, model
@@ -8,29 +7,12 @@ from odoo.models import Model, TransientModel
 import logging
 _logger = logging.getLogger(__name__)
 
-
-
-class AccountPayment(Model):
-    _inherit = 'account.payment'
-    
-    payment_group_id = Many2one('account.payment.group', string="Payment Group")
-    
-    def _add_partner_id_to_vals(self, vals):
-        if 'payment_group_id' not in vals or vals.get('partner_id' ):
-            return vals
-        partner_id = self.env['account.payment.group'].browse([vals.get('payment_group_id')]).partner_id.id
-        vals.update({
-            'partner_id':partner_id
-        })
-        return vals
-
-    def _add_partner_id_from_group_id(self, vals_list):
-        return [self._add_partner_id_to_vals(vals) for vals in vals_list] if isinstance(vals_list, list) else self._add_partner_id_to_vals(vals_list)
-
-    @model
-    def create(self, vals_list):
-        self._add_partner_id_from_group_id(vals_list)
-        return super().create(vals_list)
+def add_value_to_key(grouping_dict, key, value):
+    old_val = grouping_dict.get(key, 0)
+    grouping_dict.update({
+        key: value + old_val
+    })
+    return grouping_dict
 
 class PaymentGroup(Model):
     """Group payments into one model many payments can be reconciled to many invoices and print it in the same report.
@@ -66,6 +48,7 @@ class PaymentGroup(Model):
 
     payment_lines_ids = One2many('account.payment','payment_group_id', string="Pagos")
     move_line_ids = Many2many('account.move.line',string="Comprobantes imputados", states={'posted':[('readonly',True)]}) 
+    currency_id = Many2one('res.currency',string="Moneda", default=lambda self: self.env.company.currency_id, required=True)
     company_id = Many2one('res.company',string="Compañia", default=lambda self: self.env.company, required=True)
     partner_id = Many2one('res.partner', string="Contacto", required=True)
     date = Date(string='Fecha',required=True, default=Date.today())
@@ -79,17 +62,81 @@ class PaymentGroup(Model):
         ('reconcile', 'Mark as fully paid'),
     ], default='open', string="Payment Difference Handling")
     writeoff_account_id = fields.Many2one('account.account', string="Difference Account", copy=False,
-        domain="[('deprecated', '=', False), ('company_id', '=', company_id)]")
+        domain="[('deprecated', '=', False), ('company_id', '=', company_id)]", default=lambda s: s.env['account.account'].search([('user_type_id.type','=','other')], limit=1))
+    writeoff_journal_id = fields.Many2one('account.journal', string="Difference Journal", copy=False,
+        domain="[('company_id', '=', company_id)]", required=True, default=lambda s: s.env['account.journal'].search([('type','=','general')], limit=1))
     writeoff_label = fields.Char(string='Journal Item Label', default='Write-Off',
         help='Change label of the counterpart that will hold the payment difference')
+
+    def _get_closing_entry_move_lines(self, account_id, currency_id, balance):
+        return  [
+                (0,0,{
+                    'name': self.writeoff_label,
+                'amount_currency': -balance,
+                'currency_id': currency_id,
+                'debit': -balance if balance < 0.0 else 0.0,
+                'credit': balance if balance > 0.0 else 0.0,
+                'partner_id': self.partner_id.id,
+                'account_id': account_id,
+                }),
+                (0,0,{
+                'name': self.writeoff_label,
+                'amount_currency': balance,
+                'currency_id': currency_id,
+                'debit': balance if balance > 0.0 else 0.0,
+                'credit': -balance if balance < 0.0 else 0.0,
+                'partner_id': self.partner_id.id,
+                'account_id': self.writeoff_account_id.id,
+            })]
+    def _create_and_post_account_move(self, line_vals_list, currency_id):
+        account_move = self.env['account.move'].create([{
+                'partner_id':self.partner_id.id,
+                'journal_id':self.writeoff_journal_id.id,
+                'line_ids':line_vals_list,
+                'move_type':'entry',
+                'currency_id':currency_id
+            }])
+        account_move.post()
+        return account_move
+
+    def _create_payment_closing_entry(self):
+        """Get the write off data, make a move id against the invoices to"""
+        self.ensure_one()
+        payment_lines = self.payment_lines_ids.move_id.line_ids.filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable')
+        balance = sum((payment_lines|self.move_line_ids).mapped('amount_residual')) 
+        debt_account_id = self.move_line_ids.account_id.id
+        if not self.currency_id.is_zero(balance):
+            line_vals_list = self._get_closing_entry_move_lines(debt_account_id, self.currency_id.id, balance)
+            return self._create_and_post_account_move(line_vals_list, self.currency_id.id)
+            
+        return self.env['account.move']
+
+    def _create_foreign_currency_closing_entry_and_reconcile(self):
+        self.ensure_one()
+        moves_with_residual_currency = self.move_line_ids.filtered(lambda r: not self.currency_id.is_zero(r.amount_residual_currency))
+        grouping_dict = {}
+        for move in moves_with_residual_currency:
+            grouping_dict = add_value_to_key(grouping_dict, move.currency_id.id, move.amount_residual_currency)
+        for currency, value in grouping_dict.items():
+            moves_for_this_currency = moves_with_residual_currency.filtered(lambda r:r.currency_id.id == currency)
+            line_vals_list = self._get_closing_entry_move_lines(moves_for_this_currency.account_id.id , currency, value)
+            closing_moves = self._create_and_post_account_move(line_vals_list, currency)
+            # ? Maybe this shouldnt be this way.
+            (moves_for_this_currency|closing_moves.line_ids).filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable').reconcile()
 
     def post(self):
         for rec in self:
             payments = rec.payment_lines_ids
             payments.action_post()
-            # TODO add payable accounts also to get both of them
-            move_lines = payments.mapped('line_ids').filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable') + rec.move_line_ids.filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable')
-            move_lines.reconcile()
+            move_lines = self.env['account.move.line']
+            filter_moves_to_reconcile = lambda r: not r.reconciled and r.account_id.reconcile and r.account_internal_type == 'receivable'
+            move_lines |= (rec.move_line_ids | payments.line_ids).filtered(filter_moves_to_reconcile) 
+            move_lines.filtered(filter_moves_to_reconcile).reconcile()
+            if rec.payment_difference_handling == 'reconcile':
+                """Two things should be done here. First we close the accounting balance. Next we close the currency balance for each invoice."""
+                move_lines |= rec._create_payment_closing_entry().line_ids
+                move_lines.filtered(filter_moves_to_reconcile).reconcile()
+                rec._create_foreign_currency_closing_entry_and_reconcile()
             name = rec.name
             if not name:
                 name = rec.sequence_id.next_by_id()

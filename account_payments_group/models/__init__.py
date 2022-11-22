@@ -1,1 +1,1 @@
-from . import account_move, account_payment_group
+from . import account_move, account_payment, account_payment_group
