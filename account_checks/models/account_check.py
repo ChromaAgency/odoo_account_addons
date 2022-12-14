@@ -28,6 +28,7 @@ class AccountPayment(Model):
         currency_field="company_currency_id",
         compute="_compute_amount_company_currency"
     )
+    company_id = Many2one("res.company",string="Compañia")
     currency_id = Many2one(
         'res.currency',
         default=lambda self: self.env.user.company_id.currency_id.id,
