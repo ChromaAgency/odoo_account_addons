@@ -29,20 +29,3 @@ class res_currency_rate(Model):
                     'currency_id' : self.currency_id.id,
                     'company_id' : company.id
                 }])
-
-
-
-
-
-
-
-
-
-
-
-
-
-        #Currency = self.env['res.currency']
-        #CurrencyRate = self.env['res.currency.rate']
-#
-        #active_currencies = self.env['res.currency'].search([])
