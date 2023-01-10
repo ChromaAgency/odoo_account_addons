@@ -15,14 +15,27 @@ class PaymentConditionMixin(AbstractModel):
   payment_acquirer_id = Many2one('payment.acquirer', string=_("Metodo de pago"))
   is_payment_acquirer_id_visible = Boolean(string=_("Es metodo de pago visible") , compute="_compute_is_payment_acquirer_id_visible")
 
+  def write(self, vals):
+      payment_condition_id = vals.get('payment_condition_id') 
+      if payment_condition_id and 'payment_acquirer_id' not in vals:
+            possible_acquirer_ids = self.env['account.payment.condition'].browse(payment_condition_id).payment_acquirer_ids
+            if len(possible_acquirer_ids) == 1:
+                  vals.update({
+                    'payment_acquirer_id':possible_acquirer_ids.id
+                  })
+      return super().write(vals)
+
+  @onchange('payment_condition_id')
+  def _onchange_payment_condition_id(self):
+      if len(self.payment_condition_id.payment_acquirer_ids) == 1:
+            self.payment_acquirer_id = self.payment_condition_id.payment_acquirer_ids.id
+
   @depends('possible_payment_acquirers', 'payment_condition_id')
   def _compute_is_payment_acquirer_id_visible(self):
     for rec in self:
       rec.is_payment_acquirer_id_visible = False
-      if rec.payment_condition_id != False and len(rec.possible_payment_acquirers) > 1:
+      if rec.payment_condition_id != False and len(rec.possible_payment_acquirers) >= 1:
         rec.is_payment_acquirer_id_visible = True
-        if len(rec.possible_payment_acquirers) == 1:
-          rec.payment_acquirer_id = rec.possible_payment_acquirers.id
 
   @depends('possible_payment_terms', 'payment_condition_id')
   def _compute_is_payment_term_id_visible(self):
