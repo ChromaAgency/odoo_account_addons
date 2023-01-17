@@ -39,7 +39,6 @@ class AccountPayment(Model):
         string='Moneda de la empresa',
     )
     
-    payment_ids = One2many('account.payment', 'check_id', string="Pagos")
 
     def action_return_check(self): ...
         # ? This should make a payment back to the original owner
