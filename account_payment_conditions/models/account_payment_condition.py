@@ -42,10 +42,11 @@ class PaymentConditionMixin(AbstractModel):
       else:
         setattr(rec, payment_term_field_name, False)
 
-class PaymentConditions(Model):
+class PaymentConditions(Model): 
   _name = "account.payment.condition"
   _description = 'Condiciones de pago'
 
+  active = Boolean(string="Activo", default=True)
   name = Char(string=_("Nombre"))
   payment_terms_ids = Many2many('account.payment.term', string=_("Terminos de pago"))
   payment_acquirer_ids = Many2many('payment.acquirer', string=_("Añade metodo de pago"))
