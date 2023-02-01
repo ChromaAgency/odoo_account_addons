@@ -4,6 +4,12 @@ from odoo.api import depends, model, onchange
 from odoo.fields import Boolean, Char, Many2many, Many2one
 from odoo.models import Model, AbstractModel
 
+
+class ResPartnerPaymentMethod(Model):
+    _name = "res.partner.payment.method"
+    
+    name = Char(string="Nombre")
+
 class PaymentConditionMixin(AbstractModel):
   _name = "account.payment.condition.mixin"
   _description = 'Mixin de condiciones de pago'
@@ -12,7 +18,7 @@ class PaymentConditionMixin(AbstractModel):
   possible_payment_terms = Many2many(related="payment_condition_id.payment_terms_ids")
   is_payment_term_id_visible = Boolean(string=_("Terminos de pago visibles"), compute="_compute_is_payment_term_id_visible")
   possible_payment_acquirers = Many2many(related="payment_condition_id.payment_acquirer_ids")
-  payment_acquirer_id = Many2one('payment.acquirer', string=_("Metodo de pago"))
+  payment_acquirer_id = Many2one('res.partner.payment.method', string=_("Metodo de pago"))
   is_payment_acquirer_id_visible = Boolean(string=_("Es metodo de pago visible") , compute="_compute_is_payment_acquirer_id_visible")
 
   def write(self, vals):
