@@ -54,3 +54,12 @@ class AccountPayment(models.Model):
         return super(
             AccountPayment,
             (self - payments))._compute_payment_method_description()
+    
+class AccountPayment(models.Model):
+    _inherit = "account.payment.method"
+    
+    @api.model
+    def _get_payment_method_information(self):
+        vals = super()._get_payment_method_information()
+        vals.update({  'withholding': {'mode': 'multi', 'domain': [('type', 'in', ('bank', 'cash'))]}})
+        return vals
