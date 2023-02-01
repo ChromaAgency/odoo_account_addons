@@ -62,7 +62,7 @@ class PaymentGroup(Model):
         ('reconcile', 'Mark as fully paid'),
     ], default='open', string="Payment Difference Handling")
     writeoff_account_id = fields.Many2one('account.account', string="Difference Account", copy=False,
-        domain="[('deprecated', '=', False), ('company_id', '=', company_id)]", default=lambda s: s.env['account.account'].search([('user_type_id.type','=','other')], limit=1))
+        domain="[('deprecated', '=', False), ('company_id', '=', company_id)]", limit=1)
     writeoff_journal_id = fields.Many2one('account.journal', string="Difference Journal", copy=False,
         domain="[('company_id', '=', company_id)]", required=True, default=lambda s: s.env['account.journal'].search([('type','=','general')], limit=1))
     writeoff_label = fields.Char(string='Journal Item Label', default='Write-Off',
@@ -163,7 +163,7 @@ class PaymentGroup(Model):
             '|',('amount_residual','!=',0),('amount_residual_currency', '!=', 0.0),
             ('account_id.reconcile', '=', True),  
             ('account_id.deprecated', '=', False),
-            ('account_id.internal_type', '=', 'receivable'),
+            ('account_id.account_type', '=', 'receivable'),
             ('reconciled', '=', False)])
         return account_moves
         
