@@ -11,5 +11,5 @@
             <field name="code">checks</field>
             <field name="payment_type">outbound</field>
         </record>
-    </data>
+    </data> 
 </odoo>
