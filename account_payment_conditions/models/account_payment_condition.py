@@ -3,7 +3,9 @@ from odoo import _
 from odoo.api import depends, model, onchange
 from odoo.fields import Boolean, Char, Many2many, Many2one
 from odoo.models import Model, AbstractModel
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class ResPartnerPaymentMethod(Model):
     _name = "res.partner.payment.method"
@@ -33,7 +35,9 @@ class PaymentConditionMixin(AbstractModel):
 
   @onchange('payment_condition_id')
   def _onchange_payment_condition_id(self):
-      if len(self.payment_condition_id.payment_acquirer_ids) == 1:
+      len_of_payment = self.payment_condition_id.payment_acquirer_ids
+      _logger.info(len_of_payment)
+      if len_of_payment == 1:
             self.payment_acquirer_id = self.payment_condition_id.payment_acquirer_ids.id
 
   @depends('possible_payment_acquirers', 'payment_condition_id')
@@ -68,4 +72,4 @@ class PaymentConditions(Model):
   active = Boolean(string="Activo", default=True)
   name = Char(string=_("Nombre"))
   payment_terms_ids = Many2many('account.payment.term', string=_("Terminos de pago"))
-  payment_acquirer_ids = Many2many('payment.acquirer', string=_("Añade metodo de pago"))
+  payment_acquirer_ids = Many2many('res.partner.payment.method', string=_("Añade metodo de pago"))

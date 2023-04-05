@@ -1,6 +1,4 @@
 from email.policy import default
-from tkinter import EW
-from numpy import require
 from odoo.models import Model
 from odoo.fields import Date, Char, Many2one, Datetime, Selection, Monetary, One2many
 
