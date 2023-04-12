@@ -11,8 +11,8 @@ class RepairOrder(Model):
   payment_term_id = Many2one('account.payment.term', string="Plazo de pago")
 
   @onchange('partner_id')
-  def onchange_partner_id(self):
-    super(RepairOrder, self).onchange_partner_id()
+  def _onchange_partner_id_warning(self):
+    super(RepairOrder, self)._onchange_partner_id_warning()
     self.payment_term_id = self.partner_id.property_payment_term_id
     self.payment_condition_id = self.partner_id.payment_condition_id
     self.payment_acquirer_id = self.partner_id.payment_acquirer_id
