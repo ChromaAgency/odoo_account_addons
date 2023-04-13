@@ -36,7 +36,6 @@ class PaymentConditionMixin(AbstractModel):
   @onchange('payment_condition_id')
   def _onchange_payment_condition_id(self):
       len_of_payment = self.payment_condition_id.payment_acquirer_ids
-      _logger.info(len_of_payment)
       if len_of_payment == 1:
             self.payment_acquirer_id = self.payment_condition_id.payment_acquirer_ids.id
 
