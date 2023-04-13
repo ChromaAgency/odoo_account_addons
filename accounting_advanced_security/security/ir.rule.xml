@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.rule" id="adv_sec_res_partner_groups">
+        <field name="name">Filter by groups Res partner</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">['|',('group_ids','=',False),('group_ids', 'in', user.groups_id.ids)]</field>
+    </record>
+
+    <record model="ir.rule" id="adv_sec_account_journal_groups">
+        <field name="name">Filter by groups Account journal</field>
+        <field name="model_id" ref="account.model_account_journal"/>
+        <field name="domain_force">['|',('group_ids','=',False),('group_ids', 'in', user.groups_id.ids)]</field>
+    </record>
+
+    <record model="ir.rule" id="adv_sec_account_move_groups">
+        <field name="name">Filter by groups account move</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="domain_force">['|',('partner_id.group_ids','=',False),('partner_id.group_ids', 'in', user.groups_id.ids)]</field>
+    </record>
+
+    <record model="ir.rule" id="adv_sec_account_move_line_groups">
+        <field name="name">Filter by groups account move line</field>
+        <field name="model_id" ref="account.model_account_move_line"/>
+        <field name="domain_force">['|',('partner_id.group_ids','=',False),('partner_id.group_ids', 'in', user.groups_id.ids)]</field>
+    </record>
+
+    <record model="ir.rule" id="adv_sec_account_journal_groups">
+        <field name="name">Filter by groups Purchase order</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="domain_force">['|',('partner_id.group_ids','=',False),('partner_id.group_ids', 'in', user.groups_id.ids)]</field>
+    </record>
+</odoo>
