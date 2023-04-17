@@ -3,6 +3,14 @@ from odoo import _
 from odoo.api import depends, model, onchange
 from odoo.fields import Boolean, Char, Many2many, Many2one
 from odoo.models import Model, AbstractModel
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class ResPartnerPaymentMethod(Model):
+    _name = "res.partner.payment.method"
+    
+    name = Char(string="Nombre")
 
 class PaymentConditionMixin(AbstractModel):
   _name = "account.payment.condition.mixin"
@@ -12,7 +20,7 @@ class PaymentConditionMixin(AbstractModel):
   possible_payment_terms = Many2many(related="payment_condition_id.payment_terms_ids")
   is_payment_term_id_visible = Boolean(string=_("Terminos de pago visibles"), compute="_compute_is_payment_term_id_visible")
   possible_payment_acquirers = Many2many(related="payment_condition_id.payment_acquirer_ids")
-  payment_acquirer_id = Many2one('payment.acquirer', string=_("Metodo de pago"))
+  payment_acquirer_id = Many2one('res.partner.payment.method', string=_("Metodo de pago"))
   is_payment_acquirer_id_visible = Boolean(string=_("Es metodo de pago visible") , compute="_compute_is_payment_acquirer_id_visible")
 
   def write(self, vals):
@@ -27,7 +35,8 @@ class PaymentConditionMixin(AbstractModel):
 
   @onchange('payment_condition_id')
   def _onchange_payment_condition_id(self):
-      if len(self.payment_condition_id.payment_acquirer_ids) == 1:
+      len_of_payment = self.payment_condition_id.payment_acquirer_ids
+      if len_of_payment == 1:
             self.payment_acquirer_id = self.payment_condition_id.payment_acquirer_ids.id
 
   @depends('possible_payment_acquirers', 'payment_condition_id')
@@ -62,4 +71,4 @@ class PaymentConditions(Model):
   active = Boolean(string="Activo", default=True)
   name = Char(string=_("Nombre"))
   payment_terms_ids = Many2many('account.payment.term', string=_("Terminos de pago"))
-  payment_acquirer_ids = Many2many('payment.acquirer', string=_("Añade metodo de pago"))
+  payment_acquirer_ids = Many2many('res.partner.payment.method', string=_("Añade metodo de pago"))
