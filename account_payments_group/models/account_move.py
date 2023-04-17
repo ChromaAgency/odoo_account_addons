@@ -15,7 +15,7 @@ class AccountMove(Model):
     payment_group_count = Integer(string="Pagos", compute="_compute_payment_group_ids")
 
     def open_payment_groups(self):
-        return  {
+        payment_group_data = {
             'name': _('Grupos de pagos'),
             'res_model': 'account.payment.group',
             'view_mode': 'list,form',
@@ -24,6 +24,7 @@ class AccountMove(Model):
             'domain': [('id','in',self.payment_group_ids.ids)],
             'type': 'ir.actions.act_window',
         }
+        return payment_group_data
     
     def action_register_payment(self):
         ctx = self.env.context.copy()
@@ -50,8 +51,13 @@ class AccountMove(Model):
 
     @depends('state','invoice_payments_widget')
     def _compute_payment_group_ids(self):
+        #hello = 'hello'
         for rec in self:
+            payment_groups2 = self.env['account.payment.group'].search([]).move_line_ids
             payment_groups = self.env['account.payment.group'].search([('move_line_ids','in',rec.line_ids.ids)]).ids
+            _logger.info('rec line ids: %s', rec.line_ids.ids)
+            _logger.info('esto hay en payment groups %s',payment_groups2)
+            _logger.info('Payment groups tiene contenido? %s', payment_groups)
             rec.payment_group_ids = payment_groups
             rec.payment_group_count = len(payment_groups)
 
