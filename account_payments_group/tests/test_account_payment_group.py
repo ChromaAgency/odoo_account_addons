@@ -6,7 +6,7 @@ from logging import getLogger
 
 _logger = getLogger(__name__)
 
-filter_invoices = lambda r: r.account_id.reconcile and r.account_internal_type == 'receivable'
+filter_invoices = lambda r: r.account_id.reconcile and r.account_id.account_type == 'receivable'
 
 @tagged('post_install', '-at_install')
 class TestAccountPaymentGroup(TransactionCase):
