@@ -23,6 +23,8 @@
 
     # any module necessary for this one to work correctly
     'depends': ['base','sale','account'],
-
-
+    'data': [
+            'views/res_partner.xml',
+            'views/sale_order.xml'
+    ]
 }

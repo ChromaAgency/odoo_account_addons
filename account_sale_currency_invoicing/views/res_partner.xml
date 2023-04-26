@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="partner_currency_invoicing">
+        <field name="name">partner.currency.invoicing</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='industry_id']" position="after">
+                <field name="invoicing_currency" string="Moneda de facturacion nueva" attrs="{'invisible':[('company_type','!=','company')]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
