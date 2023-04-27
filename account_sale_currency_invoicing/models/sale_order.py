@@ -11,7 +11,7 @@ class product_pricelist_report(models.Model):
     invoicing_currency = Many2one('res.currency',string='Moneda para facturar')
 
     @onchange('partner_id')
-    def _onchange_partner_id_dicrom_invoicing_currency(self):
+    def _onchange_partner_id_invoicing_currency(self):
         for rec in self:
             # TODO Check if this works with commercial partner
             rec.invoicing_currency = rec.partner_id.invoicing_currency
