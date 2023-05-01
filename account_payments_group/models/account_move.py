@@ -32,13 +32,16 @@ class AccountMove(Model):
         if not active_ids:
             raise UserError('Por alguna razon el emisor/receptor del pago no pudo ser determinado')
         invoices = self.env['account.move'].browse(active_ids).filtered(lambda move: move.is_invoice(include_receipts=True))
-        if any([invoice.move_type == 'in_invoice' for invoice in invoices]):
-            return super(AccountMove, self).action_register_payment()
+        # TODO We should change this to be able to identify is we have to pay more than receive or viceversa
+        default_payment_type = 'receivable'
+        if any(invoice.move_type == 'in_invoice' for invoice in invoices):
+            default_payment_type = 'payable'
         ctx.update({
             'default_partner_id':invoices[0].commercial_partner_id.id,
             'active_ids':False,
             'active_id':False,
             'active_model':False,
+            'default_payment_type':default_payment_type,
         })
         
         action = self.env.ref('account_payments_group.payments_group_window').sudo().read()[0]

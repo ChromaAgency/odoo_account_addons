@@ -20,12 +20,14 @@
     'version': '0.1',
     'installable': True,
     # any module necessary for this one to work correctly
-    'depends': ['account','l10n_ar'],
+    'depends': ['account','l10n_latam_check','account_payments_withholdings'],
     # always loaded
     'data': [
         'views/views.xml',
         'security/ir.model.access.csv',
-        'data/data.xml',
+        'data/ir.sequence.xml',
+        'data/ir.actions.xml',
+        'data/ir.menu.xml',
         'reports/reports.xml',
     ]
 }
