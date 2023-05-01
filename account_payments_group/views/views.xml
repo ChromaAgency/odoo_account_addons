@@ -95,7 +95,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page>
+                        <page string="Otra información">
                             <group>
                                 <field name="observations" />
                             </group>
