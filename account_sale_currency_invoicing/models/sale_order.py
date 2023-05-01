@@ -4,7 +4,7 @@ from odoo.fields import Date, Many2one
 from odoo.api import onchange
 import logging
 _logger=logging.getLogger(__name__)
-class product_pricelist_report(models.Model):
+class SaleOrder(models.Model):
     _inherit = "sale.order"
     
     # TODO add to view
