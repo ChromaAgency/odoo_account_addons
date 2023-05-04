@@ -100,10 +100,14 @@ class PaymentGroup(Model):
         account_move.action_post()
         return account_move
 
+    @property
+    def account_type(self):
+        return 'asset_receivable' if self.payment_type == 'receivable' else 'liability_payable'
+    
     def _create_payment_closing_entry(self):
         """Get the write off data, make a move id against the invoices to"""
         self.ensure_one()
-        payment_lines = self.payment_lines_ids.move_id.line_ids.filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == 'asset_receivable')
+        payment_lines = self.payment_lines_ids.move_id.line_ids.filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == self.account_type)
         balance = sum((payment_lines|self.move_line_ids).mapped('amount_residual')) 
         debt_account_id = self.move_line_ids.account_id.id
         if not self.currency_id.is_zero(balance):
@@ -123,14 +127,14 @@ class PaymentGroup(Model):
             line_vals_list = self._get_closing_entry_move_lines(moves_for_this_currency.account_id.id , currency, value)
             closing_moves = self._create_and_post_account_move(line_vals_list, currency)
             # ? Maybe this shouldnt be this way.
-            (moves_for_this_currency|closing_moves.line_ids).filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == 'asset_receivable').reconcile()
+            (moves_for_this_currency|closing_moves.line_ids).filtered(lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == self.account_type).reconcile()
 
     def post(self):
         for rec in self:
             payments = rec.payment_lines_ids
             payments.action_post()
             move_lines = self.env['account.move.line']
-            filter_moves_to_reconcile = lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == 'asset_receivable'
+            filter_moves_to_reconcile = lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == self.account_type
             move_lines |= (rec.move_line_ids | payments.line_ids).filtered(filter_moves_to_reconcile) 
             move_lines.filtered(filter_moves_to_reconcile).reconcile()
             if rec.payment_difference_handling == 'reconcile':
@@ -164,7 +168,7 @@ class PaymentGroup(Model):
             '|',('amount_residual','!=',0),('amount_residual_currency', '!=', 0.0),
             ('account_id.reconcile', '=', True),  
             ('account_id.deprecated', '=', False),
-            ('account_id.account_type', '=', 'asset_receivable'),
+            ('account_id.account_type', '=', self.account_type),
             ('reconciled', '=', False)])
         return account_moves
         
