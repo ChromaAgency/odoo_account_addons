@@ -55,7 +55,8 @@
                                 context="{
                                                 'default_partner_id':partner_id, 
                                                 'default_currency_id':currency_id,
-                                                'default_payment_type':'inbound' if payment_type == 'receivable' else 'outbound'
+                                                'default_payment_type':'inbound' if payment_type == 'receivable' else 'outbound',
+                                                'default_partner_type':'customer' if payment_type == 'receivable' else 'supplier'
                                                 }">
                                 <tree>
                                     <field name="date" />
