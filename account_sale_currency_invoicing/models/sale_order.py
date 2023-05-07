@@ -7,7 +7,6 @@ _logger=logging.getLogger(__name__)
 class SaleOrder(models.Model):
     _inherit = "sale.order"
     
-    # TODO add to view
     invoicing_currency = Many2one('res.currency',string='Moneda para facturar')
 
     @onchange('partner_id')
