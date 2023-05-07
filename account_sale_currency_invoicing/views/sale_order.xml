@@ -6,7 +6,7 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='pricelist_id']" position="after">
+            <xpath expr="//div[@groups='product.group_product_pricelist']" position="after">
                 <field name="invoicing_currency" />
             </xpath>
 
