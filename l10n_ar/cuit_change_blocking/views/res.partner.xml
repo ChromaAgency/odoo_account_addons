@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_latam_form_inherit_cuit_change_blocking" model="ir.ui.view">
+        <field name="name">res.partner.view.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="l10n_latam_base.view_partner_latam_form"/>
+        <field name="arch" type="xml">
+            <field name="vat" class="oe_inline" position="attributes">
+                <attribute name="attrs" >{'readonly': ['|', ('parent_id','!=',False), ('vat_lock','=',True)]}</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>
