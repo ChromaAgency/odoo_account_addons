@@ -31,6 +31,13 @@ class PaymentGroup(Model):
     _description = 'Groups different lines of account.payment and relates them with account.move lines (invoices, and other)'
     _inherit = 'mail.thread'
     _order = "date desc"
+
+    def default_get(self, fields):
+        res = super(PaymentGroup, self).default_get(fields)
+        sequence_id = self.env.ref('account_payments_group.ir_sequence_account_payments_group')
+        if sequence_id:
+            res.update({'sequence_id':sequence_id.id})
+        return res
     
     company_id = fields.Many2one(
         'res.company',
@@ -43,7 +50,7 @@ class PaymentGroup(Model):
         states={'draft': [('readonly', False)]},
     )
     name = Char(string="Nombre", readonly=1)
-    sequence_id = Many2one('ir.sequence',string="Secuencia", default=lambda self: self.env.ref('account_payments_group.ir_sequence_account_payments_group'))
+    sequence_id = Many2one('ir.sequence',string="Secuencia")
     state = Selection([('draft','Borrador'),('posted','Validado'),('canceled','Cancelado')],default="draft", string="Estado")
     payment_type = Selection([('receivable','Recibo'),('payable','Orden de pago')],default="receivable", string="Tipo")
 
