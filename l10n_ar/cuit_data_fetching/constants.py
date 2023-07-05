@@ -1,0 +1,1 @@
+CONSTANCIA_DE_INSCRIPCION_WS = 'ws_sr_constancia_inscripcion'
