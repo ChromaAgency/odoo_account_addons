@@ -1,7 +1,7 @@
 from odoo import _
 from odoo.exceptions import UserError
 from odoo.models import Model 
-from ..constants import CONSTANCIA_DE_INSCRIPCION_WS
+from ..constants import CONSTANCIA_DE_INSCRIPCION_WS, RESPONSABLE_INSCRIPTO, IVA_SUJETO_EXENTO, CONSUMIDOR_FINAL, RESPONSABLE_MONOTRIBUTO, IVA_LIBERADOR_SEGUN_LEY, IVA_NO_ALCANZADO
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -9,11 +9,41 @@ _logger = logging.getLogger(__name__)
 class ResPartner(Model):
     _inherit = 'res.partner'
 
+    @property
+    def ar_state_map(self):
+        return {
+        0 : self.env.ref('base.state_ar_c').id,
+        1 : self.env.ref('base.state_ar_b').id,
+        2 : self.env.ref('base.state_ar_k').id,
+        16 : self.env.ref('base.state_ar_h').id,
+        17 : self.env.ref('base.state_ar_u').id,
+        3 : self.env.ref('base.state_ar_x').id,
+        4 : self.env.ref('base.state_ar_w').id,
+        5 : self.env.ref('base.state_ar_e').id,
+        18 : self.env.ref('base.state_ar_p').id,
+        6 : self.env.ref('base.state_ar_y').id,
+        21 : self.env.ref('base.state_ar_l').id,
+        8 : self.env.ref('base.state_ar_f').id,
+        7 : self.env.ref('base.state_ar_m').id,
+        19 : self.env.ref('base.state_ar_n').id,
+        20 : self.env.ref('base.state_ar_q').id,
+        22 : self.env.ref('base.state_ar_r').id,
+        9 : self.env.ref('base.state_ar_a').id,
+        10 : self.env.ref('base.state_ar_j').id,
+        11 : self.env.ref('base.state_ar_d').id,
+        23 : self.env.ref('base.state_ar_z').id,
+        12 : self.env.ref('base.state_ar_s').id,
+        13 : self.env.ref('base.state_ar_g').id,
+        24 : self.env.ref('base.state_ar_v').id,
+        14 : self.env.ref('base.state_ar_t').id,
+        }
+
     def _get_l10n_ar_afip_ws(self):
         """ Return the list of values of the selection field. """
-        return super()._get_l10n_ar_afip_ws() + [(CONSTANCIA_DE_INSCRIPCION_WS, _('CUIT Data fetching'))] 
+        #TODO super()._get_l10n_ar_afip_ws() + 
+        return [(CONSTANCIA_DE_INSCRIPCION_WS, _('CUIT Data fetching'))] 
 
-    def get_partner_data_with_cuit(self, cuit):
+    def get_partner_data_with_cuit(self):
         self.ensure_one()
         cuit = self.vat
         if self.country_id.id != self.env.ref('base.ar').id:
@@ -23,25 +53,48 @@ class ResPartner(Model):
         
         connection = self.env.company._l10n_ar_get_connection(CONSTANCIA_DE_INSCRIPCION_WS)
         client, auth = connection._get_client()
-        res = client.service.getPersona_v2(auth, {
-            'token':auth.get("token"),
-            'sign':auth.get("sign"),
-            'cuitRepresentada':self.env.company.vat,
-            'idPersona':cuit,
+        res = client.service.getPersona_v2(auth.get('Token'),auth.get('Sign'),auth.get('Cuit'),cuit)
+        
+
+        self._update_partner_data(res)
+        
+        
+        
+    def _update_partner_data(self, partner_data):
+        address_info = partner_data['datosGenerales']['domicilioFiscal']
+        postal_code = address_info['codPostal']
+        province = address_info['idProvincia']
+        street = address_info['direccion']
+        cuit_type = partner_data['datosGenerales']['tipoClave']
+        
+        afip_responsibility = self._check_afip_responsability(partner_data, province)
+
+        cuit_type = self.env['l10n_latam.identification.type'].search([('name','=',cuit_type)]).id
+        self.write({
+            'street': street,
+            'zip': postal_code,
+            'l10n_ar_afip_responsibility_type_id': afip_responsibility,
+            'l10n_latam_identification_type_id': cuit_type,
+            'state_id': self.ar_state_map.get(province, False)
+
 
         })
-        _logger.info(res)
-        data = res.getPersona_v2Response.personaReturn
-        address = data.domicilioFiscal
-        cuit_type = data.tipoClave
-        """ 
-            si tiene datos monotributo return mono.
-            si tiene datos general checkear 
-                si es tierra del fuego return iva liberado
-                si tiene iva exento en impuestos return iva exento
-                si tiene iva no alcanzado  en impuestos return iva no alcanzado
-                return responsable inscripto
-                
-            return consumidor final
-        """
-        afip_responsibility = ''
+
+        
+
+    def _check_afip_responsability(self, partner_data, province):
+        generalregimen_data = partner_data['datosRegimenGeneral']
+        monotributo_data = partner_data['datosMonotributo']
+
+        if generalregimen_data:
+            for tax in generalregimen_data['impuesto']:
+                if tax['idImpuesto'] == 34:
+                    return IVA_NO_ALCANZADO
+                if tax['idImpuesto'] == 32:
+                    return IVA_SUJETO_EXENTO
+                if province == 24:
+                    return IVA_LIBERADOR_SEGUN_LEY
+            return RESPONSABLE_INSCRIPTO
+        if monotributo_data:
+            return RESPONSABLE_MONOTRIBUTO
+        return CONSUMIDOR_FINAL
