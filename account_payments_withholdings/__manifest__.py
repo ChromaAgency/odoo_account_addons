@@ -23,7 +23,12 @@
     'depends': ['account'],
     # always loaded
     'data': [
-       'views/views.xml',
-       'data/data.xml'
+       'views/account_move.xml',
+       'data/data.xml',
+       'data/ir.sequence.xml',
+       'views/account_payment.xml',
+       'views/account_tax.xml',
+       'views/product_template.xml',
+
     ]
 }

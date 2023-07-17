@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_payments_group_inherit" model="ir.ui.view">
+        <field name="name">account.payment.group.view.form.inherit</field>
+        <field name="model">account.payment.group</field>
+        <field name="inherit_id" ref="account_payments_group.account_payment_group_view_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//field[@name='writeoff_account_id']" position="after">
+                <button string="Calcular Retenciones" name="get_withholdings_amount" type="object" class="oe_highlight"/>
+            </xpath> -->
+        </field>
+    </record>    
+
+</odoo>

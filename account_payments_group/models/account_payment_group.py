@@ -220,3 +220,27 @@ class PaymentGroup(Model):
                 'unmatched_amount':amount_residual,
                 'matched_amount':matched_amount
             })
+
+    def action_add_withholdings_payments(self):
+        return self._create_withholdings_payments()
+    
+    def _prepare_withholding_payment(self, withholding_id, base_amount, amount):
+        payment_method_id = self.env.ref('account_payments_withholdings.account_payment_method_outbound_withholding').id
+        journal_id = self.env['account.journal'].search([('outbound_payment_method_line_ids.payment_method_id', 'in', [payment_method_id])]).id
+        return {
+                'payment_type':'outbound',
+                'partner_id':self.partner_id.id,
+                'amount':amount,
+                'date':self.date,
+                'journal_id':journal_id,
+                'payment_method_id':payment_method_id,
+                'tax_withholding_id':withholding_id,
+                'withholding_base_amount':base_amount,
+                # Autocalcular con secuncia
+                'withholding_number':self.env['ir.sequence'].next_by_code('withholding')
+            }
+    
+    def _create_withholdings_payments(self):
+        # Explicar mañana
+        withholdings_amounts:dict = self.move_line_ids.move_id.invoice_line_ids.get_withholdings_amount()
+        self.payment_lines_ids = [(0,0,self._prepare_withholding_payment(withholding_id, amounts.get("base_amount",0), amounts.get("amount",0))) for withholding_id, amounts in withholdings_amounts.items()]

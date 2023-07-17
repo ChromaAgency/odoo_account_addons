@@ -1,1 +1,1 @@
-from . import models
+from . import account_move_line, account_payment, account_payment_method, account_tax, account_tax_template, product_template

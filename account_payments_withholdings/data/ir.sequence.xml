@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ir_sequence_account_vendor_payments_group" model="ir.sequence">
+        <field name="name">Retención</field>
+        <field name="code">withholding</field> 
+        <field name="number_next_actual" eval="1" />
+        <field name="prefix">%(year)s/</field>
+        <field name="padding" eval="8" />
+    </record>
+
+</odoo>
