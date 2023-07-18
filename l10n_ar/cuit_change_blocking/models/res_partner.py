@@ -12,8 +12,11 @@ class ResPartner(Model):
 
     def write(self, vals):
         _ = True
+        if 'vat' not in vals:
+            return super().write(vals)
+        vat = vals.get("vat", False)
         for rec in self:
-            if 'vat' in vals and rec.vat_locked:
+            if vat != rec.vat and rec.vat_locked and rec.commercial_partner_id.id == rec.id:
                 raise UserError('No se puede modificar el CUIT de un cliente')
             _ = super().write(vals)
         return _
