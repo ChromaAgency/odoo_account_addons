@@ -5,7 +5,7 @@ from odoo.api import onchange
 import logging
 _logger=logging.getLogger(__name__)
 class product_pricelist_report(models.Model):
-    _inherit = "sale.order"
+    _inherit = "repair.order"
     
     # TODO add to view
     invoicing_currency = Many2one('res.currency',string='Moneda para facturar')
@@ -30,20 +30,20 @@ class product_pricelist_report(models.Model):
         })
         return invoice_vals
 
-class SaleOrderLine(models.Model):
-    _inherit = 'sale.order.line'
+# class RepairOrderLine(models.Model):
+#     _inherit = 'repair.order.line'
 
-    def _prepare_invoice_line(self, **optional_values):
-        """
-        Prepare the dict of values to create the new invoice line for a sales order line.
+#     def _prepare_invoice_line(self, **optional_values):
+#         """
+#         Prepare the dict of values to create the new invoice line for a sales order line.
 
-        :param qty: float quantity to invoice
-        :param optional_values: any parameter that should be added to the returned invoice line
-        """
-        self.ensure_one()
-        res = super()._prepare_invoice_line(**optional_values)
-        if self.order_id.currency_id.id!=self.order_id.invoicing_currency.id:
-            res.update({
-                'price_unit': self.order_id.currency_id._convert(self.price_unit, self.order_id.invoicing_currency, self.env.company, Date.today())
-            })
-        return res
+#         :param qty: float quantity to invoice
+#         :param optional_values: any parameter that should be added to the returned invoice line
+#         """
+#         self.ensure_one()
+#         res = super()._prepare_invoice_line(**optional_values)
+#         if self.order_id.currency_id.id!=self.order_id.invoicing_currency.id:
+#             res.update({
+#                 'price_unit': self.order_id.currency_id._convert(self.price_unit, self.order_id.invoicing_currency, self.env.company, Date.today())
+#             })
+#         return res
