@@ -10,6 +10,9 @@
     'images': [
     ],
     'depends': ['l10n_ar_edi'],
+    'data': [
+        'views/res_partner.xml',    
+    ],  
     'demo': [
     ],
     'installable': True,
