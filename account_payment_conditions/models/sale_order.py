@@ -10,9 +10,11 @@ class SaleOrder(Model):
 
   @onchange('partner_id')
   def _onchange_partner_id_warning(self):
-    super(SaleOrder, self)._onchange_partner_id_warning()
+    message = super()._onchange_partner_id_warning()
     self.payment_condition_id = self.partner_id.payment_condition_id
     self.payment_acquirer_id = self.partner_id.payment_acquirer_id
+    if message:
+      return message
 
   def _prepare_invoice(self):
     invoice_vals = super(SaleOrder, self)._prepare_invoice()
