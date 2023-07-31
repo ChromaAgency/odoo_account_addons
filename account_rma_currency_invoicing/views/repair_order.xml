@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="repair.view_repair_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="invoicing_currency" string="Moneda de facturacion nueva"/>
+                <field name="invoicing_currency" string="Moneda de facturacion"/>
             </xpath>
         </field>
     </record>
