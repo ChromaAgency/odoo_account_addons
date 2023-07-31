@@ -6,13 +6,11 @@ from odoo.api import onchange
 class Repair(models.Model):
     _inherit = "repair.order"
     
-    # TODO add to view
     invoicing_currency = Many2one('res.currency',string='Moneda para facturar')
 
     @onchange('partner_id')
     def _onchange_partner_id_invoicing_currency(self):
         for rec in self:
-            # TODO Check if this works with commercial partner
             rec.invoicing_currency = rec.partner_id.invoicing_currency
 
 
