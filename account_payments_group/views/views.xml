@@ -13,6 +13,31 @@
             </xpath>
         </field>
     </record>
+    <record id="account_payment_group_view_search" model="ir.ui.view">
+        <field name="name">account.payment.group.view.search</field>
+        <field name="model">account.payment.group</field>
+        <field name="arch" type="xml">
+            <search string="">
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="payments_total" />
+                <filter name="date" string="Fecha" date="date" />
+                <filter name="groupby_date" string="Fecha" context="{'group_by': 'date'}" />
+                <filter name="groupby_partner_id" string="Cliente" context="{'group_by': 'partner_id'}" />
+            </search>
+        </field>
+    </record>
+    <record id="account_payment_group_view_tree" model="ir.ui.view">
+        <field name="name">account.payment.group.view.tree</field>
+        <field name="model">account.payment.group</field>
+        <field name="arch" type="xml">
+            <tree string="">
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="payments_total" />
+            </tree>
+        </field>
+    </record>
     <record id="account_payment_group_view_form" model="ir.ui.view">
         <field name="name">account.payment.group.view.form</field>
         <field name="model">account.payment.group</field>
