@@ -32,11 +32,12 @@
         <field name="name">account.payment.group.view.tree</field>
         <field name="model">account.payment.group</field>
         <field name="arch" type="xml">
-            <tree string="">
+            <tree string="" decoration-danger="state=='canceled'" decoration-success="state=='posted'" decoration-muted="state=='draft'">
                 <field name="name" />
                 <field name="partner_id" />
                 <field name="payments_total" />
                 <field name="journal_ids" widget="many2many_tags"/>
+                <field name="state" widget="badge" />
             </tree>
         </field>
     </record>
