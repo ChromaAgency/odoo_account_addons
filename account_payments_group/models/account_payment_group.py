@@ -50,6 +50,7 @@ class PaymentGroup(Model):
         states={'draft': [('readonly', False)]},
     )
     name = Char(string="Nombre", readonly=1)
+    journal_ids = Many2many('account.journal', string="Diario", compute="_compute_journal_ids", search="_search_journal_ids")
     sequence_id = Many2one('ir.sequence',string="Secuencia")
     state = Selection([('draft','Borrador'),('posted','Validado'),('canceled','Cancelado')],default="draft", string="Estado")
     payment_type = Selection([('receivable','Recibo'),('payable','Orden de pago')],default="receivable", string="Tipo")
@@ -76,6 +77,13 @@ class PaymentGroup(Model):
     writeoff_label = fields.Char(string='Journal Item Label', default='Write-Off',
         help='Change label of the counterpart that will hold the payment difference')
 
+    def _compute_journal_ids(self):
+        for rec in self:
+            rec.journal_ids = rec.payment_lines_ids.journal_id
+
+    def _search_journal_ids(self, operator, value):
+        return [('payment_lines_ids.journal_id',operator, value)]
+        
     def _get_closing_entry_move_lines(self, account_id, currency_id, balance):
         return  [
                 (0,0,{
