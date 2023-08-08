@@ -22,6 +22,9 @@
                 <field name="partner_id" />
                 <field name="payments_total" />
                 <field name="journal_ids" />
+                <filter name="draft" string="Borrador" domain="[('state','=','draft')]" />
+                <filter name="published" string="Publicado" domain="[('state','=','posted')]" />
+                <filter name="canceled" string="Cancelado" domain="[('state','=','canceled')]" />
                 <filter name="date" string="Fecha" date="date" />
                 <filter name="groupby_date" string="Fecha" context="{'group_by': 'date'}" />
                 <filter name="groupby_partner_id" string="Cliente" context="{'group_by': 'partner_id'}" />
