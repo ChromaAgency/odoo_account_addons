@@ -1,6 +1,7 @@
 from odoo import _
 from odoo.exceptions import UserError
 from odoo.models import Model 
+from odoo.fields import Text
 from ..constants import CONSTANCIA_DE_INSCRIPCION_WS, RESPONSABLE_INSCRIPTO, IVA_SUJETO_EXENTO, CONSUMIDOR_FINAL, RESPONSABLE_MONOTRIBUTO, IVA_LIBERADOR_SEGUN_LEY, IVA_NO_ALCANZADO
 
 import logging
