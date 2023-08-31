@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 class ResPartner(Model):
     _inherit = 'res.partner'
 
+    cuit_update_error = Text(string="Error de actualización de CUIT")
     @property
     def ar_state_map(self):
         return {
@@ -55,12 +56,13 @@ class ResPartner(Model):
         client, auth = connection._get_client()
         res = client.service.getPersona_v2(auth.get('Token'),auth.get('Sign'),auth.get('Cuit'),cuit)
         
-
         self._update_partner_data(res)
         
         
         
     def _update_partner_data(self, partner_data):
+        if not partner_data:
+            raise UserError(_("No data was found for this CUIT."))
         address_info = partner_data['datosGenerales']['domicilioFiscal']
         postal_code = address_info['codPostal']
         province = address_info['idProvincia']
