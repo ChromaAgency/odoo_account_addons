@@ -57,7 +57,7 @@ class ResPartner(Model):
         client, auth = connection._get_client()
         res = client.service.getPersona_v2(auth.get('Token'),auth.get('Sign'),auth.get('Cuit'),cuit)
         self._update_partner_data(res)
-        
+        return True
         
         
     def _update_partner_data(self, partner_data):
