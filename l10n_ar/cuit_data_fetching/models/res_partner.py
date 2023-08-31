@@ -62,7 +62,7 @@ class ResPartner(Model):
         
     def _update_partner_data(self, partner_data):
         if not partner_data:
-            raise UserError(_("No data was found for this CUIT."))
+            raise UserError(_("No data was found for this CUIT. %s" % partner_data))
         address_info = partner_data['datosGenerales']['domicilioFiscal']
         postal_code = address_info['codPostal']
         province = address_info['idProvincia']
