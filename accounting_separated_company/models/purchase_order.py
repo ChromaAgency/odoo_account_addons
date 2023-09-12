@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 
 
 class PurchaseOrderLine(Model):
-    _name = "purchase.order.line"
+    _inherit = "purchase.order.line"
 
     price_unit = Float(copy=True)
 
