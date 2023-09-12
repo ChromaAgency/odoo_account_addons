@@ -1,8 +1,15 @@
 from odoo.models import Model
 from odoo.exceptions import UserError
+from odoo.fields import Float
 import logging 
 
 _logger = logging.getLogger(__name__)
+
+
+class PurchaseOrderLine(Model):
+    _name = "purchase.order.line"
+
+    price_unit = Float(copy=True)
 
 class PurchaseOrder(Model):
     _name = "purchase.order"
