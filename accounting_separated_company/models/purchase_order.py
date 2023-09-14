@@ -2,6 +2,7 @@ from odoo.models import Model
 from odoo.exceptions import UserError
 from odoo.fields import Float
 import logging 
+from odoo.api import depends
 
 _logger = logging.getLogger(__name__)
 
@@ -9,7 +10,9 @@ _logger = logging.getLogger(__name__)
 class PurchaseOrderLine(Model):
     _inherit = "purchase.order.line"
 
-    price_unit = Float(copy=True)
+    @depends('product_qty', 'product_uom', 'company_id')
+    def _compute_price_unit_and_date_planned_and_name(self):
+        super(PurchaseOrderLine, self.with_context(original_order_company=self.order_id.original_document_id.company_id.id))._compute_price_unit_and_date_planned_and_name()
 
 class PurchaseOrder(Model):
     _name = "purchase.order"
