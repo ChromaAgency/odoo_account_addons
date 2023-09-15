@@ -75,7 +75,7 @@
                                                             t-field="line.date" />
                                                     </td>
                                                     <td name="account_invoice_line_name">
-                                                        <span t-field="line.name"
+                                                        <span t-field="line.move_id.name"
                                                             t-options="{'widget': 'text'}" />
                                                     </td>
 
