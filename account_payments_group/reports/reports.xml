@@ -125,7 +125,9 @@
                                                     <th name="th_date" class="text-start">
                                                         <span>Fecha</span>
                                                     </th>
-
+                                                    <th name="th_date" class="text-start">
+                                                        <span>Metodo de pago</span>
+                                                    </th>
                                                     <th name="th_total" class="text-end">
                                                         <span>Monto</span>
                                                     </th>
@@ -145,10 +147,14 @@
                                                             <span class="text-nowrap"
                                                                 t-field="transfer.date" />
                                                         </td>
+                                                        <td
+                                                            t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                            <span class="text-nowrap"
+                                                                t-field="transfer.journal_id" />
+                                                        </td>
                                                         <td class="text-end o_price_total">
                                                             <span class="text-nowrap"
-                                                                t-field="transfer.amount"
-                                                            />
+                                                                t-field="transfer.amount" />
 
                                                         </td>
 
