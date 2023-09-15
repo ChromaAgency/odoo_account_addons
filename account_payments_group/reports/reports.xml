@@ -82,7 +82,7 @@
 
                                                     <td class="text-end o_price_total">
                                                         <span class="text-nowrap"
-                                                            t-field="line.price_total"
+                                                            t-field="line.balance"
                                                         />
 
                                                     </td>
