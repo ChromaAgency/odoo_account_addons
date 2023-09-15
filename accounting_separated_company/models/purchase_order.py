@@ -12,7 +12,9 @@ class PurchaseOrderLine(Model):
 
     @depends('product_qty', 'product_uom', 'company_id')
     def _compute_price_unit_and_date_planned_and_name(self):
-        return super(PurchaseOrderLine, self.with_context(original_order_company=self.order_id.original_document_id.company_id.id))._compute_price_unit_and_date_planned_and_name()
+        if self.order_id.original_document_id:
+            return super(PurchaseOrderLine, self.with_context(original_order_company=self.order_id.original_document_id.company_id.id))._compute_price_unit_and_date_planned_and_name()
+        return super(PurchaseOrderLine, self)._compute_price_unit_and_date_planned_and_name()
 
 class PurchaseOrder(Model):
     _name = "purchase.order"
