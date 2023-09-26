@@ -28,8 +28,8 @@ class SaleOrder(Model):
 class SaleAdvancePaymentInv(TransientModel):
   _inherit = "sale.advance.payment.inv"
 
-  def _prepare_invoice_values(self, order, name, amount, so_line):
-    invoice_vals = super(SaleAdvancePaymentInv, self)._prepare_invoice_values(order, name, amount, so_line)
+  def _prepare_invoice_values(self, order, so_line):
+    invoice_vals = super(SaleAdvancePaymentInv, self)._prepare_invoice_values(order, so_line)
 
     invoice_vals.update({
       'payment_condition_id':order.payment_condition_id.id,
