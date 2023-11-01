@@ -29,7 +29,7 @@ class PaymentGroup(Model):
 
     _name = 'account.payment.group'
     _description = 'Groups different lines of account.payment and relates them with account.move lines (invoices, and other)'
-    _inherit = 'mail.thread'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = "date desc"
 
     def default_get(self, fields):
