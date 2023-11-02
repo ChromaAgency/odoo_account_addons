@@ -222,17 +222,17 @@ msgstr ""
 #. module: account_payments_group
 #: model:ir.model.fields,field_description:account_payments_group.field_account_payment_group__writeoff_account_id
 msgid "Difference Account"
-msgstr ""
+msgstr "Cuenta contable para diferencía"
 
 #. module: account_payments_group
 #: model:ir.model.fields,field_description:account_payments_group.field_account_payment_group__writeoff_journal_id
 msgid "Difference Journal"
-msgstr ""
+msgstr "Diario de diferencía"
 
 #. module: account_payments_group
 #: model:ir.model.fields,field_description:account_payments_group.field_account_payment_group__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre mostrado"
 
 #. module: account_payments_group
 #: model:ir.model.fields,field_description:account_payments_group.field_account_payment_group__state
@@ -348,12 +348,12 @@ msgstr "Asiento contable"
 #. module: account_payments_withholdings
 #: model:ir.model,name:account_payments_withholdings.model_account_move_line
 msgid "Journal Item"
-msgstr ""
+msgstr "Apunte contable"
 
 #. module: account_payments_group
 #: model:ir.model.fields,field_description:account_payments_group.field_account_payment_group__writeoff_label
 msgid "Journal Item Label"
-msgstr ""
+msgstr "Etiqueta del movimiento"
 
 #. module: account_payments_group
 #: model:ir.model.fields.selection,name:account_payments_group.selection__account_payment_group__payment_difference_handling__open
