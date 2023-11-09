@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field, asdict
 from typing import Dict, List
 from datetime import date
-from .column_width_generator import FixedColumnWidthCSVGenerator
+from ...column_width_generator import FixedColumnWidthCSVGenerator
 
-arciba_ret_per_cols = {
+arciba_credit_note_cols = {
     "op_type":1,
     "norm":3,
     "retper_date":10,
@@ -47,12 +47,12 @@ def generate_arciba_txt_generator():
     post_process_fn = {
         float:lambda x: x.replace(".", ",")
     }
-    for name, t in vars(ArcibaTxtRetPercLine)['__annotations__'].items():
-        arciba_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), arciba_ret_per_cols[name], post_process_fn.get(t, lambda x: x))
+    for name, t in vars(CreditNoteLine)['__annotations__'].items():
+        arciba_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), arciba_credit_note_cols[name], post_process_fn.get(t, lambda x: x))
     return arciba_txt_generator
         
 @dataclass
-class ArcibaTxtRetPercLine:
+class CreditNoteLine:
     """
     Spec according to V2 of e-Arciba 
     Source 2023: https://www.agip.gob.ar/filemanager/source/Agentes/DocTecnicoImpoOperacionesDise%C3%B1odeRegistro.pdf
@@ -85,7 +85,7 @@ class ArcibaTxtRetPercLine:
         doc_date = self.doc_date
         generator.add_line_with_args(self.op_type, self.norm, retper_date, self.doc_type, self.doc_letter, self.doc_number, doc_date, self.doc_amount, self.ret_number, self.afip_document_type, self.afip_document_number, self.ib_type, self.ib_number, self.iva_type, self.name, self.amount_other, self.amount_iva, self.base_amount_for_tax, self.tax_rate, self.tax_amount, self.tax_retention)
 
-def build_and_generate_txt(lines:List[ArcibaTxtRetPercLine]):         
+def build_and_generate_txt(lines:List[CreditNoteLine]):         
     arciba_txt_generator = generate_arciba_txt_generator()
     for l in lines:
         arciba_txt_generator.add_line_with_args(*asdict(l).values())

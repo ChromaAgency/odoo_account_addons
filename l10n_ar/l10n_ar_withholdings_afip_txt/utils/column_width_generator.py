@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Union
+import logging
+_logger = logging.getLogger(__name__)
 
 
 
@@ -13,7 +15,7 @@ class FixedColumnWidthCSVGeneratorCol:
 
     @property
     def fill_format(self):
-        return f"{{:{self.fill}{self.alignment}{self.width}{self.format}}}"
+        return f"{{:{self.fill}{self.alignment}{self.width if not self.format else ''}{self.format}}}"
 
     def fill_value(self, value):
         return self.post_process_fn(self.fill_format.format(value)[:self.width])
@@ -29,6 +31,7 @@ class FixedColumnWidthCSVGenerator:
         return (col.fill_value(arg) for arg, col in zip(args, self.columns))
 
     def build_line(self, *args):
+        
         return self.column_separator.join(self.fill_columns(*args))
     
     def add_line_with_args(self, *args):
