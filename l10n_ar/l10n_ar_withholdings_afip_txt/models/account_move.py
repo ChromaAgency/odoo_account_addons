@@ -88,4 +88,22 @@ class AccountMove(Model):
         lines = []
         for rec in self:
             lines += rec._prepare_afip_ventas_comprobantes()
-        _logger.info(build_and_generate_ventas_comprobantes_txt(lines))
+        return build_and_generate_ventas_comprobantes_txt(lines)
+
+    def action_ventas_comprobantes_txt(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'name': "Emitir Txt",
+            'url': f'/l10n_ar_withholdings_afip_txt/comprobante_venta/{",".join(str(i) for i in self.ids)}',
+            'target': 'self',
+            'context': self._context, 
+        }
+    
+    def action_ventas_alicuotas_txt(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'name': "Emitir Txt",
+            'url': f'/l10n_ar_withholdings_afip_txt/alicuotas_venta/{",".join(str(i) for i in self.ids)}',
+            'target': 'self',
+            'context': self._context, 
+        }

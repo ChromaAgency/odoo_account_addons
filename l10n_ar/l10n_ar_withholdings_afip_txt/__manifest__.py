@@ -9,7 +9,9 @@
     'license': 'AGPL-3',
     'images': [],
     'depends': ['account_payments_withholdings'],
-    'data': [],  
+    'data': [
+        "views/account.move.xml"
+    ],  
     'demo': [],
     'installable': True,
     'auto_install': True,

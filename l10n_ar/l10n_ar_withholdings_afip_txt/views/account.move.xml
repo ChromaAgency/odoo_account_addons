@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_invoice_tree_inherit_l10n_ar_tax_txt" model="ir.ui.view">
+        <field name="name">account.move.view.list.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <header>
+            
+                <button string="Comprobantes VTA" name="action_ventas_comprobantes_txt" type="object" class="oe_highlight"/>
+                <button string="Alicuotas VTA" name="action_ventas_alicuotas_txt" type="object" class="oe_highlight"/>
+            </header>
+        </field>
+    </record>
+
+</odoo>
