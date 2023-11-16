@@ -56,8 +56,6 @@ def generate_arciba_txt_generator():
     }
     for name, t in vars(VentasComprobantesLine)['__annotations__'].items():
         post_process_fn = post_process_fn.get(t, lambda x: x)
-        if name == 'buyer_nif':
-            post_process_fn = lambda x: x.replace("-", "")
         arciba_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn)
     return arciba_txt_generator
         
@@ -99,6 +97,7 @@ class VentasComprobantesLine:
 def build_and_generate_ventas_comprobantes_txt(lines:List[VentasComprobantesLine]):         
     arciba_txt_generator = generate_arciba_txt_generator()
     for l in lines:
-        _logger.info("l: %s", l)
-        arciba_txt_generator.add_line_with_args(*asdict(l).values())
+        ldict = asdict(l)
+        ldict['buyer_nif'] = ldict['buyer_nif'].replace("-", "")
+        arciba_txt_generator.add_line_with_args(*ldict.values())
     return arciba_txt_generator.build()
