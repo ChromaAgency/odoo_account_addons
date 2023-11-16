@@ -55,7 +55,10 @@ def generate_arciba_txt_generator():
         float:lambda x: x.replace(".", ",")
     }
     for name, t in vars(VentasComprobantesLine)['__annotations__'].items():
-        arciba_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn.get(t, lambda x: x))
+        post_process_fn = post_process_fn.get(t, lambda x: x)
+        if name == 'buyer_nif':
+            post_process_fn = lambda x: x.replace("-", "")
+        arciba_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn)
     return arciba_txt_generator
         
 @dataclass
