@@ -55,8 +55,7 @@ def generate_arciba_txt_generator():
         float:lambda x: x.replace(".", ",")
     }
     for name, t in vars(VentasComprobantesLine)['__annotations__'].items():
-        post_process_fn = post_process_fn.get(t, lambda x: x)
-        arciba_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn)
+        arciba_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn.get(t, lambda x: x))
     return arciba_txt_generator
         
 @dataclass
