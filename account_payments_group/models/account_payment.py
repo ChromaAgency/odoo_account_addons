@@ -7,7 +7,7 @@ from odoo.models import Model
 class AccountPayment(Model):
     _inherit = 'account.payment'
     
-    payment_group_id = Many2one('account.payment.group', string="Payment Group")
+    payment_group_id = Many2one('account.payment.group', string="Payment Group", ondelete='cascade')
     
     def _add_partner_id_to_vals(self, vals):
         if 'payment_group_id' not in vals or vals.get('partner_id' ):
