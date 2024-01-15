@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="repair_order_modified" inherit_id="repair.report_repairorder">
+        <xpath expr="//t/t/t[3]" position="after">
+            <t t-if="o.payment_term_id">
+                <strong>Plazo de pago: </strong><span t-field="o.payment_term_id"/>
+            </t>
+            <br/>
+            <t t-if="o.payment_condition_id">
+                <strong>Condición de pago: </strong><span t-field="o.payment_condition_id"/>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

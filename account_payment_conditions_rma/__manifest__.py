@@ -26,5 +26,6 @@
     # always loaded
     'data': [
         'views/views.xml',
+        'reports/repair_order2.xml'
     ]
 }
