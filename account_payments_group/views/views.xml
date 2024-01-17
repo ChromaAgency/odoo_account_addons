@@ -153,7 +153,7 @@
         <field name="name">account.payment.view.form.inherit</field>
         <field name="model">account.payment</field>
         <field name="mode">primary</field>
-        <field name="inherit_id" ref="inherit_module_name.view_account_payment_form"/>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
         <field name="arch" type="xml">
             <header position="replace">
                 <header>
