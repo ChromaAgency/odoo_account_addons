@@ -4,12 +4,14 @@
         <field name="name">Recibos</field>
         <field name="res_model">account.payment.group</field>
         <field name="domain">[('payment_type','=','receivable')]</field>
+        <field name="context">{'default_payment_type': 'receivable'}</field>
         <field name="view_mode">tree,form</field>
     </record>
     <record id="vendor_payments_group_window" model="ir.actions.act_window">
         <field name="name">Ordenes de pago</field>
         <field name="res_model">account.payment.group</field>
         <field name="domain">[('payment_type','=','payable')]</field>
+        <field name="context">{'default_payment_type': 'payable'}</field>
         <field name="view_mode">tree,form</field>
     </record>
 </odoo>
