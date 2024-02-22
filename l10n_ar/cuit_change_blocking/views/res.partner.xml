@@ -10,8 +10,7 @@
                 <field name="vat_locked" invisible="1" />
             </field>
             <field name="vat" class="oe_inline" position="attributes">
-                <attribute name="attrs">{'readonly': ['|', ('parent_id','!=',False),
-                    ('vat_locked','=',True)]}</attribute>
+                <attribute name="readonly">parent_id != False or vat_locked == True</attribute>
             </field>
         </field>
     </record>
@@ -24,10 +23,10 @@
                 <header>
                     <button type="object" name="action_toggle_vat_lock" string="Desbloquear cuit"
                         groups="base.group_erp_manager"
-                        attrs="{'invisible':[('vat_locked','=',False)]}" />
+                        invisible="vat_locked == False" />
                     <button type="object" name="action_toggle_vat_lock" string="Bloquear cuit"
                         groups="base.group_erp_manager"
-                        attrs="{'invisible':[('vat_locked','=',True)]}" />
+                        invisible="vat_locked == True" />
                 </header>
             </sheet>
         </field>

@@ -74,7 +74,7 @@
                         </group>
                         
                     </group>
-                    <group attrs="{'invisible': [('payment_difference_handling','!=', 'reconcile' )]}">
+                    <group invisible="payment_difference_handling != 'reconcile'">
                         <group>
                             <field name="writeoff_journal_id" />
                             <field name="writeoff_label" />

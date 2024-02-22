@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
             <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="before">
-                <field name="invoicing_currency" attrs="{'invisible':[('company_type','!=','company'),('parent_id','!=',False)]}"/>
+                <field name="invoicing_currency" invisible="company_type != 'company' and parent_id != False"/>
             </xpath>
         </field>
     </record>
