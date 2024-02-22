@@ -26,6 +26,14 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+docker-odoo-config/
+.dockerignore
+.env.sample
+.gitignore
+.gitmodules
+docker-compose-test.yml
+docker-compose.yml
+odoo.conf
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
