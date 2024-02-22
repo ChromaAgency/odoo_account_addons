@@ -3,8 +3,8 @@
     'name': 'Sincronizar Tipos de cambio',
     'summary': 'Sincroniza los tipos de cambio en multi empresa',
     'version': '1.0.1',
-    'author': 'Making Argentina',
-    'website': 'https://www.making.com.ar',
+    'author': 'Chroma',
+    'website': 'https://portal.chroma.agency/',
     "category": "Accounting",
     "depends": ['base'],
     'data': [

@@ -4,8 +4,8 @@
     'category': 'Localization',
     'sequence': 1,
     'summary': '',
-    'author': 'Making Argentina',
-    'website': 'www.making.com.ar',
+    'author': 'Chroma',
+    'website': 'www.Chroma.com.ar',
     'license': 'AGPL-3',
     'images': [
     ],

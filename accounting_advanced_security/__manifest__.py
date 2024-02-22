@@ -2,8 +2,8 @@
     'name': 'Seguridad por grupos',
     'summary': 'Limita la accesibilidad de los roles del usuario mediante grupos',
     'version': '0.9',
-    'author': 'Making Argentina',
-    'website': 'https://www.making.com.ar',
+    'author': 'Chroma',
+    'website': 'https://portal.chroma.agency/',
     "category": "Security",
     "depends": ['base','account'],
     'data': [

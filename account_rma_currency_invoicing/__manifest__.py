@@ -12,8 +12,8 @@
 
     """,
 
-    'author': "Making",
-    'website': "http://www.making.com.ar",
+    'author': "Chroma",
+    'website': "https://portal.chroma.agency/",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
