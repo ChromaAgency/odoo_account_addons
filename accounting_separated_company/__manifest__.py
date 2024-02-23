@@ -6,7 +6,7 @@
     'author': 'Chroma',
     'website': 'https://www.chroma.agency',
     "category": "Accounting",
-    "depends": ['base','account','sale','sale_purchase','purchase'],
+    "depends": ['base','account','sale','sale_purchase','purchase','stock'],
     'data': [
         'views/purchase.order.xml',
         'views/sale.order.xml',
