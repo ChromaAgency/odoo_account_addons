@@ -5,7 +5,7 @@
     'author': 'Chroma',
     'website': 'https://portal.chroma.agency/',
     "category": "Security",
-    "depends": ['base','account'],
+    "depends": ['base','account','purchase'],
     'data': [
         'views/res.partner.xml',
         'views/account.journal.xml',
