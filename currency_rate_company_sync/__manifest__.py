@@ -6,7 +6,7 @@
     'author': 'Chroma',
     'website': 'https://portal.chroma.agency/',
     "category": "Accounting",
-    "depends": ['base'],
+    "depends": ['base','account'],
     'data': [
  
     ],
