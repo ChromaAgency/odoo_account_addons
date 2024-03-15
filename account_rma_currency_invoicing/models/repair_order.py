@@ -2,6 +2,9 @@ from odoo.exceptions import UserError
 from odoo import api, fields, models, _
 from odoo.fields import Date, Many2one
 from odoo.api import onchange
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class Repair(models.Model):
     _inherit = "repair.order"
@@ -13,20 +16,23 @@ class Repair(models.Model):
         for rec in self:
             rec.invoicing_currency = rec.partner_id.invoicing_currency
 
-
-    def _create_invoices(self, group=False):
-        repair_invoice_dict = super()._create_invoices(group=group)
-        for repair, invoice in repair_invoice_dict.items():
-            account_move = self.env['account.move'].browse([invoice])
-            account_move.write({
-        'currency_id': self.invoicing_currency.id
+    def action_create_sale_order(self):
+        res = super().action_create_sale_order()
+        sale_order_id = res['res_id']
+        sale_order = self.env['sale.order'].browse([sale_order_id])
+        for line in sale_order.order_line:
+            line.write({
+                'currency_id': self.invoicing_currency.id,
+                'price_unit' : self.invoicing_currency._convert(line.price_unit, line.currency_id, self.env.company, Date.today()),
+            })
+        sale_order.write({
+            'invoicing_currency': self.invoicing_currency.id,
+            'currency_rate': self.invoicing_currency.id,
+            'currency_id': self.invoicing_currency.id,
         })
-            for line in account_move.invoice_line_ids:
-                line.write({
-                    'currency_id': self.invoicing_currency.id,
-                    'price_unit' : self.currency_id._convert(line.price_unit, self.invoicing_currency, self.env.company, Date.today()),
-                    'debit':  self.currency_id._convert(line.debit, self.invoicing_currency, self.env.company, Date.today()),
-                    'credit': self.currency_id._convert(line.credit, self.invoicing_currency, self.env.company, Date.today())
-                })
-        return repair_invoice_dict
+        
+        sale_order._compute_amounts()
+        return res
+
+
 
