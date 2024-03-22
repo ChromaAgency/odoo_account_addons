@@ -9,7 +9,7 @@
             name="account_move.account_withholdings_report"
             file="account_move.account_withholdings_report"
         />
-        <
+        
         <record id="view_account_move_withholdings" model="ir.ui.view">
             <field name="name">Withholdings Report View</field>
             <field name="model">account.move</field>
@@ -27,7 +27,6 @@
                         </div>
                         <div t-attf-class="footer" style="z-index:1;">
                         </div>
-                    </t>
                 </t>
             </t>
         </template>

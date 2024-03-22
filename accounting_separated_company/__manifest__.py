@@ -2,7 +2,7 @@
 {
     'name': 'Compañias contables',
     'summary': 'Copia documentos de una compañia de gestion a otras compañias contables',
-    'version': '1.0.1',
+    'version': '17.1.0.1',
     'author': 'Chroma',
     'website': 'https://www.chroma.agency',
     "category": "Accounting",

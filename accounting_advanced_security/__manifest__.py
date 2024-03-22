@@ -1,7 +1,7 @@
 {
     'name': 'Seguridad por grupos',
     'summary': 'Limita la accesibilidad de los roles del usuario mediante grupos',
-    'version': '0.9',
+    'version': '17.0.9',
     'author': 'Chroma',
     'website': 'https://portal.chroma.agency/',
     "category": "Security",
