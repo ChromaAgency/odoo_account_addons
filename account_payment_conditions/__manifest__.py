@@ -19,7 +19,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Account',
-    'version': '17.0.2',
+    'version': '17.0.2.0s',
     'installable': True,
     # any module necessary for this one to work correctly
     'depends': ['account', 'sale'],

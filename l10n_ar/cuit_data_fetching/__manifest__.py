@@ -1,6 +1,6 @@
 {
     'name': 'Busqueda de datos via CUIT',
-    'version': "0.1.0",
+    'version': "17.1.0.0",
     'category': 'Localization',
     'sequence': 1,
     'summary': '',
