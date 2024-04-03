@@ -2,7 +2,7 @@
 {
     'name': 'Sincronizar Tipos de cambio',
     'summary': 'Sincroniza los tipos de cambio en multi empresa',
-    'version': '17.1.0.1',
+    'version': '17.0.1.0',
     'author': 'Chroma',
     'website': 'https://portal.chroma.agency/',
     "category": "Accounting",
