@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="account_payments_group_report"
+        inherit_id="account_payments_group.payment_group_report">
+        <t t-set="o" position="after">
+
+            <t t-set="custom_header" t-value="'l10n_ar.custom_header'" />
+            <t t-set="report_date" t-value="o.date"/>
+            <t t-set="report_number" t-value="o.name" />
+            <t t-set="document_letter" t-value="'X'" />
+            <t t-set="report_name" t-value="'Recibo' if o.payment_type == 'receivable' else 'Orden de pago'" />
+            <t t-set="header_address" t-value="o.company_id.partner_id"/>
+
+        </t>
+
+    </template>
+
+</odoo>

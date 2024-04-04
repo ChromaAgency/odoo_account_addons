@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="account_payment_receipt_book_menu"
+        name="Talonarios de recibo/orden de pago"
+        action="account_payment_receipt_book_action"
+        parent="account.account_invoicing_menu"
+        sequence="10"/>
+
+</odoo>
