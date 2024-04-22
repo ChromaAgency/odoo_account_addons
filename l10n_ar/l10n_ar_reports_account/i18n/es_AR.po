@@ -1,0 +1,155 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* l10n_ar_reports_account
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-09 20:30+0000\n"
+"PO-Revision-Date: 2024-01-09 20:30+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_ar_reports_account
+#: model_terms:ir.ui.view,arch_db:l10n_ar_reports_account.l10n_ar_account_report_invoice_document
+msgid ""
+"<br/>\n"
+"                <strong>Remitos: </strong>"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model_terms:ir.ui.view,arch_db:l10n_ar_reports_account.l10n_ar_account_report_invoice_document
+msgid "<br/><strong>CBU: </strong>"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_bank_statement_line__invoiced_amount_in_letters
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_move__invoiced_amount_in_letters
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment__invoiced_amount_in_letters
+msgid "Facturación en letras"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model,name:l10n_ar_reports_account.model_account_payment_group
+msgid ""
+"Groups different lines of account.payment and relates them with account.move"
+" lines (invoices, and other)"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__id
+msgid "ID"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model,name:l10n_ar_reports_account.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__name
+msgid "Nombre"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields.selection,name:l10n_ar_reports_account.selection__account_payment_receipt_book__payment_type__payable
+msgid "Orden de pago"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__lowest_number
+msgid "Primer Número"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_group__payment_total_in_letters
+msgid "Recibimos"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields.selection,name:l10n_ar_reports_account.selection__account_payment_receipt_book__payment_type__receivable
+msgid "Recibo"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_bank_statement_line__stock_picking_ids
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_move__stock_picking_ids
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment__stock_picking_ids
+msgid "Remito/s de esta factura"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_group__sequence_id
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__sequence_id
+msgid "Secuencia"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_group__receipt_book_id
+msgid "Talonario de recibos"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model,name:l10n_ar_reports_account.model_account_payment_receipt_book
+msgid "Talonarios de recibo"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.ui.menu,name:l10n_ar_reports_account.account_payment_receipt_book_menu
+msgid "Talonarios de recibo/orden de pago"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.actions.act_window,name:l10n_ar_reports_account.account_payment_receipt_book_action
+msgid "Talonarios de recibo/ordenes de pago"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__payment_type
+msgid "Tipo de pago"
+msgstr ""
+
+#. module: l10n_ar_reports_account
+#: model_terms:ir.ui.view,arch_db:l10n_ar_reports_account.tax_groups_totals
+msgid "on"
+msgstr "en"
+
+#. module: l10n_ar_reports_account
+#: model:ir.model.fields,field_description:l10n_ar_reports_account.field_account_payment_receipt_book__highest_number
+msgid "Último Número"
+msgstr ""

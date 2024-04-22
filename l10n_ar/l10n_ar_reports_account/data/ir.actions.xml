@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_payment_receipt_book_action" model="ir.actions.act_window">
+        <field name="name">Talonarios de recibo/ordenes de pago</field>
+        <field name="res_model">account.payment.receipt_book</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
