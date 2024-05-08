@@ -5,11 +5,12 @@
     'author': 'Making Argentina',
     'website': 'https://www.making.com.ar',
     "category": "Security",
-    "depends": ['base','account'],
+    "depends": ['base','account','purchase'],
     'data': [
         'views/res.partner.xml',
         'views/account.journal.xml',
         'security/ir.rule.xml',
+        'security/res.groups.xml',
  
     ],
     'installable': True,

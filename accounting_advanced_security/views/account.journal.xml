@@ -10,7 +10,8 @@
                 <page name="Security" string="Seguridad" groups="base.group_erp_manager">
                     <group>
                         <field name="group_ids" widget="many2many_tags"/>
-                        <field name="group_ids_only_hide_moves" widget="many2many_tags"/>
+                        <field name="block_journal_visibility" string="Bloquear la visibilidad de este diario"/>
+                        <field name="show_moves_only_to" widget="many2many_tags"/>
                     </group>
                 </page>
             </notebook>

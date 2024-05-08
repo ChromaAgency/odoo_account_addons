@@ -45,7 +45,6 @@
         '|',('journal_id.group_ids','=',False),('journal_id.group_ids', 'in', user.groups_id.ids)
         ]</field>
     </record>
-
     <record model="ir.rule" id="adv_sec_account_purchase_order">
         <field name="name">Filter by groups Purchase order</field>
         <field name="model_id" ref="purchase.model_purchase_order"/>
@@ -69,39 +68,4 @@
                 ]</field>
     </record>
 
-    <record model="ir.rule" id="adv_sec_account_move_groups_only_hide_moves">
-        <field name="name">Filter by groups account move hide moves</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="domain_force">[
-        '|', 
-            '|', ('partner_id','=',False),
-                '&amp;', ('partner_id.group_ids','=',False), ('partner_id.commercial_partner_id.group_ids', '=', False), 
-            '|', 
-                '|', ('partner_id.group_ids', 'in', user.groups_id.ids), ('partner_id.commercial_partner_id.group_ids', 'in', user.groups_id.ids), 
-                ('partner_id.parent_id.group_ids','in',user.groups_id.ids), 
-        '|',('journal_id.group_ids_only_hide_moves','=',False),('journal_id.group_ids_only_hide_moves', 'in', user.groups_id.ids)
-        ]</field>
-        <field name="perm_read" eval="0" />
-        <field name="perm_write" eval="1" />
-        <field name="perm_create" eval="1" />
-        <field name="perm_unlink" eval="0" />
-    </record>
-
-    <record model="ir.rule" id="adv_sec_account_move_line_groups_only_hide_moves">
-        <field name="name">Filter by groups account move line hide moves</field>
-        <field name="model_id" ref="account.model_account_move_line"/>
-        <field name="domain_force">[
-        '|',
-            '|', ('partner_id','=',False),
-                '&amp;', ('partner_id.group_ids','=',False), ('partner_id.commercial_partner_id.group_ids', '=', False), 
-            '|', 
-                '|', ('partner_id.group_ids', 'in', user.groups_id.ids), ('partner_id.commercial_partner_id.group_ids', 'in', user.groups_id.ids), 
-                ('partner_id.parent_id.group_ids','in',user.groups_id.ids),
-        '|',('journal_id.group_ids_only_hide_moves','=',False),('journal_id.group_ids_only_hide_moves', 'in', user.groups_id.ids)
-        ]</field>
-        <field name="perm_read" eval="0" />
-        <field name="perm_write" eval="1" />
-        <field name="perm_create" eval="1" />
-        <field name="perm_unlink" eval="0" />
-    </record>
 </odoo>
