@@ -10,7 +10,6 @@
         'views/res.partner.xml',
         'views/account.journal.xml',
         'security/ir.rule.xml',
-        'security/res.groups.xml',
  
     ],
     'installable': True,
