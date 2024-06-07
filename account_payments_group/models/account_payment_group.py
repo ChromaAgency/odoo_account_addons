@@ -147,7 +147,8 @@ class PaymentGroup(Model):
     def post(self):
         for rec in self:
             payments = rec.payment_lines_ids
-            payments.action_post()
+            for payment in payments:
+                payment.action_post() # we prevent duplicate name here
             move_lines = self.env['account.move.line']
             filter_moves_to_reconcile = lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == self.account_type
             move_lines |= (rec.move_line_ids | payments.line_ids).filtered(filter_moves_to_reconcile) 
