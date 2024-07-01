@@ -15,7 +15,7 @@ class AbstractCopy(AbstractModel):
         # self - self allows to have the empty model independently of who is inheriting it.
         copied_documents = self - self
         for rec in self.sudo():
-            if rec.accounting_company_id:
+            if rec.accounting_company_id and rec.accounting_company_id != rec.company_id:
                 new_record = rec.with_company(rec.accounting_company_id).copy().sudo()
                 copied_documents |= new_record
                 new_record.with_company(rec.accounting_company_id).company_id = rec.accounting_company_id
