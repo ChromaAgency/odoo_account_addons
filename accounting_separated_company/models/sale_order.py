@@ -38,6 +38,9 @@ class SaleOrder(Model):
     def write(self, vals):
         result = super().write(vals)
         if 'accounting_company_id' in vals:
+            user = self.env.user
+            message = ("La compañia de facturación ha sido cambiada a {}").format(self.accounting_company_id.name if self.accounting_company_id else "Ninguna")
+            self.message_post(body=message, author=user.id)
             if self.accounting_company_id and self.state in ['sale','done'] and not self.copied_sale_order_name:
                 copied_docs = self.copy_document_to_company()
                 copied_docs.action_confirm()

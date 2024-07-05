@@ -8,7 +8,7 @@ class AbstractCopy(AbstractModel):
 
     accounting_company_id = Many2one('res.company', string='Compañia contable',copy=False)
     original_document_id = Reference( string='Documento original',selection='_selection_accounting_separated_reference_document',copy=False)
-    accounting_document_id = Reference(string='Documento contable',selection='_selection_accounting_separated_reference_document',tracking=True,copy=False)
+    accounting_document_id = Reference(string='Documento contable',selection='_selection_accounting_separated_reference_document',copy=False)
 
     def _selection_accounting_separated_reference_document(self):
         return [(self._name, self._description)]
