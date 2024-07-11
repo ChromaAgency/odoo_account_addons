@@ -50,3 +50,11 @@ class SaleOrder(Model):
                     copied_docs.client_order_ref = self.client_order_ref or self.name
                     self.copied_sale_order_name = copied_docs.name
         return result
+
+
+    @depends('state', 'order_line.invoice_status')
+    def _compute_invoice_status(self):
+        for rec in self:
+            if rec.copied_sale_order_name:
+                return
+        super()._compute_invoice_status()
