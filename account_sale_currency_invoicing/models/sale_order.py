@@ -43,6 +43,6 @@ class SaleOrderLine(models.Model):
         res = super()._prepare_invoice_line(**optional_values)
         if self.order_id.currency_id.id != self.order_id.invoicing_currency.id:
             res.update({
-                'price_unit': self.currency_id._convert(self.price_unit, self.currency_id, self.env.company, Date.today())
+                'price_unit': self.currency_id._convert(self.price_unit, self.order_id.invoicing_currency, self.env.company, Date.today())
             })
         return res
