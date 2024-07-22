@@ -26,6 +26,7 @@
     'data': [
         #'report/report_templates.xml',
         'report/report_invoice_document.xml',
+        'report/custom_header.xml',
         'report/paper_invoice.xml',
         'report/account_payments_group_report.xml',
         'views/views.xml',

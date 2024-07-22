@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="custom_header" inherit_id="l10n_ar.custom_header" name="Custom Header">
+        <data>
+            <div name="right-upper-side">
+                <br/>
+                <span>Original</span>
+            </div>
+        </data>
+    </template>
+
+</odoo>
