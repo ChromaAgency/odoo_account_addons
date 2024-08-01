@@ -19,7 +19,6 @@ class SaleOrder(Model):
                 rec.invoice_status = 'invoiced'
                 copied_docs.origin = rec.name  
                 copied_docs.client_order_ref = rec.client_order_ref or rec.name
-                copied_docs.copied_sale_order_name = False
                 rec.copied_sale_order_name = copied_docs.name
         return _
     
@@ -49,7 +48,6 @@ class SaleOrder(Model):
                     self.invoice_status = 'invoiced'
                     copied_docs.origin = self.name  
                     copied_docs.client_order_ref = self.client_order_ref or self.name
-                    copied_docs.copied_sale_order_name = False
                     self.copied_sale_order_name = copied_docs.name
         return result
 
