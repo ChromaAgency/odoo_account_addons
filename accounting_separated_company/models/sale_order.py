@@ -1,6 +1,7 @@
 from odoo.models import Model
 from odoo.fields import Many2one, Char
 from odoo.api import depends, onchange
+from odoo import api
 import logging 
 _logger = logging.getLogger(__name__)
 
@@ -35,6 +36,12 @@ class SaleOrder(Model):
             order.action_cancel()
         return _
     
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'copied_sale_order_name' in vals:
+                vals.pop('copied_sale_order_name')
+        return super().create(vals_list)
 
     def write(self, vals):
         result = super().write(vals)
