@@ -8,7 +8,7 @@ class SaleOrder(Model):
     _name = "sale.order"
     _inherit = ["sale.order", "abstract.order.accounting"]
 
-    copied_sale_order_name = Char(string="Pedidos de venta copiados", store=True)
+    copied_sale_order_name = Char(string="Pedidos de venta copiados", store=True, copy=False)
 
     def action_confirm(self):
         _ = super().action_confirm()
@@ -33,7 +33,7 @@ class SaleOrder(Model):
         for order in orders_to_cancel:
             order.action_cancel()
         return _
-    
+
 
     def write(self, vals):
         result = super().write(vals)
