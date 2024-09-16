@@ -1,6 +1,7 @@
 from ..utils import float_as_integer_without_separator
 from ..utils.afip.afip_libro_iva_digital.alicuotas_ventas import AlicuotasVentasLine, build_and_generate_ventas_alicuotas_txt
 from ..utils.afip.afip_libro_iva_digital.comprobantes_ventas import VentasComprobantesLine, build_and_generate_ventas_comprobantes_txt
+from ..utils.afip.afip_libro_iva_digital.alicuotas_compras import AlicuotasComprasLine, build_and_generate_compras_alicuotas_txt
 from odoo import _
 from odoo.models import Model
 import logging
@@ -31,7 +32,6 @@ class AccountMove(Model):
         # TODO make it safer
         lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
         lines_alicuotas = lines.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name).mapped("amount")
-        _logger.info(lines_alicuotas)
         return [
             AlicuotasVentasLine(doc_type=2, 
                                 pos=int(self.journal_id.code), 
@@ -77,12 +77,40 @@ class AccountMove(Model):
                                        currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,
                                        due_date=self.invoice_date_due, )
                                         ]        
+    
+    def _prepare_afip_compras_alicuotas(self):
+        alicuotas = {
+            21:5,
+            10.5:4,
+            0:3,
+            27:6,
+            5:8,
+            2.5:9,
+        }
+        self.ensure_one()
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
+        lines_alicuotas = lines.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name).mapped("amount")
+        return [
+            AlicuotasComprasLine(doc_type=2, 
+                                pos=int(self.journal_id.code), 
+                                doc_number=self.sequence_number,
+                                vendor_document_code=self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code,
+                                vendor_document_number= self.partner_id.vat,
+                                net_amount=float_as_integer_without_separator(sum(lines.mapped("price_subtotal"))), 
+                                iva_rate=alicuotas[alicuota], 
+                                iva_amount=float_as_integer_without_separator(sum(lines.mapped("price_subtotal"))*(alicuota/100))) for alicuota in lines_alicuotas]
 
     def generate_ventas_alicuotas_txt(self):
         lines = []
         for rec in self:
             lines += rec._prepare_afip_ventas_alicuotas()
         return build_and_generate_ventas_alicuotas_txt(lines)
+    
+    def generate_compras_alicuotas_txt(self):
+        lines = []
+        for rec in self:
+            lines += rec._prepare_afip_compras_alicuotas()
+        return build_and_generate_compras_alicuotas_txt(lines)
 
     
     def generate_ventas_comprobantes_txt(self):
@@ -105,6 +133,15 @@ class AccountMove(Model):
             'type': 'ir.actions.act_url',
             'name': "Emitir Txt",
             'url': f'/l10n_ar_withholdings_afip_txt/alicuotas_venta/{",".join(str(i) for i in self.ids)}',
+            'target': 'self',
+            'context': self._context, 
+        }
+    
+    def action_compras_alicuotas_txt(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'name': "Emitir Txt",
+            'url': f'/l10n_ar_withholdings_afip_txt/alicuotas_compra/{",".join(str(i) for i in self.ids)}',
             'target': 'self',
             'context': self._context, 
         }
