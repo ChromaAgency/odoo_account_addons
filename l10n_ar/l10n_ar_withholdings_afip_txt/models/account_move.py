@@ -29,8 +29,9 @@ class AccountMove(Model):
         }
         self.ensure_one()
         # TODO make it safer
-        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids and 'IVA' in x.tax_ids.tax_group_id.name )
-        lines_alicuotas = lines.tax_ids.mapped("amount")
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
+        lines_alicuotas = lines.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name).mapped("amount")
+        _logger.info(lines_alicuotas)
         return [
             AlicuotasVentasLine(doc_type=2, 
                                 pos=int(self.journal_id.code), 
@@ -60,7 +61,7 @@ class AccountMove(Model):
         doc_code = self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code
         nif = self.partner_id.vat   
         doct_type_id = self.l10n_latam_document_type_id_code
-        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids and 'IVA' in x.tax_ids.tax_group_id.name )
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
         lines_alicuotas = lines.tax_ids.mapped("amount")
         amount_of_rates = len(lines_alicuotas)
         amount_total = float_as_integer_without_separator(self.amount_total)
