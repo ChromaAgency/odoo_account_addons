@@ -2,6 +2,7 @@ from ..utils import float_as_integer_without_separator
 from ..utils.afip.afip_libro_iva_digital.alicuotas_ventas import AlicuotasVentasLine, build_and_generate_ventas_alicuotas_txt
 from ..utils.afip.afip_libro_iva_digital.comprobantes_ventas import VentasComprobantesLine, build_and_generate_ventas_comprobantes_txt
 from ..utils.afip.afip_libro_iva_digital.alicuotas_compras import AlicuotasComprasLine, build_and_generate_compras_alicuotas_txt
+from ..utils.afip.afip_libro_iva_digital.comprobantes_compras import ComprasComprobantesLine, build_and_generate_compras_comprobantes_txt
 from odoo import _
 from odoo.models import Model
 import logging
@@ -77,7 +78,31 @@ class AccountMove(Model):
                                        currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,
                                        due_date=self.invoice_date_due, )
                                         ]        
-    
+    def _prepare_afip_compras_comprobantes(self):
+        """
+        """
+        doc_code = self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code
+        nif = self.partner_id.vat   
+        doct_type_id = self.l10n_latam_document_type_id_code
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
+        lines_alicuotas = lines.tax_ids.mapped("amount")
+        amount_of_rates = len(lines_alicuotas)
+        amount_total = float_as_integer_without_separator(self.amount_total)
+        amount_total = float_as_integer_without_separator(self.amount_total)
+        excluded_tax_lines = self.invoice_line_ids - lines
+        amount_total_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_total")))
+        amount_untaxed_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_subtotal")))
+        return [
+            ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=int(self.journal_id.code), doc_number=self.sequence_number,
+                                       vendor_doc_code=doc_code, vendor_nif=nif, vendor_full_name=self.partner_id.display_name, 
+                                       total_amount=amount_total, other_amount=amount_total_of_excluded_lines,
+                                       tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, national_perceptions_amount=0, iibb_perceptions_amount=0, 
+                                       city_perceptions_amount=0,internal_taxes_amount=0,
+                                       currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , 
+                                       IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,perceptions_or_payment_IVA_amount=,another_national_perceptions_amount=,
+                                         computable_fiscal_credit=, emisor_vat=, emisor_denomination=, vat_commission=,  )
+                                        ]     
+
     def _prepare_afip_compras_alicuotas(self):
         alicuotas = {
             21:5,
@@ -118,6 +143,12 @@ class AccountMove(Model):
         for rec in self:
             lines += rec._prepare_afip_ventas_comprobantes()
         return build_and_generate_ventas_comprobantes_txt(lines)
+    
+    def generate_compras_comprobantes_txt(self):
+        lines = []
+        for rec in self:
+            lines += rec._prepare_afip_compras_comprobantes()
+        return build_and_generate_compras_comprobantes_txt(lines)
 
     def action_ventas_comprobantes_txt(self):
         return {
@@ -142,6 +173,15 @@ class AccountMove(Model):
             'type': 'ir.actions.act_url',
             'name': "Emitir Txt",
             'url': f'/l10n_ar_withholdings_afip_txt/alicuotas_compra/{",".join(str(i) for i in self.ids)}',
+            'target': 'self',
+            'context': self._context, 
+        }
+    
+    def action_compras_comprobantes_txt(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'name': "Emitir Txt",
+            'url': f'/l10n_ar_withholdings_afip_txt/comprobante_compra/{",".join(str(i) for i in self.ids)}',
             'target': 'self',
             'context': self._context, 
         }
