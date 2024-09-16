@@ -95,7 +95,7 @@ class AccountMove(Model):
                                 pos=int(self.journal_id.code), 
                                 doc_number=self.sequence_number,
                                 vendor_document_code=self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code,
-                                vendor_document_number= self.partner_id.vat,
+                                vendor_document_number= str(self.partner_id.vat).replace("-", ""),
                                 net_amount=float_as_integer_without_separator(sum(lines.mapped("price_subtotal"))), 
                                 iva_rate=alicuotas[alicuota], 
                                 iva_amount=float_as_integer_without_separator(sum(lines.mapped("price_subtotal"))*(alicuota/100))) for alicuota in lines_alicuotas]
