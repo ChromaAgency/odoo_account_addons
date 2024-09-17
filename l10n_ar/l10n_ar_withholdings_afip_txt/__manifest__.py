@@ -11,7 +11,7 @@
     'depends': ['account_payments_withholdings'],
     'data': [
         "views/account.move.xml",
-        "views/account.tax.xml"
+        "views/account.tax.group.xml"
     ],  
     'demo': [],
     'installable': True,
