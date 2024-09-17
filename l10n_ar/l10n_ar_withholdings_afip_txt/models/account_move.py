@@ -117,7 +117,7 @@ class AccountMove(Model):
         for tax in tax_totals:
             tax_id = tax.get('tax_group_id')
             if tax_group_dict.get(tax_id) == 'national':
-                national_perceptions_amounts += tax.get('tax_group_amount')
+                another_national_perceptions_amounts += tax.get('tax_group_amount')
             elif tax_group_dict.get(tax_id) == 'perception':
                 perceptions_or_payment_IVA_amount += tax.get('tax_group_amount')
             elif tax_group_dict.get(tax_id) == 'vat':
