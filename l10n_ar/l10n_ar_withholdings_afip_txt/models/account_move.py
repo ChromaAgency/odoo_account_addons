@@ -86,7 +86,7 @@ class AccountMove(Model):
         _logger.info(self.tax_totals)   
         doct_type_id = self.l10n_latam_document_type_id_code
         lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
-        perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, national_perceptions_amounts, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts()
+        perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts()
         lines_alicuotas = lines.tax_ids.mapped("amount")
         amount_of_rates = len(lines_alicuotas)
         amount_total = float_as_integer_without_separator(self.amount_total)
@@ -102,14 +102,13 @@ class AccountMove(Model):
                                        city_perceptions_amount=city_perceptions_amount,internal_taxes_amount=0,
                                        currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , 
                                        IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,perceptions_or_payment_IVA_amount=perceptions_or_payment_IVA_amount,
-                                       another_national_perceptions_amount=another_national_perceptions_amounts, national_perceptions_amounts=national_perceptions_amounts,
+                                       another_national_perceptions_amount=another_national_perceptions_amounts,
                                          computable_fiscal_credit=computable_fiscal_credit, emisor_vat=self.partner_id.vat, emisor_denomination=self.partner_id.name, vat_commission=0,  )
                                         ]
     def _obtain_taxes_amounts(self):
         perceptions_or_payment_IVA_amount = 0
         another_national_perceptions_amounts = 0
         computable_fiscal_credit = 0
-        national_perceptions_amounts = 0
         iibb_perceptions_amount = 0
         city_perceptions_amount = 0
         tax_groups = self.env['account.tax.group'].search([('active','=',True)])
@@ -119,22 +118,15 @@ class AccountMove(Model):
             tax_id = tax.get('tax_group_id')
             if tax_group_dict.get(tax_id) == 'national':
                 national_perceptions_amounts += tax.get('tax_group_amount')
-                continue
             elif tax_group_dict.get(tax_id) == 'perception':
                 perceptions_or_payment_IVA_amount += tax.get('tax_group_amount')
-                continue
             elif tax_group_dict.get(tax_id) == 'vat':
                 computable_fiscal_credit += tax.get('tax_group_amount')
-                continue
             elif tax_group_dict.get(tax_id) == 'iibb':
                 iibb_perceptions_amount += tax.get('tax_group_amount')
-                continue
             elif tax_group_dict.get(tax_id) == 'city':
                 city_perceptions_amount += tax.get('tax_group_amount')
-                continue
-            else:
-                another_national_perceptions_amounts += tax.get('tax_group_amount')
-        return perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, national_perceptions_amounts, iibb_perceptions_amount, city_perceptions_amount
+        return perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, iibb_perceptions_amount, city_perceptions_amount
                 
 
     def _prepare_afip_compras_alicuotas(self):
