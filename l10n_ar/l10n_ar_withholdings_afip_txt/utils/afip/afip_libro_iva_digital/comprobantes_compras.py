@@ -71,27 +71,28 @@ class ComprasComprobantesLine:
     doc_type:int
     pos:int
     doc_number:int
-    dispatch_number:int
+    dispatch_number:str
     vendor_doc_code:int
-    vendor_nif:int
+    vendor_nif:str
     vendor_full_name:str
     total_amount:int
     other_amount:int
     tax_excluded_operation_amount:int
-    perceptions_or_payment_IVA_amount:int 
-    another_national_perceptions_amount:int 
-    iibb_perceptions_amount:int
-    city_perceptions_amount:int
+    perceptions_or_payment_IVA_amount:int #buscar percepciones en los impuestos
+    another_national_perceptions_amount:int #agregar check iumpuesto nacional y municipal o internos y filtrar en base a eso y aplicar en ventas
+    iibb_perceptions_amount:int #IIBB
+    city_perceptions_amount:int #Municipal
     internal_taxes_amount:int
     currency_code:str
     exchange_rate:int
     IVA_rates_amount:int
     op_code:str
-    computable_fiscal_credit:int 
+    computable_fiscal_credit:int #Taxes de IVA (Monto) pending
     other_taxes:int
-    emisor_vat:int 
-    emisor_denomination:str 
-    vat_commission:int
+    emisor_vat:int # CUIT del partner
+    emisor_denomination:str #partner name
+    #TODO Adaptar para factura de liquido producto
+    vat_commission:int #poner en 0
 
 
     def add_line_to_generator(self, generator:FixedColumnWidthCSVGenerator):

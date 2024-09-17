@@ -10,7 +10,8 @@
     'images': [],
     'depends': ['account_payments_withholdings'],
     'data': [
-        "views/account.move.xml"
+        "views/account.move.xml",
+        "views/account.tax.xml"
     ],  
     'demo': [],
     'installable': True,

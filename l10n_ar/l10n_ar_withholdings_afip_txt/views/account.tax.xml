@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_tax_inherit_l10n_ar_withholdings_afip_txt" model="ir.ui.view">
+        <field name="name">account.tax.view.form.inherit</field>
+        <field name="model">account.tax</field>
+        <field name="inherit_id" ref="account.view_tax_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_base_affected']" position="after">
+                <field name="is_national_tax"/>
+                <field name="is_perception_tax"/>
+                <field name="is_vat_tax"/>
+                <field name="is_iibb_tax"/>
+                <field name="is_city_tax"/>                
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

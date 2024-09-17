@@ -85,6 +85,7 @@ class AccountMove(Model):
         nif = self.partner_id.vat   
         doct_type_id = self.l10n_latam_document_type_id_code
         lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
+        perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, national_perceptions_amounts, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts(lines)
         lines_alicuotas = lines.tax_ids.mapped("amount")
         amount_of_rates = len(lines_alicuotas)
         amount_total = float_as_integer_without_separator(self.amount_total)
@@ -96,12 +97,41 @@ class AccountMove(Model):
             ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=int(self.journal_id.code), doc_number=self.sequence_number,
                                        vendor_doc_code=doc_code, vendor_nif=nif, vendor_full_name=self.partner_id.display_name, 
                                        total_amount=amount_total, other_amount=amount_total_of_excluded_lines,
-                                       tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, national_perceptions_amount=0, iibb_perceptions_amount=0, 
-                                       city_perceptions_amount=0,internal_taxes_amount=0,
+                                       tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, national_perceptions_amount=1, iibb_perceptions_amount=iibb_perceptions_amount, 
+                                       city_perceptions_amount=city_perceptions_amount,internal_taxes_amount=0,
                                        currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , 
-                                       IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,perceptions_or_payment_IVA_amount=,another_national_perceptions_amount=,
-                                         computable_fiscal_credit=, emisor_vat=, emisor_denomination=, vat_commission=,  )
-                                        ]     
+                                       IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,perceptions_or_payment_IVA_amount=perceptions_or_payment_IVA_amount,
+                                       another_national_perceptions_amount=another_national_perceptions_amounts, national_perceptions_amounts=national_perceptions_amounts,
+                                         computable_fiscal_credit=computable_fiscal_credit, emisor_vat=self.partner_id.vat, emisor_denomination=self.partner_id.name, vat_commission=0,  )
+                                        ]
+    
+    def _obtain_taxes_amounts(self, lines):
+        perceptions_or_payment_IVA_amount = 0
+        another_national_perceptions_amounts = 0
+        computable_fiscal_credit = 0
+        national_perceptions_amounts = 0
+        iibb_perceptions_amount = 0
+        city_perceptions_amount = 0
+        for line in lines:
+            for tax in line.tax_ids:
+                if tax.is_perception_tax:
+                    perceptions_or_payment_IVA_amount += tax.base_amount
+                    continue
+                if tax.is_national_tax:
+                    national_perceptions_amounts += tax.base_amount
+                    continue
+                if tax.is_iibb_tax:
+                    iibb_perceptions_amount += tax.base_amount
+                    continue
+                if tax.is_city_tax:
+                    city_perceptions_amount += tax.base_amount
+                    continue
+                if tax.is_vat_tax:
+                    computable_fiscal_credit += tax.base_amount
+                    continue
+                another_national_perceptions_amounts += tax.base_amount
+        return perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, national_perceptions_amounts, iibb_perceptions_amount, city_perceptions_amount
+                
 
     def _prepare_afip_compras_alicuotas(self):
         alicuotas = {
