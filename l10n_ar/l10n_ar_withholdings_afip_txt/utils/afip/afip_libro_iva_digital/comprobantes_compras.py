@@ -27,7 +27,7 @@ alicuotas_cols = {
     "op_code":1,
     "computable_fiscal_credit":15,
     "other_taxes":15,
-    "emisor_vat":20,
+    "emisor_vat":11,
     "emisor_denomination":30,
     "vat_commission":15,
     
@@ -105,5 +105,6 @@ def build_and_generate_compras_comprobantes_txt(lines:List[ComprasComprobantesLi
     for l in lines:
         ldict = asdict(l)
         ldict['vendor_nif'] = ldict['vendor_nif'].replace("-", "")
+        ldict['emisor_vat'] = int(str(ldict['emisor_vat']).replace("-", ""))
         arciba_txt_generator.add_line_with_args(*ldict.values())
     return arciba_txt_generator.build()

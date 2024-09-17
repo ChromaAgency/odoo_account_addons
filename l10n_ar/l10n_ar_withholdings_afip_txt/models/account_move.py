@@ -89,6 +89,7 @@ class AccountMove(Model):
         perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts()
         lines_alicuotas = lines.tax_ids.mapped("amount")
         amount_of_rates = len(lines_alicuotas)
+        dispatch_number = self.stock_picking_ids[0].dispatch_number if self.stock_picking_ids else '0'
         amount_total = float_as_integer_without_separator(self.amount_total)
         amount_total = float_as_integer_without_separator(self.amount_total)
         excluded_tax_lines = self.invoice_line_ids - lines
@@ -97,8 +98,8 @@ class AccountMove(Model):
         return [
             ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=int(self.journal_id.code), doc_number=self.sequence_number,
                                        vendor_doc_code=doc_code, vendor_nif=nif, vendor_full_name=self.partner_id.display_name, 
-                                       total_amount=amount_total, other_amount=amount_total_of_excluded_lines,
-                                       tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, national_perceptions_amount=1, iibb_perceptions_amount=iibb_perceptions_amount, 
+                                       total_amount=amount_total, other_amount=amount_total_of_excluded_lines, dispatch_number=dispatch_number,
+                                       tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, iibb_perceptions_amount=iibb_perceptions_amount, 
                                        city_perceptions_amount=city_perceptions_amount,internal_taxes_amount=0,
                                        currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , 
                                        IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,perceptions_or_payment_IVA_amount=perceptions_or_payment_IVA_amount,
@@ -126,7 +127,7 @@ class AccountMove(Model):
                 iibb_perceptions_amount += tax.get('tax_group_amount')
             elif tax_group_dict.get(tax_id) == 'city':
                 city_perceptions_amount += tax.get('tax_group_amount')
-        return perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, iibb_perceptions_amount, city_perceptions_amount
+        return float_as_integer_without_separator(perceptions_or_payment_IVA_amount), float_as_integer_without_separator(another_national_perceptions_amounts), float_as_integer_without_separator(computable_fiscal_credit), float_as_integer_without_separator(iibb_perceptions_amount), float_as_integer_without_separator(city_perceptions_amount)
                 
 
     def _prepare_afip_compras_alicuotas(self):
