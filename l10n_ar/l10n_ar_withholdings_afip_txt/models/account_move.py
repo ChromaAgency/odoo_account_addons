@@ -82,10 +82,11 @@ class AccountMove(Model):
         """
         """
         doc_code = self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code
-        nif = self.partner_id.vat   
+        nif = self.partner_id.vat
+        _logger.info(self.tax_totals)   
         doct_type_id = self.l10n_latam_document_type_id_code
         lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
-        perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, national_perceptions_amounts, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts(lines)
+        perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, national_perceptions_amounts, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts()
         lines_alicuotas = lines.tax_ids.mapped("amount")
         amount_of_rates = len(lines_alicuotas)
         amount_total = float_as_integer_without_separator(self.amount_total)
@@ -104,32 +105,35 @@ class AccountMove(Model):
                                        another_national_perceptions_amount=another_national_perceptions_amounts, national_perceptions_amounts=national_perceptions_amounts,
                                          computable_fiscal_credit=computable_fiscal_credit, emisor_vat=self.partner_id.vat, emisor_denomination=self.partner_id.name, vat_commission=0,  )
                                         ]
-    
-    def _obtain_taxes_amounts(self, lines):
+    def _obtain_taxes_amounts(self):
         perceptions_or_payment_IVA_amount = 0
         another_national_perceptions_amounts = 0
         computable_fiscal_credit = 0
         national_perceptions_amounts = 0
         iibb_perceptions_amount = 0
         city_perceptions_amount = 0
-        for line in lines:
-            for tax in line.tax_ids:
-                if tax.is_perception_tax:
-                    perceptions_or_payment_IVA_amount += tax.base_amount
-                    continue
-                if tax.is_national_tax:
-                    national_perceptions_amounts += tax.base_amount
-                    continue
-                if tax.is_iibb_tax:
-                    iibb_perceptions_amount += tax.base_amount
-                    continue
-                if tax.is_city_tax:
-                    city_perceptions_amount += tax.base_amount
-                    continue
-                if tax.is_vat_tax:
-                    computable_fiscal_credit += tax.base_amount
-                    continue
-                another_national_perceptions_amounts += tax.base_amount
+        tax_groups = self.env['account.tax.group'].search([('active','=',True)])
+        tax_group_dict = {tax_group.id:tax_group.tax_type for tax_group in tax_groups}
+        tax_totals = self.tax_totals.get('groups_by_subtotal').get('Base imponible')
+        for tax in tax_totals:
+            tax_id = tax.get('tax_group_id')
+            if tax_group_dict.get(tax_id) == 'national':
+                national_perceptions_amounts += tax.get('tax_group_amount')
+                continue
+            elif tax_group_dict.get(tax_id) == 'perception':
+                perceptions_or_payment_IVA_amount += tax.get('tax_group_amount')
+                continue
+            elif tax_group_dict.get(tax_id) == 'vat':
+                computable_fiscal_credit += tax.get('tax_group_amount')
+                continue
+            elif tax_group_dict.get(tax_id) == 'iibb':
+                iibb_perceptions_amount += tax.get('tax_group_amount')
+                continue
+            elif tax_group_dict.get(tax_id) == 'city':
+                city_perceptions_amount += tax.get('tax_group_amount')
+                continue
+            else:
+                another_national_perceptions_amounts += tax.get('tax_group_amount')
         return perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, national_perceptions_amounts, iibb_perceptions_amount, city_perceptions_amount
                 
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_tax_inherit_l10n_ar_withholdings_afip_txt" model="ir.ui.view">
+        <field name="name">account.tax.group.view.form.inherit</field>
+        <field name="model">account.tax.group</field>
+        <field name="inherit_id" ref="account.view_tax_group_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sequence']" position="after">
+                <field name="tax_type"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
