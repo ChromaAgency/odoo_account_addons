@@ -18,10 +18,9 @@ class AbstractCopy(AbstractModel):
         copied_documents = self - self
         for rec in self.sudo():
             if rec.accounting_company_id and rec.accounting_company_id != rec.company_id:
-                new_record = rec.with_company(rec.accounting_company_id).copy({
-                    'company_id': rec.accounting_company_id.id
-                }).sudo()
+                new_record = rec.with_company(rec.accounting_company_id).copy().sudo()
                 copied_documents |= new_record
+                new_record.with_company(rec.accounting_company_id).company_id = rec.accounting_company_id
                 rec.accounting_document_id = "{},{}".format(new_record._name, new_record.id)
                 new_record.original_document_id = "{},{}".format(rec._name, rec.id)
         return copied_documents.sudo()
