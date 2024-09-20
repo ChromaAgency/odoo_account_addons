@@ -1,6 +1,7 @@
 from odoo.models import AbstractModel
 from odoo.fields import Many2one,Reference
 import logging
+from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 class AbstractCopy(AbstractModel):
@@ -14,13 +15,32 @@ class AbstractCopy(AbstractModel):
         return [(self._name, self._description)]
     
     def copy_document_to_company(self):
-        # self - self allows to have the empty model independently of who is inheriting it.
+        _logger.info('inside copy document')
         copied_documents = self - self
         for rec in self.sudo():
             if rec.accounting_company_id and rec.accounting_company_id != rec.company_id:
-                new_record = rec.with_company(rec.accounting_company_id).copy().sudo()
+                new_order_lines = []
+                for line in rec.order_line:
+                    new_taxes = self.env['account.tax'].search([
+                        ('name', 'in', line.tax_id.mapped('name')),
+                        ('company_id', '=', rec.accounting_company_id.id)
+                    ])
+                    
+                    if not new_taxes:
+                        raise UserError(f"No se encontraron impuestos para la compañía destino en la orden {self.name}.")
+
+                    copied_line = line.with_company(rec.accounting_company_id).copy({
+                        'tax_id': new_taxes.ids
+                    }).sudo()
+                    new_order_lines.append((4, copied_line.id))
+                
+                new_record = rec.with_company(rec.accounting_company_id).copy({
+                    'company_id': rec.accounting_company_id.id,
+                    'order_line': new_order_lines 
+                }).sudo()
+                
                 copied_documents |= new_record
-                new_record.with_company(rec.accounting_company_id).company_id = rec.accounting_company_id
                 rec.accounting_document_id = "{},{}".format(new_record._name, new_record.id)
                 new_record.original_document_id = "{},{}".format(rec._name, rec.id)
+        
         return copied_documents.sudo()
