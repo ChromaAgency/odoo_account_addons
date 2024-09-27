@@ -100,8 +100,7 @@
                                 <h4>
                                     Pagos
                                 </h4>
-                                <t t-set="checks"
-                                    t-value="payments.filtered(lambda x: x.payment_method_id.code in ['new_third_party_checks', 'in_third_party_checks','out_third_party_checks'])" />
+                                <t t-set="checks" t-value="payments.filtered(lambda x: x.payment_method_id.code in ['check_printing','new_third_party_checks', 'in_third_party_checks','out_third_party_checks'])"/>
                                 <t t-set="withholdings"
                                     t-value="payments.filtered(lambda x: x.payment_method_id.code in ['withholding'])" />
                                 <t t-set="transfers"
