@@ -47,16 +47,22 @@ class ResPartner(Model):
 
     def get_partner_data_with_cuit(self):
         self.ensure_one()
-        cuit = self.vat
-        if self.country_id.id != self.env.ref('base.ar').id:
-            raise UserError(_("This partner is not from Argentina."))
-        if not cuit:
-            raise UserError(_("You must set a CUIT number for this partner."))
-        
-        connection = self.env.company._l10n_ar_get_connection(CONSTANCIA_DE_INSCRIPCION_WS)
-        client, auth = connection._get_client()
-        res = client.service.getPersona_v2(auth.get('Token'),auth.get('Sign'),auth.get('Cuit'),cuit)
-        self._update_partner_data(res)
+        if self.l10n_latam_identification_type_id.name == 'CUIT':
+            cuit = self.vat
+            if self.country_id.id != self.env.ref('base.ar').id:
+                raise UserError(_("This partner is not from Argentina."))
+            if not cuit:
+                raise UserError(_("You must set a CUIT number for this partner."))
+            
+            connection = self.env.company._l10n_ar_get_connection(CONSTANCIA_DE_INSCRIPCION_WS)
+            client, auth = connection._get_client()
+            try:
+                res = client.service.getPersona_v2(auth.get('Token'),auth.get('Sign'),auth.get('Cuit'),cuit)
+            except:
+                raise UserError(_("The provided CUIT is not valid."))
+            self._update_partner_data(res)
+        else:
+            raise UserError(_("The provided number is not a CUIT."))
         return True
         
         
