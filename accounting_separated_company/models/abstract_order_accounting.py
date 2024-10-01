@@ -1,6 +1,7 @@
 from odoo.models import AbstractModel
 from odoo.fields import Many2one,Reference
 import logging
+from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 class AbstractCopy(AbstractModel):
