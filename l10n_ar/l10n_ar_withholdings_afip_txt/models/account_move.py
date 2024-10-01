@@ -71,7 +71,7 @@ class AccountMove(Model):
         amount_total_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_total")))
         amount_untaxed_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_subtotal")))
         return [
-            VentasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=int(self.journal_id.code), doc_number=self.sequence_number,
+            VentasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=self.journal_id.code, doc_number=self.sequence_number,
                                        doc_number_to=self.sequence_number, buyer_doc_code=doc_code, buyer_nif=nif, buyer_full_name=self.partner_id.display_name, 
                                        total_amount=amount_total, other_amount=amount_total_of_excluded_lines, non_categorized_perception=0, 
                                        tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, national_perceptions_amount=0, iibb_perceptions_amount=0, city_perceptions_amount=0,internal_taxes_amount=0,
@@ -96,7 +96,7 @@ class AccountMove(Model):
         amount_total_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_total")))
         amount_untaxed_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_subtotal")))
         return [
-            ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=int(self.journal_id.code), doc_number=self.sequence_number,
+            ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=self.journal_id.code, doc_number=self.sequence_number,
                                        vendor_doc_code=doc_code, vendor_nif=nif, vendor_full_name=self.partner_id.display_name, 
                                        total_amount=amount_total, other_amount=amount_total_of_excluded_lines, dispatch_number=dispatch_number,
                                        tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, iibb_perceptions_amount=iibb_perceptions_amount, 

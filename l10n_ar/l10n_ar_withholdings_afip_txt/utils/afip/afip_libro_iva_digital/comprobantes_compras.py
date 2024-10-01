@@ -104,7 +104,11 @@ def build_and_generate_compras_comprobantes_txt(lines:List[ComprasComprobantesLi
     arciba_txt_generator = generate_afip_txt_generator()
     for l in lines:
         ldict = asdict(l)
-        ldict['vendor_nif'] = ldict['vendor_nif'].replace("-", "")
-        ldict['emisor_vat'] = int(str(ldict['emisor_vat']).replace("-", ""))
+        vendor_nif = ldict['vendor_nif']
+        emisor_vat = ldict['emisor_vat']
+        if vendor_nif:
+            ldict['vendor_nif'] = vendor_nif.replace("-", "").replace(".","")
+        if emisor_vat:
+            ldict['emisor_vat'] = int(str(emisor_vat).replace("-", "").replace(".", ""))
         arciba_txt_generator.add_line_with_args(*ldict.values())
     return arciba_txt_generator.build()
