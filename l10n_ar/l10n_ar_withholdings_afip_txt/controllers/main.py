@@ -30,7 +30,7 @@ class TxtController(Controller):
                 'Content-Disposition':'attachment; filename="%s_%s_%s_alicuotas_compra_%s.txt"' % (now.year, now.month, now.day, int(now.timestamp()) ) }, status=200)
     
     @route('/l10n_ar_withholdings_afip_txt/comprobante_compra/<ids>', type='http', auth='user')
-    def txt_alicuota_compra_route(self, ids):
+    def txt_comprobante_compra_route(self, ids):
         now = datetime.now()
         res = request.env['account.move'].browse([int(i) for i in ids.split(',')]).generate_compras_comprobantes_txt()
         return Response(res, headers={

@@ -4,6 +4,7 @@ from ..utils.afip.afip_libro_iva_digital.comprobantes_ventas import VentasCompro
 from ..utils.afip.afip_libro_iva_digital.alicuotas_compras import AlicuotasComprasLine, build_and_generate_compras_alicuotas_txt
 from ..utils.afip.afip_libro_iva_digital.comprobantes_compras import ComprasComprobantesLine, build_and_generate_compras_comprobantes_txt
 from odoo import _
+from odoo.exceptions import UserError
 from odoo.models import Model
 import logging
 _logger = logging.getLogger(__name__)
@@ -31,8 +32,8 @@ class AccountMove(Model):
         }
         self.ensure_one()
         # TODO make it safer
-        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
-        lines_alicuotas = lines.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name).mapped("amount")
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type))
+        lines_alicuotas = lines.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type).mapped("amount")
         return [
             AlicuotasVentasLine(doc_type=2, 
                                 pos=int(self.journal_id.code), 
@@ -62,7 +63,8 @@ class AccountMove(Model):
         doc_code = self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code
         nif = self.partner_id.vat   
         doct_type_id = self.l10n_latam_document_type_id_code
-        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
+        #filtrar pot tipo de impuesto (campo de group)
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type))
         lines_alicuotas = lines.tax_ids.mapped("amount")
         amount_of_rates = len(lines_alicuotas)
         amount_total = float_as_integer_without_separator(self.amount_total)
@@ -85,18 +87,26 @@ class AccountMove(Model):
         nif = self.partner_id.vat
         _logger.info(self.tax_totals)   
         doct_type_id = self.l10n_latam_document_type_id_code
-        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type))
         perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts()
         lines_alicuotas = lines.tax_ids.mapped("amount")
         amount_of_rates = len(lines_alicuotas)
-        dispatch_number = self.stock_picking_ids[0].dispatch_number if self.stock_picking_ids else '0'
+        dispatch_number = self.stock_picking_ids[0].dispatch_number if self.stock_picking_ids else 0
         amount_total = float_as_integer_without_separator(self.amount_total)
         amount_total = float_as_integer_without_separator(self.amount_total)
         excluded_tax_lines = self.invoice_line_ids - lines
         amount_total_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_total")))
         amount_untaxed_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_subtotal")))
-        return [
-            ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=self.journal_id.code, doc_number=self.sequence_number,
+        pos = 0
+        doc_number = 0
+        if dispatch_number == 0:
+            doc_number = self.sequence_number
+            try:
+                pos = int(self.journal_id.code)
+            except:
+                raise UserError(_("No se puede utilizar un punto de venta cuyo codigo no sea numerico segun reglamentación de AFIP."))
+        compras_line = [
+            ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=pos, doc_number=doc_number,
                                        vendor_doc_code=doc_code, vendor_nif=nif, vendor_full_name=self.partner_id.display_name, 
                                        total_amount=amount_total, other_amount=amount_total_of_excluded_lines, dispatch_number=dispatch_number,
                                        tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, iibb_perceptions_amount=iibb_perceptions_amount, 
@@ -106,6 +116,9 @@ class AccountMove(Model):
                                        another_national_perceptions_amount=another_national_perceptions_amounts,
                                          computable_fiscal_credit=computable_fiscal_credit, emisor_vat=self.partner_id.vat, emisor_denomination=self.partner_id.name, vat_commission=0,  )
                                         ]
+
+        return compras_line
+    
     def _obtain_taxes_amounts(self):
         perceptions_or_payment_IVA_amount = 0
         another_national_perceptions_amounts = 0
@@ -140,17 +153,25 @@ class AccountMove(Model):
             2.5:9,
         }
         self.ensure_one()
-        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name))
-        lines_alicuotas = lines.tax_ids.filtered(lambda t: 'IVA' in t.tax_group_id.name).mapped("amount")
-        return [
+        lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type))
+        name_alicuotas = lines.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type).mapped("name")
+        _logger.info(name_alicuotas)
+        lines_alicuotas = lines.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type).mapped("amount")
+        pos = 0
+        try:
+            pos = int(self.journal_id.code)
+        except:
+            raise UserError(_("No se puede utilizar un punto de venta cuyo codigo no sea numerico segun reglamentación de AFIP."))
+        alicuotas_compras_line = [
             AlicuotasComprasLine(doc_type=2, 
-                                pos=int(self.journal_id.code), 
+                                pos=pos, 
                                 doc_number=self.sequence_number,
                                 vendor_document_code=self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code,
-                                vendor_document_number= str(self.partner_id.vat).replace("-", ""),
+                                vendor_document_number= str(self.partner_id.vat).replace("-", "").replace(".",""),
                                 net_amount=float_as_integer_without_separator(sum(lines.mapped("price_subtotal"))), 
                                 iva_rate=alicuotas[alicuota], 
                                 iva_amount=float_as_integer_without_separator(sum(lines.mapped("price_subtotal"))*(alicuota/100))) for alicuota in lines_alicuotas]
+        return alicuotas_compras_line
 
     def generate_ventas_alicuotas_txt(self):
         lines = []
