@@ -14,10 +14,14 @@ class AccountPaymentGroup(Model):
     receipt_book_id = Many2one("account.payment.receipt_book", string="Talonario de recibos", required=True)
     payment_total_in_letters = Char('Recibimos')
 
-    @onchange('payment_type')
+    @onchange('partner_id')
     def _onchange_payment_type(self):
         for rec in self:
-            receipt_book = self.env['account.payment.receipt_book'].search([('payment_type','=',rec.payment_type)],limit=1)
+            current_company = self.env.company
+            receipt_book = self.env['account.payment.receipt_book'].search([
+                ('payment_type', '=', rec.payment_type),
+                ('name', 'ilike', current_company.name)
+            ], limit=1)
             rec.receipt_book_id = receipt_book.id
             
     @model
