@@ -99,12 +99,12 @@ class AccountMove(Model):
         amount_untaxed_of_excluded_lines = float_as_integer_without_separator(sum(excluded_tax_lines.mapped("price_subtotal")))
         pos = 0
         doc_number = 0
-        if dispatch_number == 0:
-            doc_number = self.sequence_number
-            try:
-                pos = int(self.journal_id.code)
-            except:
-                raise UserError(_("No se puede utilizar un punto de venta cuyo codigo no sea numerico segun reglamentación de AFIP."))
+        if dispatch_number == 0:    
+            if "-" in self.l10n_latam_document_number:
+                try:
+                    pos = int(str(self.l10n_latam_document_number).split("-")[0])
+                except:
+                    raise UserError(_("No se puede utilizar un punto de venta cuyo codigo no sea numerico segun reglamentación de AFIP."))
         compras_line = [
             ComprasComprobantesLine(doc_date=self.invoice_date,doc_type=doct_type_id, pos=pos, doc_number=doc_number,
                                        vendor_doc_code=doc_code, vendor_nif=nif, vendor_full_name=self.partner_id.display_name, 
@@ -155,13 +155,16 @@ class AccountMove(Model):
         self.ensure_one()
         lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type))
         name_alicuotas = lines.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type).mapped("name")
+        dispatch_number = self.stock_picking_ids[0].dispatch_number if self.stock_picking_ids else 0
         _logger.info(name_alicuotas)
         lines_alicuotas = lines.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type).mapped("amount")
         pos = 0
-        try:
-            pos = int(self.journal_id.code)
-        except:
-            raise UserError(_("No se puede utilizar un punto de venta cuyo codigo no sea numerico segun reglamentación de AFIP."))
+        if dispatch_number == 0:    
+            if "-" in self.l10n_latam_document_number:
+                try:
+                    pos = int(str(self.l10n_latam_document_number).split("-")[0])
+                except:
+                    raise UserError(_("No se puede utilizar un punto de venta cuyo codigo no sea numerico segun reglamentación de AFIP."))
         alicuotas_compras_line = [
             AlicuotasComprasLine(doc_type=2, 
                                 pos=pos, 
