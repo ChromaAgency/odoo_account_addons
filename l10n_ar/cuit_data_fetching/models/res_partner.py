@@ -48,7 +48,7 @@ class ResPartner(Model):
     def get_partner_data_with_cuit(self):
         self.ensure_one()
         if self.l10n_latam_identification_type_id.name == 'CUIT':
-            cuit = self.vat
+            cuit = ''.join(filter(str.isdigit, str(self.vat)))
             if self.country_id.id != self.env.ref('base.ar').id:
                 raise UserError(_("This partner is not from Argentina."))
             if not cuit:
