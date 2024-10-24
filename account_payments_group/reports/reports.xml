@@ -204,7 +204,7 @@
                                                         <td
                                                             t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                                             <span class="text-nowrap"
-                                                                t-field="check.date" />
+                                                                t-field="check.l10n_latam_check_payment_date" />
                                                         </td>
                                                         <td class="text-start o_price_total">
                                                             <span class="text-nowrap"
