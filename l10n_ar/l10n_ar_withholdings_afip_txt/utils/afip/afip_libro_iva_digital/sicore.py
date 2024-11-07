@@ -19,8 +19,8 @@ alicuotas_cols = {
     "withholding_amount":14,
     "exluded_percentage":6,
     "publication_date":10,
-    "retention_document_type":2, #CUIT
-    "retention_document_number":20, #NroDeCuit
+    "retention_document_type":2, 
+    "retention_document_number":20,
     "original_certificate_number":14,
     
 

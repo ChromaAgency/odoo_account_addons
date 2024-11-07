@@ -69,26 +69,40 @@ class AccountPayment(Model):
     def _prepare_afip_sicore(self):
         """
         """
-        
+        document_code = '02' if self.payment_type == 'outbound' else '01'
+        document_date = self.date.strftime('%dd/%mm/%YY')
+        document_number = self.sequence_number
+        document_amount = self.amount
+        tax_code = self.tax_withholding_id.tax_code
+        regime_code = self.tax_withholding_id.regime_code
+        operation_code = 1 if self.payment_method_line_id.name == 'Retenciones' else 2
+        calculation_base = self.withholding_base_amount
+        withholding_date = document_date
+        condition_code = 1 if self.partner_id.l10n_ar_afip_responsibility_type_id.code == '1' else 2
+        withholding_amount = self.amount
+        retetion_document_type = self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code
+        retetion_document_number = str(self.partner_id.vat).replace("-", "").replace(".","")
+        original_certificate_number= self.withholding_number
+
         sicore_line = [
             SicoreLine(
-                document_code=,
-                document_date=,
-                document_number=,
-                document_amount=,
-                tax_code=,
-                regime_code =,
-                operation_code=,
-                calculation_base=,
-                withholding_date =,
-                condition_code=,
-                withholding_suspended_to_subject=,
-                withholding_amount=,
-                exluded_percentage =,
-                publication_date=,
-                retention_document_type=,
-                retention_document_number=,
-                original_certificate_number=,
+                document_code=document_code,
+                document_date=document_date,
+                document_number=document_number,
+                document_amount=document_amount,
+                tax_code=tax_code,
+                regime_code =regime_code,
+                operation_code=operation_code,
+                calculation_base=calculation_base,
+                withholding_date =withholding_date,
+                condition_code=condition_code,
+                withholding_suspended_to_subject=0,
+                withholding_amount=withholding_amount,
+                exluded_percentage =0,
+                publication_date='',
+                retention_document_type=retetion_document_type,
+                retention_document_number=retetion_document_number,
+                original_certificate_number=original_certificate_number,
             )
                                         ]
 
