@@ -128,7 +128,7 @@ class AccountMove(Model):
         city_perceptions_amount = 0
         tax_groups = self.env['account.tax.group'].search([])
         tax_group_dict = {tax_group.id:tax_group.tax_type for tax_group in tax_groups}
-        tax_totals = self.tax_totals.get('groups_by_subtotal').get('Base imponible')
+        tax_totals = self.tax_totals.get('groups_by_subtotal').get('Base imponible') or self.tax_totals.get('groups_by_subtotal').get('Untaxed Amount')
         for tax in tax_totals:
             tax_id = tax.get('tax_group_id')
             if tax_group_dict.get(tax_id) == 'national':
