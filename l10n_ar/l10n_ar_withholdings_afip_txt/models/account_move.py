@@ -99,7 +99,7 @@ class AccountMove(Model):
         dispatch_number = 0
         pos = 0
         doc_number = 0
-        if self.l10n_latam_document_type_id.code != 66:
+        if self.l10n_latam_document_type_id.code != "66":
             try:
                 pos = int(str(self.l10n_latam_document_number).split("-")[0])
             except:
@@ -159,7 +159,7 @@ class AccountMove(Model):
         _logger.info(name_alicuotas)
         lines_alicuotas = lines.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type).mapped("amount")
         pos = 0
-        if self.l10n_latam_document_type_id.code != 66:
+        if self.l10n_latam_document_type_id.code != "66":
             try:
                 pos = int(str(self.l10n_latam_document_number).split("-")[0])
             except:
