@@ -81,11 +81,10 @@ class AccountMove(Model):
                                        due_date=self.invoice_date_due, )
                                         ]        
     def _prepare_afip_compras_comprobantes(self):
-        """
-        """
+        if not self.l10n_latam_document_type_id.code:
+            return []
         doc_code = self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code
         nif = self.partner_id.vat
-        _logger.info(self.tax_totals)   
         doct_type_id = self.l10n_latam_document_type_id_code
         lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type))
         perceptions_or_payment_IVA_amount, another_national_perceptions_amounts, computable_fiscal_credit, iibb_perceptions_amount, city_perceptions_amount = self._obtain_taxes_amounts()
@@ -154,6 +153,8 @@ class AccountMove(Model):
             2.5:9,
         }
         self.ensure_one()
+        if not self.l10n_latam_document_type_id.code:
+            return []
         lines = self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type))
         name_alicuotas = lines.tax_ids.filtered(lambda t: 'vat' in t.tax_group_id.tax_type).mapped("name")
         _logger.info(name_alicuotas)
