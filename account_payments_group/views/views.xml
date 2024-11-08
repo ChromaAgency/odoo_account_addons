@@ -168,4 +168,21 @@
             </field>
         </field>
     </record>
+    
+    
+    <record id="account_payment_inherit_module_name" model="ir.ui.view">
+        <field name="name">account.payment.view.form.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="l10n_latam_check.view_account_payment_form_inherited"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='l10n_latam_check_number']" position="attributes">
+                <attribute name="invisible">1</attribute>                
+            </xpath>
+            <xpath expr="//field[@name='check_number']" position="attributes">
+                <attribute name="invisible">0</attribute>
+                <attribute name="attrs">{'invisible': [('payment_method_code', '!=', 'new_third_party_checks'), '|', ('payment_method_code', '!=', 'check_printing'), ('l10n_latam_manual_checks', '=', False)],'required': ['|', ('payment_method_code', '=', 'new_third_party_checks'), '&amp;', ('payment_method_code', '=', 'check_printing'), ('l10n_latam_manual_checks', '=', True)],                         'readonly': [('state', '!=', 'draft')]}</attribute>
+                
+            </xpath>
+        </field>
+    </record>
 </odoo>
