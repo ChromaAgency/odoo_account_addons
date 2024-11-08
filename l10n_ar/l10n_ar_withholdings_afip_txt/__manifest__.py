@@ -12,7 +12,8 @@
     'data': [
         "views/account.move.xml",
         "views/account.tax.group.xml",
-        "views/account.tax.xml"
+        "views/account.tax.xml",
+        "views/account.payment.xml"
     ],  
     'demo': [],
     'installable': True,
