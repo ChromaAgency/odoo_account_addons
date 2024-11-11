@@ -14,10 +14,15 @@ class FixedColumnWidthCSVGeneratorCol:
     post_process_fn:callable
 
     @property
+    def empty_fill_format(self):
+        return f"{{:{self.fill}{self.alignment}{self.width}}}"
+    
+    @property
     def fill_format(self):
         return f"{{:{self.fill}{self.alignment}{self.width if not self.format else ''}{self.format}}}"
 
     def fill_value(self, value):
+        if not value: return self.post_process_fn(self.empty_fill_format.format(value)[:self.width])
         return self.post_process_fn(self.fill_format.format(value)[:self.width])
     
 @dataclass

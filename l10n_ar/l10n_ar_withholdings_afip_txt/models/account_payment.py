@@ -70,7 +70,7 @@ class AccountPayment(Model):
         """
         """
         document_code = '02' if self.payment_type == 'outbound' else '01'
-        document_date = self.date.strftime('%dd/%mm/%YY')
+        document_date = self.date
         document_number = self.sequence_number
         document_amount = self.amount
         tax_code = self.tax_withholding_id.tax_code
