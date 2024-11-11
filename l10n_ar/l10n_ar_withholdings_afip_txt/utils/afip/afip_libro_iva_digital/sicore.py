@@ -7,9 +7,9 @@ _logger = logging.getLogger(__name__)
 alicuotas_cols = {
     "document_code":2,
     "document_date":10,
-    "document_number":14,
+    "document_number":16,
     "document_amount":16,
-    "tax_code":3,
+    "tax_code":4,
     "regime_code":3,
     "operation_code":1,
     "calculation_base":14,
@@ -43,11 +43,10 @@ def generate_afip_txt_generator():
         float:".2f",
         int:"",
         str:"",
-        date:"%Y%m%d",
+        date:"%d/%m/%Y",
     }
 
     post_process_fn = {
-        float:lambda x: x.replace(".", ",")
     }
     for name, t in vars(SicoreLine)['__annotations__'].items():
         afip_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn.get(t, lambda x: x))
@@ -58,7 +57,7 @@ class SicoreLine:
 
     document_code: int
     document_date: date
-    document_number: int
+    document_number: str
     document_amount: float
     tax_code: int
     regime_code : int
@@ -72,7 +71,7 @@ class SicoreLine:
     publication_date: date
     retention_document_type: str
     retention_document_number: int
-    original_certificate_number: int
+    original_certificate_number: str
 
 
 
@@ -86,4 +85,4 @@ def build_and_generate_sicore_txt(lines:List[SicoreLine]):
     for l in lines:
         ldict = asdict(l)
         arciba_txt_generator.add_line_with_args(*ldict.values())
-    return arciba_txt_generator.build()
+    return arciba_txt_generator.build() + '\n'
