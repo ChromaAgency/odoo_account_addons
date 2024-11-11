@@ -12,6 +12,7 @@ class FixedColumnWidthCSVGeneratorCol:
     fill:str
     width:int
     post_process_fn:callable
+    force_width:bool
 
     @property
     def empty_fill_format(self):
@@ -19,7 +20,7 @@ class FixedColumnWidthCSVGeneratorCol:
     
     @property
     def fill_format(self):
-        return f"{{:{self.fill}{self.alignment}{self.width if not self.format else ''}{self.format}}}"
+        return f"{{:{self.fill}{self.alignment}{self.width if not self.format or self.force_width else ''}{self.format}}}"
 
     def fill_value(self, value):
         if not value: return self.post_process_fn(self.empty_fill_format.format(value)[:self.width])
@@ -46,8 +47,8 @@ class FixedColumnWidthCSVGenerator:
     def add_line_with_str(self, line):
         self.lines.append(line)
 
-    def add_column(self, format, alignment, fill, width, post_process_fn):
-        self.columns.append(FixedColumnWidthCSVGeneratorCol(format, alignment, fill, width, post_process_fn))
+    def add_column(self, format, alignment, fill, width, post_process_fn, force_width=False):
+        self.columns.append(FixedColumnWidthCSVGeneratorCol(format, alignment, fill, width, post_process_fn, force_width))
 
     def build(self):
         return self.line_separator.join(self.lines)

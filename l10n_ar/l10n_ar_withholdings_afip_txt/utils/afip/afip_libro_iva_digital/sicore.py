@@ -27,7 +27,7 @@ alicuotas_cols = {
 }
 
 def generate_afip_txt_generator():
-    afip_txt_generator = FixedColumnWidthCSVGenerator()
+    afip_txt_generator = FixedColumnWidthCSVGenerator(line_separator="\r\n")
     aligns = {
         float:">",
         int:">",
@@ -35,7 +35,7 @@ def generate_afip_txt_generator():
     }
     fills = {
         str:" ",
-        float:"0",
+        float:"",
         int:"0",
     }
 
@@ -49,7 +49,8 @@ def generate_afip_txt_generator():
     post_process_fn = {
     }
     for name, t in vars(SicoreLine)['__annotations__'].items():
-        afip_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn.get(t, lambda x: x))
+        force_width = t == float
+        afip_txt_generator.add_column(formats.get(t, ""), aligns.get(t, ""), fills.get(t, ""), alicuotas_cols[name], post_process_fn.get(t, lambda x: x),force_width)
     return afip_txt_generator
         
 @dataclass
@@ -69,9 +70,9 @@ class SicoreLine:
     withholding_amount: float
     exluded_percentage : float
     publication_date: date
-    retention_document_type: str
-    retention_document_number: int
-    original_certificate_number: str
+    retention_document_type: int
+    retention_document_number: str
+    original_certificate_number: int
 
 
 
@@ -85,4 +86,4 @@ def build_and_generate_sicore_txt(lines:List[SicoreLine]):
     for l in lines:
         ldict = asdict(l)
         arciba_txt_generator.add_line_with_args(*ldict.values())
-    return arciba_txt_generator.build() + '\n'
+    return arciba_txt_generator.build() + '\r\n'

@@ -71,7 +71,7 @@ class AccountPayment(Model):
         """
         document_code = '02' if self.payment_type == 'outbound' else '01'
         document_date = self.date
-        document_number = self.sequence_number
+        document_number = self.payment_group_id.name.replace("-", "")
         document_amount = self.amount
         tax_code = self.tax_withholding_id.tax_code
         regime_code = self.tax_withholding_id.regime_code
@@ -98,7 +98,7 @@ class AccountPayment(Model):
                 condition_code=condition_code,
                 withholding_suspended_to_subject=0,
                 withholding_amount=withholding_amount,
-                exluded_percentage =0,
+                exluded_percentage =0.0,
                 publication_date='',
                 retention_document_type=retetion_document_type,
                 retention_document_number=retetion_document_number,
