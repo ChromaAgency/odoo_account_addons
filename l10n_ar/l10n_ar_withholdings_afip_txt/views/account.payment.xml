@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payment_tree_inherit_l10n_ar_tax_txt" model="ir.ui.view">
+        <field name="name">account.payment.view.list.inherit</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_tree"/>
+        <field name="arch" type="xml">
+            <header>
+            
+                <button string="Sicore" name="action_sicore_txt" type="object" class="oe_highlight"/>
+
+            </header>
+        </field>
+    </record>
+
+</odoo>
