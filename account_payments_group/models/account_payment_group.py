@@ -3,6 +3,7 @@ from odoo import  fields, _
 from odoo.fields import  One2many, Many2many, Many2one, Date, Float, Char, Text, Selection
 from odoo.api import depends, onchange, returns, model
 from odoo.models import Model, TransientModel
+from odoo.exceptions import UserError
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -76,6 +77,7 @@ class PaymentGroup(Model):
         domain="[('company_id', '=', company_id)]", required=True, default=lambda s: s.env['account.journal'].search([('type','=','general')], limit=1))
     writeoff_label = fields.Char(string='Journal Item Label', default='Write-Off',
         help='Change label of the counterpart that will hold the payment difference')
+    is_reconciled_or_matched = fields.Boolean(string="Is concilied or matched", compute="_compute_is_reconciled_or_matched")
 
     def _compute_journal_ids(self):
         for rec in self:
@@ -119,6 +121,13 @@ class PaymentGroup(Model):
     def account_type(self):
         return 'asset_receivable' if self.payment_type == 'receivable' else 'liability_payable'
     
+    @depends("payment_lines_ids")
+    def _compute_is_reconciled_or_matched(self):
+        for rec in self:
+            rec.is_reconciled_or_matched = False
+            if rec.payment_lines_ids.filtered(lambda x: x.is_matched) or rec.payment_lines_ids.filtered(lambda x: x.is_reconciled):
+                rec.is_reconciled_or_matched = True
+    
     def _create_payment_closing_entry(self):
         """Get the write off data, make a move id against the invoices to"""
         self.ensure_one()
@@ -147,7 +156,8 @@ class PaymentGroup(Model):
     def post(self):
         for rec in self:
             payments = rec.payment_lines_ids
-            payments.action_post()
+            for payment in payments:
+                payment.action_post() # we prevent duplicate name here
             move_lines = self.env['account.move.line']
             filter_moves_to_reconcile = lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == self.account_type
             move_lines |= (rec.move_line_ids | payments.line_ids).filtered(filter_moves_to_reconcile) 
@@ -167,12 +177,16 @@ class PaymentGroup(Model):
 
     def cancel(self):
         for rec in self:
+            if rec.is_reconciled_or_matched:
+                raise UserError("Uno de los pagos esta conciliado por lo que este recibo no se puede cancelar")
             payments = rec.payment_lines_ids
             payments.action_draft()
             rec.state = 'canceled'
     
     def to_draft(self):
         for rec in self:
+            if rec.is_reconciled_or_matched:
+                raise UserError("Uno de los pagos esta conciliado por lo que este recibo no se puede pasar a borrador")
             rec.state = 'draft'
 
     @returns('account.move')
@@ -252,3 +266,4 @@ class PaymentGroup(Model):
         # Explicar mañana
         withholdings_amounts:dict = self.move_line_ids.move_id.invoice_line_ids.get_withholdings_amount()
         self.payment_lines_ids = [(0,0,self._prepare_withholding_payment(withholding_id, amounts.get("base_amount",0), amounts.get("amount",0))) for withholding_id, amounts in withholdings_amounts.items()]
+

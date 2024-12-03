@@ -45,7 +45,6 @@
         '|',('journal_id.group_ids','=',False),('journal_id.group_ids', 'in', user.groups_id.ids)
         ]</field>
     </record>
-
     <record model="ir.rule" id="adv_sec_account_purchase_order">
         <field name="name">Filter by groups Purchase order</field>
         <field name="model_id" ref="purchase.model_purchase_order"/>
@@ -68,4 +67,5 @@
                     ('partner_id.parent_id.group_ids','in',user.groups_id.ids),
                 ]</field>
     </record>
+
 </odoo>

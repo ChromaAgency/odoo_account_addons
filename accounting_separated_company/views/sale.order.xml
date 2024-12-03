@@ -7,7 +7,9 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <group name="partner_details">
-                <field name="accounting_company_id"/>
+                <field name="copied_sale_order_name" groups="base.group_no_one"/>
+                <field name="copied_sale_order_name" invisible="1"/>
+                <field name="accounting_company_id" attrs="{'readonly':[('copied_sale_order_name','!=',False), ('state','in',['sale','done'])]}"/>
             </group>
         </field>
     </record>

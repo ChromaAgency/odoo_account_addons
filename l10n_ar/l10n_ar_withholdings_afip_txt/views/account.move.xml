@@ -10,6 +10,9 @@
             
                 <button string="Comprobantes VTA" name="action_ventas_comprobantes_txt" type="object" class="oe_highlight"/>
                 <button string="Alicuotas VTA" name="action_ventas_alicuotas_txt" type="object" class="oe_highlight"/>
+                <button string="Alicuotas Compra" name="action_compras_alicuotas_txt" type="object" class="oe_highlight"/>
+                <button string="Comprobantes Compra" name="action_compras_comprobantes_txt" type="object" class="oe_highlight"/>
+
             </header>
         </field>
     </record>

@@ -11,8 +11,8 @@
             <xpath expr="//t[@t-set='custom_footer']" position="before">
                 <t t-set="date" t-value="report_date"/>
             </xpath>
-            <xpath expr="//div[@id='payment_term']/parent::div/div[2]/t[3]" position="replace">
-                <t t-if="o.l10n_latam_document_type_id.code in ['201', '206', '211', '202', '207', '212'] and o.partner_bank_id and o.partner_bank_id.acc_type == 'cbu'">
+            <xpath expr="//div[@id='total']/div/t[3]" position="replace">
+                <t t-if="o.partner_bank_id">
                     <br/><strong>CBU: </strong><span t-esc="o.partner_bank_id.acc_number or '' if o.partner_bank_id.acc_type == 'cbu' else ''"/>
                 </t>            
             </xpath>
@@ -45,7 +45,11 @@
             </xpath>
         </template>
         <template id="tax_totals_variable_fixed_purchase" inherit_id="purchase.purchase_order_portal_content_totals_table">
+<<<<<<< HEAD
             <xpath expr="//t[@t-call='purchase.document_tax_totals']" position="before">
+=======
+            <xpath expr="//t[@t-call='account.document_tax_totals']" position="before">
+>>>>>>> 16.0
                 <t t-set="o" t-value="order"/>
                 <t t-set="date" t-value="o.date_approve"/>
             </xpath>
@@ -57,13 +61,21 @@
         </template>
 
         <template id="tax_totals_variable_fixed_sale" inherit_id="sale.report_saleorder_document">
+<<<<<<< HEAD
             <xpath expr="//t[@t-call='sale.document_tax_totals']" position="before">
+=======
+            <xpath expr="//t[@t-call='account.document_tax_totals']" position="before">
+>>>>>>> 16.0
                 <t t-set="o" t-value="doc"/>
                 <t t-set="date" t-value="o.date_order"/>
             </xpath>
         </template>
         <template id="tax_totals_variable_fixed_sale_order" inherit_id="sale.sale_order_portal_content_totals_table" priority="10">
+<<<<<<< HEAD
             <xpath expr="//t[@t-call='#{sale_order._get_name_tax_totals_view()}']" position="before">
+=======
+            <xpath expr="//t[@t-call='account.document_tax_totals']" position="before">
+>>>>>>> 16.0
                 <t t-set="o" t-value="sale_order"/>
                 <t t-set="date" t-value="o.date_order"/>
             </xpath>

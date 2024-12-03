@@ -10,6 +10,7 @@
     'data': [
         'views/purchase.order.xml',
         'views/sale.order.xml',
+        'views/stock.picking.type.xml',
     ],
     'installable': True,
     'license': 'GPL-3',

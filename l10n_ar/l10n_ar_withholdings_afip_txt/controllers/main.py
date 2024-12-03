@@ -19,3 +19,30 @@ class TxtController(Controller):
                 "Content-Type": f"text/plain; charset=latin-1",
 
                 'Content-Disposition':'attachment; filename="%s_%s_%s_alicuotas_vta_%s.txt"' % (now.year, now.month, now.day, int(now.timestamp()) ) }, status=200)
+    
+    @route('/l10n_ar_withholdings_afip_txt/alicuotas_compra/<ids>', type='http', auth='user')
+    def txt_alicuota_compra_route(self, ids):
+        now = datetime.now()
+        res = request.env['account.move'].browse([int(i) for i in ids.split(',')]).generate_compras_alicuotas_txt()
+        return Response(res, headers={
+                "Content-Type": f"text/plain; charset=latin-1",
+
+                'Content-Disposition':'attachment; filename="%s_%s_%s_alicuotas_compra_%s.txt"' % (now.year, now.month, now.day, int(now.timestamp()) ) }, status=200)
+    
+    @route('/l10n_ar_withholdings_afip_txt/comprobante_compra/<ids>', type='http', auth='user')
+    def txt_comprobante_compra_route(self, ids):
+        now = datetime.now()
+        res = request.env['account.move'].browse([int(i) for i in ids.split(',')]).generate_compras_comprobantes_txt()
+        return Response(res, headers={
+                "Content-Type": f"text/plain; charset=latin-1",
+
+                'Content-Disposition':'attachment; filename="%s_%s_%s_comprobante_vta_%s.txt"' % (now.year, now.month, now.day, int(now.timestamp()) ) }, status=200)
+    
+    @route('/l10n_ar_withholdings_afip_txt/sicore/<ids>', type='http', auth='user')
+    def txt_sicore_route(self, ids):
+        now = datetime.now()
+        res = request.env['account.payment'].browse([int(i) for i in ids.split(',')]).generate_sicore_txt()
+        return Response(res, headers={
+                "Content-Type": f"text/plain; charset=latin-1",
+
+                'Content-Disposition':'attachment; filename="%s_%s_%s_sicore_%s.txt"' % (now.year, now.month, now.day, int(now.timestamp()) ) }, status=200)

@@ -100,8 +100,7 @@
                                 <h4>
                                     Pagos
                                 </h4>
-                                <t t-set="checks"
-                                    t-value="payments.filtered(lambda x: x.payment_method_id.code in ['new_third_party_checks', 'in_third_party_checks','out_third_party_checks'])" />
+                                <t t-set="checks" t-value="payments.filtered(lambda x: x.payment_method_id.code in ['check_printing','new_third_party_checks', 'in_third_party_checks','out_third_party_checks'])"/>
                                 <t t-set="withholdings"
                                     t-value="payments.filtered(lambda x: x.payment_method_id.code in ['withholding'])" />
                                 <t t-set="transfers"
@@ -205,11 +204,11 @@
                                                         <td
                                                             t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                                             <span class="text-nowrap"
-                                                                t-field="check.date" />
+                                                                t-field="check.l10n_latam_check_payment_date" />
                                                         </td>
                                                         <td class="text-start o_price_total">
                                                             <span class="text-nowrap"
-                                                                t-field="check.l10n_latam_check_bank_id"
+                                                                t-field="check.journal_id"
                                                             />
                                                         </td>
                                                         <td
