@@ -31,124 +31,117 @@
             </search>
         </field>
     </record>
-    <record id="account_payment_group_view_tree" model="ir.ui.view">
-        <field name="name">account.payment.group.view.tree</field>
+    <record id="account_payment_group_view_list" model="ir.ui.view">
+        <field name="name">account.payment.group.view.list</field>
         <field name="model">account.payment.group</field>
         <field name="arch" type="xml">
-            <tree string="Recibos" decoration-danger="state=='canceled'" decoration-success="state=='posted'" decoration-muted="state=='draft'">
+            <list string="Recibos" decoration-danger="state=='canceled'" decoration-success="state=='posted'" decoration-muted="state=='draft'">
                 <field name="date" />
                 <field name="name" />
                 <field name="partner_id" />
                 <field name="payments_total" />
                 <field name="journal_ids" widget="many2many_tags"/>
                 <field name="state" widget="badge" decoration-danger="state=='canceled'" decoration-success="state=='posted'" decoration-muted="state=='draft'"/>
-            </tree>
+            </list>
         </field>
     </record>
-    <record id="account_payment_group_view_form" model="ir.ui.view">
-        <field name="name">account.payment.group.view.form</field>
-        <field name="model">account.payment.group</field>
-        <field name="arch" type="xml">
-            <form string="Grupo de pagos">
-                <header>
-                    <button name="post" type="object" class="btn btn-primary" string="Publicar"
-                        invisible="state != 'draft'" />
-                    <button name="cancel" type="object" string="Cancelar" invisible="state != 'posted'" />
-                    <button name="to_draft" type="object" string="Restablecer a borrador"
-                        invisible="state != 'canceled'" />
-                    <field name="state" widget="statusbar" />
-                </header>
-                <sheet>
-                    <div class="oe-title">
-                        <h1><field name="name" /></h1>
-                    </div>
+<record id="account_payment_group_view_form" model="ir.ui.view">
+    <field name="name">account.payment.group.view.form</field>
+    <field name="model">account.payment.group</field>
+    <field name="arch" type="xml">
+        <form string="Grupo de pagos">
+            <header>
+                <button name="post" type="object" class="btn btn-primary" string="Publicar" invisible="state != 'draft'" />
+                <button name="cancel" type="object" string="Cancelar" invisible="state != 'posted'" />
+                <button name="to_draft" type="object" string="Restablecer a borrador" invisible="state != 'canceled'" />
+                <field name="state" widget="statusbar" />
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <h1><field name="name" /></h1>
+                </div>
+                <group>
                     <group>
-                        <group>
-                            <field name="date" />
-                            <field name="company_id" invisible="1" />
-                            <field name="partner_id" />
-                            <field name="currency_id" />
-                        </group>
-                        <group>
-                            <field name="payment_difference_handling" widget="radio" />
-                        </group>
-                        
+                        <field name="date" />
+                        <field name="company_id" invisible="1" />
+                        <field name="partner_id" />
+                        <field name="currency_id" />
                     </group>
-                    <group invisible="payment_difference_handling != 'reconcile'">
-                        <group>
-                            <field name="writeoff_journal_id" />
-                            <field name="writeoff_label" />
-                        </group>
-                        <group>
-                            <field name="writeoff_account_id" />
-                        </group>                        
+                    <group>
+                        <field name="payment_difference_handling" widget="radio" />
                     </group>
-                    <notebook>
-                        <page name="payments" string="Pagos">
-                            <field name="payment_type" invisible="1" />
-                            <field name="payment_lines_ids"
-                                domain="[('partner_id','=',partner_id)]"
-                                context="{
-                                    'form_view_ref': 'account_payments_group.view_account_payment_form_inherit_account_payments_group',
-                                                'default_partner_id':partner_id, 
-                                                'default_currency_id':currency_id,
-                                                'default_payment_type':'inbound' if payment_type == 'receivable' else 'outbound',
-                                                'default_partner_type':'customer' if payment_type == 'receivable' else 'supplier'
-                                                }">
-                                <tree>
-                                    <field name="date" />
-                                    <field name="partner_id" groups="base.group_no_one" />
-                                    <field name="journal_id" />
-                                    <field name="amount" />
-                                    <field name="state" invisible="1" />
-                                </tree>
-                            </field>
-                            <group name="Totals">
-                                <button name="action_add_withholdings_payments" type="object" string="Calcular retenciones" />
-                                <group>
-                                    <field name="payments_total" />
-                                    <field name="matched_amount" />
-                                </group>
-                                <group>
-                                    <field name="unmatched_amount" />
-                                </group>
-                            </group>
-                        </page>
-                        <page name="moves" string="Comprobantes imputados">
-                            <button name="remove_all_moves" type="object"
-                                string="Vaciar lista de comprobantes" />
-                            <button name="add_all_unreconcilied_moves" type="object"
-                                string="Agregar comprobantes no imputados" />
-                            <field name="move_line_ids" context="{'default_partner_id':partner_id}"
-                                domain="[('partner_id','=',partner_id),('move_id.state','=','posted'),'|',('amount_residual','!=',0),('amount_residual_currency', '!=', 0.0),('account_id.reconcile', '=', True),('reconciled', '=', False)]">
-                                <tree>
-                                    <field name="name" string="Punto de emision" />
-                                    <field name="date" invisible="1" />
-                                    <field name="date_maturity" />
-                                    <field name="move_id" string="Comprobante" />
-                                    <field name="journal_id" string="Punto de emision" />
-                                    <field name="balance" />
-                                    <field name="amount_residual" sum="1" />
-                                    <field name="amount_currency" sum="1" />
-                                    <field name="amount_residual_currency" sum="1" />
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Otra información">
+                </group>
+                <group invisible="payment_difference_handling != 'reconcile'">
+                    <group>
+                        <field name="writeoff_journal_id" />
+                        <field name="writeoff_label" />
+                    </group>
+                    <group>
+                        <field name="writeoff_account_id" />
+                    </group>
+                </group>
+                <notebook>
+                    <page name="payments" string="Pagos">
+                        <field name="payment_type" invisible="1" />
+                        <field name="payment_lines_ids"
+                            domain="[('partner_id','=',partner_id)]"
+                            context="{
+                                'form_view_ref': 'account_payments_group.view_account_payment_form_inherit_account_payments_group',
+                                'default_partner_id':partner_id, 
+                                'default_currency_id':currency_id,
+                                'default_payment_type':'inbound' if payment_type == 'receivable' else 'outbound',
+                                'default_partner_type':'customer' if payment_type == 'receivable' else 'supplier'
+                            }">
+                            <list>
+                                <field name="date" />
+                                <field name="partner_id" groups="base.group_no_one" />
+                                <field name="journal_id" />
+                                <field name="amount" />
+                                <field name="state" invisible="1" />
+                            </list>
+                        </field>
+                        <group name="Totals">
+                            <button name="action_add_withholdings_payments" type="object" string="Calcular retenciones" />
                             <group>
-                                <field name="observations" />
+                                <field name="payments_total" />
+                                <field name="matched_amount" />
                             </group>
-                        </page>
-                    </notebook>
-                </sheet>
-                <div class="oe_chatter">
-                <field name="message_follower_ids" widget="mail_followers"/>
-                <field name="activity_ids" widget="mail_activity"/>
-                <field name="message_ids" widget="mail_thread"/>
-            </div>
-            </form>
-        </field>
-    </record>
+                            <group>
+                                <field name="unmatched_amount" />
+                            </group>
+                        </group>
+                    </page>
+                    <page name="moves" string="Comprobantes imputados">
+                        <button name="remove_all_moves" type="object" string="Vaciar lista de comprobantes" />
+                        <button name="add_all_unreconcilied_moves" type="object" string="Agregar comprobantes no imputados" />
+                        <field name="move_line_ids" context="{'default_partner_id':partner_id}"
+                            domain="[('partner_id','=',partner_id),('move_id.state','=','posted'),'|',('amount_residual','!=',0),('amount_residual_currency', '!=', 0.0),('account_id.reconcile', '=', True),('reconciled', '=', False)]">
+                            <list>
+                                <field name="name" string="Punto de emision" />
+                                <field name="date" invisible="1" />
+                                <field name="date_maturity" />
+                                <field name="move_id" string="Comprobante" />
+                                <field name="journal_id" string="Punto de emision" />
+                                <field name="balance" />
+                                <field name="amount_residual" sum="1" />
+                                <field name="amount_currency" sum="1" />
+                                <field name="amount_residual_currency" sum="1" />
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Otra información">
+                        <group>
+                            <field name="observations" />
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+            <chatter/>
+        </form>
+    </field>
+</record>
+
+
     <record id="view_account_payment_form_inherit_account_payments_group" model="ir.ui.view">
         <field name="name">account.payment.view.form.inherit</field>
         <field name="model">account.payment</field>
@@ -160,29 +153,10 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
                 </header>
             </header>
-            <field name="is_internal_transfer" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </field>
             <field name="payment_type" position="attributes">
                 <attribute name="invisible">1</attribute>
             </field>
         </field>
     </record>
-    
-    
-    <record id="account_payment_inherit_module_name" model="ir.ui.view">
-        <field name="name">account.payment.view.form.inherit</field>
-        <field name="model">account.payment</field>
-        <field name="inherit_id" ref="l10n_latam_check.view_account_payment_form_inherited"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='l10n_latam_check_number']" position="attributes">
-                <attribute name="invisible">1</attribute>                
-            </xpath>
-            <xpath expr="//field[@name='check_number']" position="attributes">
-                <attribute name="invisible">0</attribute>
-                <attribute name="attrs">{'invisible': [('payment_method_code', '!=', 'new_third_party_checks'), '|', ('payment_method_code', '!=', 'check_printing'), ('l10n_latam_manual_checks', '=', False)],'required': ['|', ('payment_method_code', '=', 'new_third_party_checks'), '&amp;', ('payment_method_code', '=', 'check_printing'), ('l10n_latam_manual_checks', '=', True)],                         'readonly': [('state', '!=', 'draft')]}</attribute>
-                
-            </xpath>
-        </field>
-    </record>
+
 </odoo>

@@ -17,10 +17,10 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Invoicing',
-    'version': '17.0.1.0',
+    'version': '18.0.1.0',
     'installable': True,
     # any module necessary for this one to work correctly
-    'depends': ['account','l10n_latam_check','account_payments_withholdings'],
+    'depends': ['accountant','l10n_latam_check'],
     # always loaded
     'data': [
         'views/views.xml',

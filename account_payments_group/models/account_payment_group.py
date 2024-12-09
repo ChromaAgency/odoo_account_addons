@@ -71,8 +71,7 @@ class PaymentGroup(Model):
         ('open', 'Keep open'),
         ('reconcile', 'Mark as fully paid'),
     ], default='open', string="Payment Difference Handling")
-    writeoff_account_id = fields.Many2one('account.account', string="Difference Account", copy=False,
-        domain="[('deprecated', '=', False), ('company_id', '=', company_id)]", limit=1)
+    writeoff_account_id = fields.Many2one('account.account',string="Difference Account",copy=False,domain="[('deprecated', '=', False), ('company_ids', 'in', [company_id.id])]",limit=1,)
     writeoff_journal_id = fields.Many2one('account.journal', string="Difference Journal", copy=False,
         domain="[('company_id', '=', company_id)]", required=True, default=lambda s: s.env['account.journal'].search([('type','=','general')], limit=1))
     writeoff_label = fields.Char(string='Journal Item Label', default='Write-Off',
@@ -160,7 +159,7 @@ class PaymentGroup(Model):
                 payment.action_post() # we prevent duplicate name here
             move_lines = self.env['account.move.line']
             filter_moves_to_reconcile = lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == self.account_type
-            move_lines |= (rec.move_line_ids | payments.line_ids).filtered(filter_moves_to_reconcile) 
+            move_lines |= (rec.move_line_ids | payments.move_id.line_ids).filtered(filter_moves_to_reconcile) 
             move_lines.filtered(filter_moves_to_reconcile).reconcile()
             if rec.payment_difference_handling == 'reconcile':
                 """Two things should be done here. First we close the accounting balance. Next we close the currency balance for each invoice."""
@@ -172,7 +171,7 @@ class PaymentGroup(Model):
                 name = rec.sequence_id.next_by_id()
                 rec.name = name
             for p in payments:
-                p.ref = name
+                p.payment_reference = name
             rec.state = 'posted'
 
     def cancel(self):

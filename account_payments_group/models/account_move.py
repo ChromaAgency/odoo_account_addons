@@ -48,7 +48,7 @@ class AccountMove(Model):
         action.update({
             'view_mode': 'form',
             'context': ctx,
-            'views':[(False,'form'),(False,'tree')]
+            'views':[(False,'form'),(False,'list')]
         })
         return action
 

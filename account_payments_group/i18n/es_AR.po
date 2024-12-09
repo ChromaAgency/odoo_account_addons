@@ -574,7 +574,7 @@ msgstr ""
 #. module: account_payments_group
 #: model:ir.actions.act_window,name:account_payments_group.payments_group_window
 #: model:ir.ui.menu,name:account_payments_group.account_payments_group_menu
-#: model_terms:ir.ui.view,arch_db:account_payments_group.account_payment_group_view_tree
+#: model_terms:ir.ui.view,arch_db:account_payments_group.account_payment_group_view_list
 msgid "Recibos"
 msgstr ""
 

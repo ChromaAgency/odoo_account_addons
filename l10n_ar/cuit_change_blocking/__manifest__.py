@@ -1,6 +1,6 @@
 {
     'name': 'Bloqueo de modificación de CUIT',
-    'version': "17.0.0.0",
+    'version': "18.0.0.0",
     'category': 'Localization',
     'sequence': 1,
     'summary': '',
