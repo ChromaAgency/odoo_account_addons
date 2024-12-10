@@ -5,7 +5,7 @@
     'sequence': 1,
     'summary': '',
     'author': 'Chroma',
-    'website': 'www.Chroma.com.ar',
+    'website': 'https://chroma.agency',
     'license': 'AGPL-3',
     'images': [
     ],

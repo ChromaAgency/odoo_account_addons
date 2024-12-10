@@ -22,7 +22,7 @@
     'version': '18.0.2.0',
     'installable': True,
     # any module necessary for this one to work correctly
-    'depends': ['account', 'sale'],
+    'depends': ['account', 'sale','sale_management'],
     # always loaded
     'data': [
         'views/views.xml',

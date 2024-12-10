@@ -5,7 +5,7 @@
     <field name="model">repair.order</field>
     <field name="inherit_id" ref="repair.view_repair_order_form"/>
     <field name="arch" type="xml">
-      <field name="pricelist_id" position="after">
+      <field name="tag_ids" position="after">
         <field name="payment_term_id" domain="[('id','in',possible_payment_terms)]" invisible="is_payment_term_id_visible == False" required="is_payment_term_id_visible == True" readonly="state in ['sale','done']"/>
         <field name="payment_condition_id" required="True" readonly="state in ['done']"/>
         <field name="possible_payment_terms" invisible="1" />
