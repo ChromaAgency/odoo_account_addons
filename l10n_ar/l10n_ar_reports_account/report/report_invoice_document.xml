@@ -11,11 +11,7 @@
             <xpath expr="//t[@t-set='custom_footer']" position="before">
                 <t t-set="date" t-value="report_date"/>
             </xpath>
-            <xpath expr="//div[@id='total']/div/t[3]" position="replace">
-                <t t-if="o.partner_bank_id">
-                    <br/><strong>CBU: </strong><span t-esc="o.partner_bank_id.acc_number or '' if o.partner_bank_id.acc_type == 'cbu' else ''"/>
-                </t>            
-            </xpath>
+   
             <xpath expr="//table[@name='invoice_line_table']" position="before">
 
                 <div class="row mt-4 border-dark border-top border-1 pt-1 text-center"/>
