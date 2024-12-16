@@ -18,28 +18,6 @@
 
             </xpath>
         </template>
-        <template id="tax_groups_totals" inherit_id="account.tax_groups_totals" priority="99">
-            <xpath expr="//t[@t-as='amount_by_group']/tr/t" position="replace">
-                <t t-if="tax_totals['display_tax_base'] or o.company_id.currency_id != o.currency_id">
-                    <td>
-                        <span t-esc="amount_by_group['tax_group_name']"/>
-                        <span class="text-nowrap"> on
-                            <t t-if="o.company_id.currency_id == o.currency_id">
-                                <t t-esc="amount_by_group['formatted_tax_group_base_amount']"/>
-                            </t>
-                            <t t-else="">
-                                <t t-esc="o.company_id.currency_id.symbol"/>
-                                <t t-set="base_amount_in_currency" t-value="o.currency_id._convert(amount_by_group['tax_group_base_amount'], o.company_id.currency_id, o.company_id, date)"/>
-                                <t t-out="base_amount_in_currency" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
-                            </t>
-                        </span>
-                    </td>
-                    <td class="text-end o_price_total">
-                        <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
-                    </td>
-                </t>
-            </xpath>
-        </template>
         <template id="tax_totals_variable_fixed_purchase" inherit_id="purchase.purchase_order_portal_content_totals_table">
             <xpath expr="//t[@t-call='purchase.document_tax_totals']" position="before">
                 <t t-set="o" t-value="order"/>

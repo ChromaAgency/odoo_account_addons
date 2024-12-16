@@ -25,9 +25,4 @@
             </xpath>
         </field>
     </record>
-    <template id="external_layout_standard" inherit_id="web.external_layout_standard">
-        <xpath expr="//div[hasclass('pt-5')]" position="attributes">
-            <attribute name="class"></attribute>
-        </xpath>
-    </template>
 </odoo>

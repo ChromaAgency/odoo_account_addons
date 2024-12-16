@@ -145,7 +145,7 @@ msgid "Tipo de pago"
 msgstr ""
 
 #. module: l10n_ar_reports_account
-#: model_terms:ir.ui.view,arch_db:l10n_ar_reports_account.tax_groups_totals
+#: model_terms:ir.ui.view,arch_db:l10n_ar_reports_account.document_tax_totals_template
 msgid "on"
 msgstr "en"
 
