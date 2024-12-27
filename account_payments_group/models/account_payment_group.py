@@ -155,7 +155,12 @@ class PaymentGroup(Model):
     def post(self):
         for rec in self:
             payments = rec.payment_lines_ids
+            name = rec.name
+            if not name:
+                name = rec.sequence_id.next_by_id()
+                rec.name = name
             for payment in payments:
+                payment.payment_reference = name
                 payment.action_post() # we prevent duplicate name here
             move_lines = self.env['account.move.line']
             filter_moves_to_reconcile = lambda r: not r.reconciled and r.account_id.reconcile and r.account_id.account_type == self.account_type
@@ -166,12 +171,6 @@ class PaymentGroup(Model):
                 move_lines |= rec._create_payment_closing_entry().line_ids
                 move_lines.filtered(filter_moves_to_reconcile).reconcile()
                 rec._create_foreign_currency_closing_entry_and_reconcile()
-            name = rec.name
-            if not name:
-                name = rec.sequence_id.next_by_id()
-                rec.name = name
-            for p in payments:
-                p.payment_reference = name
             rec.state = 'posted'
 
     def cancel(self):
