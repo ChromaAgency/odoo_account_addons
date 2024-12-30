@@ -21,20 +21,16 @@
                         </div>
                         <div class="col-auto col-3 mw-100 mb-2" name="nif" t-if="o.partner_id.vat">
                             <strong>
-                                <t t-if="o.company_id.account_fiscal_country_id.vat_label"
-                                    t-esc="o.company_id.account_fiscal_country_id.vat_label"
-                                    id="inv_tax_id_label" />
-                            <t t-else="">Tax ID</t>: </strong>
+                                <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label" />
+                                <t t-else="">Tax ID</t>: 
+                            </strong>
                             <br />
                             <span t-field="o.partner_id.vat" />
                         </div>
                     </div>
                     <div class="mt-5">
                         <div class="page">
-                            <t
-                                t-set="lines"
-                                t-value="o.move_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id),
-                                                            reverse=True)" />
+                            <t t-set="lines" t-value="o.move_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)" />
                             <section id="invoices" t-if="lines">
                                 <div class="row">
                                     <h4>
@@ -42,8 +38,7 @@
                                     </h4>
                                 </div>
                                 <div class="row">
-                                    <table class="table table-sm o_main_table"
-                                        name="invoice_line_table">
+                                    <table class="table table-sm o_main_table" name="invoice_line_table">
                                         <thead>
                                             <tr>
                                                 <th name="th_date" class="text-start">
@@ -62,28 +57,21 @@
 
 
                                             <t t-foreach="lines" t-as="line">
-                                                <t t-set="current_subtotal"
-                                                    t-value="current_subtotal + line.price_total" />
+                                                <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" />
 
-                                                <tr
-                                                    t-att-class="'bg-200 fw-bold o_line_section' if line.display_type == 'line_section' else
+                                                <tr t-att-class="'bg-200 fw-bold o_line_section' if line.display_type == 'line_section' else
                                     'fst-italic o_line_note' if line.display_type == 'line_note'
                                     else ''">
-                                                    <td
-                                                        t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                        <span class="text-nowrap"
-                                                            t-field="line.date" />
+                                                    <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                        <span class="text-nowrap" t-field="line.date" />
                                                     </td>
                                                     <td name="account_invoice_line_name">
-                                                        <span t-field="line.move_id.name"
-                                                            t-options="{'widget': 'text'}" />
+                                                        <span t-field="line.move_id.name" t-options="{'widget': 'text'}" />
                                                     </td>
 
 
                                                     <td class="text-end o_price_total">
-                                                        <span class="text-nowrap"
-                                                            t-field="line.balance"
-                                                        />
+                                                        <span class="text-nowrap" t-field="line.balance" />
 
                                                     </td>
 
@@ -101,24 +89,18 @@
                                     Pagos
                                 </h4>
                                 <t t-set="checks" t-value="payments.filtered(lambda x: x.payment_method_id.code in ['check_printing','new_third_party_checks', 'in_third_party_checks','out_third_party_checks'])"/>
-                                <t t-set="withholdings"
-                                    t-value="payments.filtered(lambda x: x.payment_method_id.code in ['withholding'])" />
-                                <t t-set="transfers"
-                                    t-value="payments.filtered(lambda x: x.id not in checks.ids + withholdings.ids)" />
+
+                                <t t-set="withholdings" t-value="payments.filtered(lambda x: x.payment_method_id.code in ['withholding'])" />
+                                <t t-set="transfers" t-value="payments.filtered(lambda x: x.id not in checks.ids + withholdings.ids)" />
 
                                 <div name="transfers" id="transfers" t-if="transfers">
-                                    <div
-                                        class="row"
-                                        t-if="transfers">
+                                    <div class="row" t-if="transfers">
                                         <h5>
                                             Transferencias
                                         </h5>
-
                                     </div>
-                                    <div
-                                        class="row">
-                                        <table class="table table-sm o_main_table"
-                                            name="transfer_table">
+                                    <div class="row">
+                                        <table class="table table-sm o_main_table" name="transfer_table">
                                             <thead>
                                                 <tr>
                                                     <th name="th_date" class="text-start">
@@ -137,23 +119,17 @@
 
 
                                                 <t t-foreach="transfers" t-as="transfer">
-                                                    <t t-set="current_subtotal"
-                                                        t-value="current_subtotal + transfer.amount" />
+                                                    <t t-set="current_subtotal" t-value="current_subtotal + transfer.amount" />
 
                                                     <tr>
-                                                        <td
-                                                            t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                            <span class="text-nowrap"
-                                                                t-field="transfer.date" />
+                                                        <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                            <span class="text-nowrap" t-field="transfer.date" />
                                                         </td>
-                                                        <td
-                                                            t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                            <span class="text-nowrap"
-                                                                t-field="transfer.journal_id" />
+                                                        <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                            <span class="text-nowrap" t-field="transfer.journal_id" />
                                                         </td>
                                                         <td class="text-end o_price_total">
-                                                            <span class="text-nowrap"
-                                                                t-field="transfer.amount" />
+                                                            <span class="text-nowrap" t-field="transfer.amount" />
 
                                                         </td>
 
@@ -167,18 +143,14 @@
                                 </div>
                                 <div name="checks" id="checks" t-if="checks">
 
-                                    <div
-                                        class="row"
-                                        t-if="checks">
+                                    <div class="row" t-if="checks">
                                         <h5>
                                             Cheques
                                         </h5>
 
                                     </div>
-                                    <div
-                                        class="row">
-                                        <table class="table table-sm o_main_table"
-                                            name="checks_table">
+                                    <div class="row">
+                                        <table class="table table-sm o_main_table" name="checks_table">
                                             <thead>
                                                 <tr>
                                                     <th name="th_date" class="text-start">
@@ -197,31 +169,25 @@
                                             </thead>
                                             <tbody class="checks_tbody">
                                                 <t t-set="current_subtotal" t-value="0" />
-                                                <t t-foreach="checks" t-as="check">
-                                                    <t t-set="current_subtotal"
-                                                        t-value="current_subtotal + check.amount" />
-                                                    <tr>
-                                                        <td
-                                                            t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                            <span class="text-nowrap"
-                                                                t-field="check.l10n_latam_check_payment_date" />
-                                                        </td>
-                                                        <td class="text-start o_price_total">
-                                                            <span class="text-nowrap"
-                                                                t-field="check.journal_id"
-                                                            />
-                                                        </td>
-                                                        <td
-                                                            t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                            <span class="text-nowrap"
-                                                                t-field="check.l10n_latam_check_number" />
-                                                        </td>
-                                                        <td class="text-end o_price_total">
-                                                            <span class="text-nowrap"
-                                                                t-field="check.amount"
-                                                            />
-                                                        </td>
-                                                    </tr>
+                                                <t t-foreach="checks" t-as="latam_checks">
+                                                    <t t-set="move_checks" t-value="latam_checks.l10n_latam_new_check_ids + latam_checks.l10n_latam_move_check_ids"/>
+                                                    <t t-foreach="move_checks" t-as="check">
+                                                        <t t-set="current_subtotal" t-value="current_subtotal + check.amount" />
+                                                        <tr>
+                                                            <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                                <span class="text-nowrap" t-esc="check.payment_date" />
+                                                            </td>
+                                                            <td class="text-start o_price_total">
+                                                                <span class="text-nowrap" t-field="check.bank_id" />
+                                                            </td>
+                                                            <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                                <span class="text-nowrap" t-field="check.name" />
+                                                            </td>
+                                                            <td class="text-end o_price_total">
+                                                                <span class="text-nowrap" t-field="check.amount" />
+                                                            </td>
+                                                        </tr>
+                                                    </t>
                                                 </t>
                                             </tbody>
                                         </table>
@@ -229,18 +195,14 @@
                                 </div>
                                 <div name="withholdings" id="withholdings" t-if="withholdings">
 
-                                    <div
-                                        class="row"
-                                        t-if="withholdings">
+                                    <div class="row" t-if="withholdings">
                                         <h5>
                                             Retenciones
                                         </h5>
 
                                     </div>
-                                    <div
-                                        class="row">
-                                        <table class="table table-sm o_main_table"
-                                            name="withholdings_table">
+                                    <div class="row">
+                                        <table class="table table-sm o_main_table" name="withholdings_table">
                                             <thead>
                                                 <tr>
                                                     <th name="th_date" class="text-start">
@@ -249,8 +211,7 @@
                                                     <th name="th_withholding" class="text-start">
                                                         <span>Retención</span>
                                                     </th>
-                                                    <th name="th_withholding_number"
-                                                        class="text-start">
+                                                    <th name="th_withholding_number" class="text-start">
                                                         <span>Número de retención</span>
                                                     </th>
                                                     <th name="th_total" class="text-end">
@@ -262,38 +223,31 @@
                                                 <t t-set="current_subtotal" t-value="0" />
 
 
-                                                <t t-foreach="withholdings" t-as="withholding">
-                                                    <t t-set="current_subtotal"
-                                                        t-value="current_subtotal + withholding.amount" />
+                                                <t t-foreach="withholdings" t-as="latam_withholdings">
+                                                    <t t-set="move_withholdings" t-value="latam_withholdings.l10n_ar_withholding_ids"/>
+                                                    <t t-foreach="move_withholdings" t-as="withholding">
+                                                        <t t-set="current_subtotal" t-value="current_subtotal + withholding.amount" />
 
-                                                    <tr>
-                                                        <td
-                                                            t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                            <span class="text-nowrap"
-                                                                t-field="withholding.date" />
-                                                        </td>
-                                                        <td class="text-start o_price_total">
-                                                            <span class="text-nowrap"
-                                                                t-field="withholding.tax_withholding_id"
-                                                            />
-                                                        </td>
-                                                        <td
-                                                            t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                            <span class="text-nowrap"
-                                                                t-field="withholding.withholding_number" />
-                                                        </td>
-                                                        <td class="text-end o_price_total">
-                                                            <span class="text-nowrap"
-                                                                t-field="withholding.amount"
-                                                            />
+                                                        <tr>
+                                                            <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                                <span class="text-nowrap" t-field="withholding.date" />
+                                                            </td>
+                                                            <td class="text-start o_price_total">
+                                                                <span class="text-nowrap" t-field="withholding.tax_withholding_id" />
+                                                            </td>
+                                                            <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                                <span class="text-nowrap" t-field="withholding.withholding_number" />
+                                                            </td>
+                                                            <td class="text-end o_price_total">
+                                                                <span class="text-nowrap" t-field="withholding.amount" />
 
 
-                                                        </td>
+                                                            </td>
 
-                                                    </tr>
+                                                        </tr>
 
+                                                    </t>
                                                 </t>
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -301,81 +255,74 @@
                             </section>
 
 
-                            <div
-                                class="clearfix mb-4">
+                            <div class="clearfix mb-4">
                                 <div id="total" class="row">
                                     <div class="col-12">
                                         <div class="row"> Son: <t t-out="o.payments_total" />
                                         </div>
-                                        <div class="row"> Recibimos la suma de <t
-                                                t-out="o.payment_total_in_letters" />
+                                        <div class="row"> Recibimos la suma de <t t-out="o.payment_total_in_letters" />
                                         </div>
-                                        <div class="row"> Observaciones: <br /> <t
-                                                t-out="o.observations" />
-                                        </div>
-
+                                        <div class="row"> Observaciones: <br />
+                                        <t t-out="o.observations" />
                                     </div>
+
                                 </div>
                             </div>
-                            <t t-set="custom_footer">
-                                <t t-if="o.payment_type == 'receivable'">
-                                        <h5>Recibi conforme:</h5>
-                                    <div class="row mb-3 pt-4 ">
-                                        <div class="col-4 px-1">
-                                            <div
-                                                class="row mt-3 border-dark border-top border-3 pt-1 text-center">
+                        </div>
+                        <t t-set="custom_footer">
+                            <t t-if="o.payment_type == 'receivable'">
+                                <h5>Recibi conforme:</h5>
+                                <div class="row mb-3 pt-4 ">
+                                    <div class="col-4 px-1">
+                                        <div class="row mt-3 border-dark border-top border-3 pt-1 text-center">
                                                 FECHA
-                                            </div>
-                                            <div
-                                                class="row mt-4 border-dark border-top border-3 pt-1 text-center">
+                                        </div>
+                                        <div class="row mt-4 border-dark border-top border-3 pt-1 text-center">
                                                 HORA
-                                            </div>
                                         </div>
-                                        <div class="col-4 px-1">
-                                            <div
-                                                class="row mt-4 border-dark border-top border-3 pt-1 text-center">
+                                    </div>
+                                    <div class="col-4 px-1">
+                                        <div class="row mt-4 border-dark border-top border-3 pt-1 text-center">
                                                 DNI
-                                            </div>
                                         </div>
-                                        <div class="col-4 px-1">
-                                            <div
-                                                class="row mt-3 border-dark border-top border-3 pt-1 text-center">
+                                    </div>
+                                    <div class="col-4 px-1">
+                                        <div class="row mt-3 border-dark border-top border-3 pt-1 text-center">
                                                 FIRMA
-                                            </div>
-                                            <div
-                                                class="row mt-4 border-dark border-top border-3 pt-1 text-center">
-                                                ACLARACIÓN
-                                            </div>
                                         </div>
-                                    </div>
-                                </t>
-                                <div class="row">
-                                    <div name="footer_left_column" class="col-8 text-center">
-                                    </div>
-                                    <div name="footer_right_column" class="col-4 text-right">
-
-                                        <div name="pager" t-if="report_type == 'pdf'"> Page: <span
-                                                class="page" /> / <span class="topage" />
+                                        <div class="row mt-4 border-dark border-top border-3 pt-1 text-center">
+                                                ACLARACIÓN
                                         </div>
                                     </div>
                                 </div>
-
                             </t>
+                            <div class="row">
+                                <div name="footer_left_column" class="col-8 text-center">
+                                </div>
+                                <div name="footer_right_column" class="col-4 text-right">
+
+                                    <div name="pager" t-if="report_type == 'pdf'"> Page: <span class="page" />
+ /                                    <span class="topage" />
+                                </div>
+                            </div>
                         </div>
 
-                    </div>
-                </t>
-            </t>
+                    </t>
+                </div>
+
+            </div>
         </t>
-    </template>
-    <record id="action_report_account_payments_group" model="ir.actions.report">
-        <field name="name">Recibo / Orden de pago</field>
-        <field name="model">account.payment.group</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">account_payments_group.payment_group_report</field>
-        <field name="report_file">account_payments_group.payment_group_report</field>
-        <field name="binding_model_id" ref="model_account_payment_group"/>
-        <field name="binding_type">report</field>
-    </record>
+    </t>
+</t>
+</template>
+<record id="action_report_account_payments_group" model="ir.actions.report">
+<field name="name">Recibo / Orden de pago</field>
+<field name="model">account.payment.group</field>
+<field name="report_type">qweb-pdf</field>
+<field name="report_name">account_payments_group.payment_group_report</field>
+<field name="report_file">account_payments_group.payment_group_report</field>
+<field name="binding_model_id" ref="model_account_payment_group"/>
+<field name="binding_type">report</field>
+</record>
 
 </odoo>
