@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Heredar la vista de árbol de res.partner -->
+        <record id="view_partner_tree_inherit" model="ir.ui.view">
+            <field name="name">res.partner.tree.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <tree>
+                    <header>
+                        <!-- Agregar el botón en el encabezado de la vista de árbol -->
+                        <button name="action_update_arciba_res_partner"
+                                type="object"
+                                string="Importar padrón Arciba"
+                                class="oe_highlight"/>
+                    </header>
+                    <field name="is_arciba_res_partner" />
+                </tree>
+
+            </field>
+        </record>
+    </data>
+</odoo>

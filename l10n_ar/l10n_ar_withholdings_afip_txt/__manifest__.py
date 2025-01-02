@@ -13,7 +13,10 @@
         "views/account.move.xml",
         "views/account.tax.group.xml",
         "views/account.tax.xml",
-        "views/account.payment.xml"
+        "views/account.payment.xml",
+        "views/res.partner.xml",
+        "wizards/update_arciba_res_partner.xml",
+        "security/ir.model.access.csv",
     ],  
     'demo': [],
     'installable': True,

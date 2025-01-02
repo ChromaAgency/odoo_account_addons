@@ -1,0 +1,1 @@
+from . import update_arciba_res_partner
