@@ -1,3 +1,4 @@
+from ..utils.agip.arciba.retper import ArcibaTxtRetPercLine, build_and_generate_txt
 from odoo import _
 from odoo.models import Model
 from ..utils.afip.afip_libro_iva_digital.sicore import SicoreLine, build_and_generate_sicore_txt
@@ -41,7 +42,29 @@ class AccountPayment(Model):
 
         """
         self.ensure_one()
-        
+        return ArcibaTxtRetPercLine(
+            op_type='1',
+            norm='029',
+            retper_date=self.date,
+            doc_type="03",
+            doc_letter="A",
+            doc_number=self.payment_group_id.name,
+            doc_date=self.payment_group_id.date,
+            doc_amount=self.payment_group_id.payments_total,
+            ret_number=self.withholding_number,
+            afip_document_type=self.partner_id.l10n_latam_identification_type_id.l10n_ar_afip_code,
+            afip_document_number=str(self.partner_id.vat).replace("-", "").replace(".",""),
+            ib_type='0',
+            ib_number='',
+            iva_type='0',
+            name=self.partner_id.name,
+            amount_other=0.0,
+            amount_iva=0.0,
+            base_amount_for_tax=float_as_integer_without_separator(self.withholding_base_amount),
+            tax_rate=float_as_integer_without_separator(self.tax_withholding_id.amount),
+            tax_amount=float_as_integer_without_separator(self.amount),
+            tax_retention=float_as_integer_without_separator(self.amount),
+        )
 
     def get_arciba_txt_lines(self):
         lines = []
@@ -60,11 +83,26 @@ class AccountPayment(Model):
             'context': self._context, 
         }
     
+    def action_arciba_txt(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'name': "Emitir Txt",
+            'url': f'/l10n_ar_withholdings_afip_txt/arciba/{",".join(str(i) for i in self.ids)}',
+            'target': 'self',
+            'context': self._context, 
+        }
+    
     def generate_sicore_txt(self):
         lines = []
         for rec in self:
             lines += rec._prepare_afip_sicore()
         return build_and_generate_sicore_txt(lines)
+    
+    def generate_arciba_txt(self):
+        lines = []
+        for rec in self:
+            lines += rec.get_arciba_txt_lines()
+        return build_and_generate_txt(lines)
     
     def _prepare_afip_sicore(self):
         """

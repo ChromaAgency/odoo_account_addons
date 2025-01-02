@@ -9,7 +9,7 @@
             <header>
             
                 <button string="Sicore" name="action_sicore_txt" type="object" class="oe_highlight"/>
-
+                <button string="Arciba" name="action_arciba_txt" type="object" class="oe_highlight"/>
             </header>
         </field>
     </record>
