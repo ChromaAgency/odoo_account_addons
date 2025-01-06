@@ -9,6 +9,7 @@
             <xpath expr="//field[@name='active']" position="after">
                 <field name="tax_code" />
                 <field name="regime_code" />
+                <field name="is_arciba_tax" />
             </xpath>
             
         </field>

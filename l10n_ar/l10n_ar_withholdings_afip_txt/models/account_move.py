@@ -236,3 +236,19 @@ class AccountMove(Model):
             'target': 'self',
             'context': self._context, 
         }
+    
+class AccountMove(Model):
+    _inherit = 'account.move.line'
+
+    def get_withholdings_amount(self):
+        vals = super().get_withholdings_amount()
+        if self.partner_id.commercial_partner_id.is_arciba_res_partner:
+            return vals
+        arciba_ids = self.env['account.tax'].search([('is_arciba_tax','=', True)]).ids 
+        ids_to_erase = []
+        for key in vals :
+            if key in arciba_ids :
+                ids_to_erase.append(key)
+        for key in ids_to_erase:
+            del vals[key]
+        return vals
