@@ -23,13 +23,19 @@ class AccountMoveLine(Model):
         withholdings_dict = {}
         for rec in self:
             withholdings = rec.product_withholding_ids
-            # TODO Should this be price subtotal?
+            old_moves = self.env['account.move.line'].search([
+                ('partner_id.commercial_partner_id', '=', rec.partner_id.commercial_partner_id.id),
+                ('move_id.state', '=', 'posted'),
+                ('date', '<', rec.date),
+                ('id', '!=', rec.id),
+            ])
+            old_subtotal = sum(old_moves.mapped('price_subtotal'))
             subtotal = rec.price_subtotal
             for withholding in withholdings:
-                #TODO should manager all the possibilities (check if amount tax has a function to calculate this.)
                 withholdings_amount = withholdings_dict.get(withholding.id, {}) 
-                amount = withholdings_amount.get("amount",0) + (subtotal * (withholding.amount / 100))
-                base_amount = withholdings_amount.get("base_amount",0) + subtotal
+                base_amount = withholdings_amount.get("base_amount",0)
+                base_amount = subtotal - (min(old_subtotal, base_amount) - base_amount) 
+                amount = withholdings_amount.get("amount",0) + (base_amount * (withholding.amount / 100))
                 withholdings_dict.update({withholding.id: {
                     "amount":amount,
                     "base_amount":base_amount,
