@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_withholding_scale_form" model="ir.ui.view">
+        <field name="name">account.withholding.scale.form</field>
+        <field name="model">account.withholding.scale</field>
+        <field name="arch" type="xml">
+            <form string="Escalas de Retenciones">
+                <sheet>
+                    <group>
+                        <field name="name" string="Nombre de la escala"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <field name="scale_lines" widget="section_and_note_one2many" mode="tree">
+                        <tree editable="bottom" string="Valores de la escala" default_order="sequence, id">
+                            <field name="sequence" invisible="1"/>
+                            <field name="more_than_amount"/>
+                            <field name="to_amount"/>
+                            <field name="withholding_amount_base"/>
+                            <field name="incremental_percentage" widget="percentage"/>
+                            <field name="excedent_fraction"/>
+                        </tree>
+                    </field>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_withholding_scale_tree" model="ir.ui.view">
+        <field name="name">account.withholding.scale.tree</field>
+        <field name="model">account.withholding.scale</field>
+        <field name="arch" type="xml">
+            <tree string="Escalas de Retenciones">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_withholding_scale" model="ir.actions.act_window">
+        <field name="name">Escalas de Retención</field>
+        <field name="res_model">account.withholding.scale</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_withholding_scale" name="Escala de Retenciones" parent="account.account_account_menu" action="action_withholding_scale" sequence="10"/>
+
+</odoo>

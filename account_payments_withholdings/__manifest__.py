@@ -29,6 +29,8 @@
        'views/account_payment.xml',
        'views/account_tax.xml',
        'views/product_template.xml',
+       'views/withholding.scale.xml',
+       'security/ir.model.access.csv',
 
     ]
 }

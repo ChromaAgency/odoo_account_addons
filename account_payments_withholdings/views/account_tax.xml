@@ -8,6 +8,9 @@
             <xpath expr="//field[@name='tax_scope']" position="after">
                 <field name="untaxed_amount" />
             </xpath>
+            <xpath expr="//field[@name='type_tax_use']" position="after">
+                <field name="withholding_scale" attrs="{'invisible':[('type_tax_use','!=','withholding_scale')]}"/>
+            </xpath>
         </field>
     </record>
 
