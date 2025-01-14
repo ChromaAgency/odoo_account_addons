@@ -28,7 +28,7 @@ class AccountMoveLine(Model):
         ('date', '<', today ),
         ('date', '>=', today.replace(day=1)),
         ('product_withholding_ids', '=', withholding.id),
-        ('id', '!=', self.id),
+        ('id', 'not in', self.ids),
         ])
         # This has to change
         old_subtotal = sum(old_moves.mapped('price_subtotal'))
@@ -45,9 +45,7 @@ class AccountMoveLine(Model):
 
     def get_withholdings_amount(self):
         withholdings_dict = {}
-        for rec in self:
-            withholdings = rec.product_withholding_ids
-            subtotal = rec.price_subtotal
-            for withholding in withholdings:
-                withholdings_dict.update({withholding.id: rec.get_witholding_dict(subtotal, withholding, withholdings_dict)})
+        for withholding in self.product_withholding_ids:
+            subtotal = sum(self.filtered(lambda r: withholding.id in r.product_withholding_ids.ids).mapped('price_subtotal'))
+            withholdings_dict.update({withholding.id: self.get_witholding_dict(subtotal, withholding, withholdings_dict)})
         return withholdings_dict  
