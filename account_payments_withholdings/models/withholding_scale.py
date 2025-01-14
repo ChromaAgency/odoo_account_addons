@@ -10,14 +10,10 @@ class AccountWithholdingScale(models.Model):
 
     def obtain_withholding_scale(self, amount):
         for line in self.scale_lines:
-            if line.to_amount <= amount and line.more_than_amount >= amount:
-                return line.withholding_amount_base, line.incremental_percentage
-        return False, False
+            if line.to_amount <= amount and line.more_than_amount >= amount or line.to_amount == 0:
+                return line.withholding_amount_base, line.incremental_percentage, line.excedent_fraction
+        return 0, 0, 0
         
-                
-        
-
-
 class AccountWithholdingScaleLine(models.Model):
     _name = 'account.withholding.scale.line'
     _order = 'sequence, id'
