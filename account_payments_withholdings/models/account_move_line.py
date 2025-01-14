@@ -31,7 +31,7 @@ class AccountMoveLine(Model):
         ('id', '!=', self.id),
         ])
         # This has to change
-        old_subtotal = 0 # sum(old_moves.mapped('price_subtotal'))
+        old_subtotal = sum(old_moves.mapped('price_subtotal'))
         withholdings_amount = withholdings_dict.get(withholding.id, {}) 
         base_amount = withholdings_amount.get("base_amount",0)
         new_base_amount = subtotal - max(withholding.untaxed_amount - old_subtotal, 0)
