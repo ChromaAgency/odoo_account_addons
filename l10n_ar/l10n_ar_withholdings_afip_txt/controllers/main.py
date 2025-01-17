@@ -48,7 +48,7 @@ class TxtController(Controller):
                 'Content-Disposition':'attachment; filename="%s_%s_%s_sicore_%s.txt"' % (now.year, now.month, now.day, int(now.timestamp()) ) }, status=200)
     
     @route('/l10n_ar_withholdings_afip_txt/arciba/<ids>', type='http', auth='user')
-    def txt_sicore_route(self, ids):
+    def txt_arciba_route(self, ids):
         now = datetime.now()
         res = request.env['account.payment'].browse([int(i) for i in ids.split(',')]).generate_arciba_txt()
         return Response(res, headers={

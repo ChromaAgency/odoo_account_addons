@@ -7,9 +7,12 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='tax_scope']" position="after">
                 <field name="untaxed_amount" />
+                <field name="take_out_untaxed_amount" />
+                
             </xpath>
             <xpath expr="//field[@name='amount_type']" position="after">
                 <field name="withholding_scale" attrs="{'invisible':[('amount_type','!=','withholding_scale')]}"/>
+                <field name="withholding_group" attrs="{'invisible':[('amount_type','!=','by_group')]}"/>
             </xpath>
         </field>
     </record>

@@ -34,8 +34,10 @@ class AccountMoveLine(Model):
         old_subtotal = sum(old_moves.mapped('price_subtotal'))
         withholdings_amount = withholdings_dict.get(withholding.id, {}) 
         base_amount = withholdings_amount.get("base_amount",0)
-        new_base_amount = subtotal - max(withholding.untaxed_amount - old_subtotal, 0)
-        base_amount_to_withhold, percentage_int, excedent_fraction = withholding.get_withholding_amount(new_base_amount)
+        new_base_amount = subtotal
+        if withholding.take_out_untaxed_amount:
+            new_base_amount = subtotal - max(withholding.untaxed_amount - old_subtotal, 0)
+        base_amount_to_withhold, percentage_int, excedent_fraction = withholding.get_withholding_amount(new_base_amount, self.partner_id)
         new_amount = base_amount_to_withhold + ((new_base_amount - excedent_fraction) * percentage_int )
         amount = withholdings_amount.get("amount",0) + new_amount
         return {
