@@ -31,7 +31,8 @@
        'views/product_template.xml',
        'views/withholding.scale.xml',
        'security/ir.model.access.csv',
-       'views/withholding.group.xml'
+       'views/withholding.group.xml',
+       'report/report_withholding.xml',
 
     ]
 }

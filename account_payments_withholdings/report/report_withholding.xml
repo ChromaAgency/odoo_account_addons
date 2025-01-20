@@ -1,36 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <report
-            id="action_report_account_withholdings_report"
-            model="account.move"
-            string="Withholdings"
-            report_type="qweb-pdf"
-            name="account_move.account_withholdings_report"
-            file="account_move.account_withholdings_report"
-        />
-        <
-        <record id="view_account_move_withholdings" model="ir.ui.view">
-            <field name="name">Withholdings Report View</field>
-            <field name="model">account.move</field>
-            <field name="type"></field>
-            <field name="arch" type="xml">
-                
-            </field>
-        </record>
+        <report id="action_report_account_withholdings_report" model="account.payment.group" string="Certificados de retención" report_type="qweb-pdf" name="account_payments_withholdings.account_withholdings_report_template" file="account_payments_withholdings.account_withholdings_report_template" />
+
         <template id="account_withholdings_report_template">
             <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="doc">
-              
-                        <div class="page">
-                            
-                        </div>
-                        <div t-attf-class="footer" style="z-index:1;">
-                        </div>
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <t t-foreach="o.payment_lines_ids.filtered(lambda x: x.payment_method_id.code == 'withholding')" t-as="line">
+                            <div class="page">
+                                <div class="row">
+                                    <div class="col-6 text-left font-weight-bold">
+                CERTIFICADO DE RETENCION
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <strong>NRO:</strong>
+                                        <span t-field="line.withholding_number" />
+                                    </div>
+                                </div>
+                                <hr class="border-dark"/>
+                                <div class="row">
+                                    <div class=" col-6 text-left font-weight-bold">
+                 RETENCION <span t-field="line.tax_withholding_id" />
+                                    </div>
+                                    <div class=" col-6 text-right">
+                                        <strong>Fecha:</strong>
+                                        <span t-field="o.date" class="border-bottom"/>
+                                    </div>
+                                </div>
+                                <hr class="border-dark"/>
+                                <div class="row">
+                                    <div class="col-12 font-weight-bold">
+                  <h5><b>DATOS AGENTE DE RETENCION</b></h5>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="offset-3 col-9">
+                                        <p>Denominación: <span t-field="o.company_id.partner_id.name" />
+                                        </p>
+                                        <p>CUIT: <span t-field="o.company_id.partner_id.vat" />
+                                        </p>
+                                        <p>Domicilio: <span t-field="o.company_id.partner_id.street" />
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr class="border-dark"/>
+                                <div class="row">
+                                    <div class="col-12 font-weight-bold">
+                <h5><b>DATOS DEL SUJETO RETENIDO</b></h5>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="offset-3 col-9">
+                                        <p>Denominación: <span t-field="o.partner_id" />
+                                        </p>
+                                        <p>CUIT: <span t-field="o.partner_id.vat" />
+                                        </p>
+                                        <p>Domicilio: <span t-field="o.partner_id.street" />
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr class="border-dark"/>
+                                <div class="row">
+                                    <div class="col-12 font-weight-bold">
+                 <h5><b>DATOS DE LA RETENCION PRACTICADA</b></h5>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="offset-3 col-9">
+                                        <p>Impuesto: <span t-field="line.tax_withholding_id" />  <span t-field="line.tax_withholding_id.tax_code" />
+                                        </p>
+                                        <p>Régimen:  <span t-field="line.tax_withholding_id.regime_code" />
+                                        </p>
+                                        <p>Comprobante que origina la retención: <span t-field="line.payment_group_id"/>
+                                        </p>
+                                        <p>Monto que origina la retención: <span t-field="line.withholding_base_amount" />
+                                        </p>
+                                        <p class="font-weight-bold">MONTO TOTAL DE LA RETENCION: <span t-field="line.amount" />
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr class="border-dark"/>
+                                <div class="row">
+                                    <div class="col-12" style="padding-top: 50px;">
+                                        <p >Firma y Aclaración: _______________________________</p>
+                                        <p style="padding-top:50px;">Cargo: _______________________________</p>
+                                    </div>
+                                </div>
+                                <hr class="border-dark"/>
+                            </div>
+                        </t>
                     </t>
                 </t>
             </t>
         </template>
-        
+
     </data>
 </odoo>
