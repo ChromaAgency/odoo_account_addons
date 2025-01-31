@@ -20,7 +20,7 @@ class AccountPaymentGroup(Model):
             current_company = self.env.company
             receipt_book = self.env['account.payment.receipt_book'].search([
                 ('payment_type', '=', rec.payment_type),
-                ('name', 'ilike', current_company.name)
+                ('company_id', '=', current_company.id)
             ], limit=1)
             rec.receipt_book_id = receipt_book.id
             
@@ -47,6 +47,7 @@ class ReceiptBook(Model):
     _name = "account.payment.receipt_book"
     _description = "Talonarios de recibo"
 
+    company_id = Many2one('res.company', string="Compañía")
     sequence_id = Many2one('ir.sequence',string="Secuencia", required=True, default=lambda self:self.env.ref('account_payments_group.ir_sequence_account_payments_group'))
     name = Char(string="Nombre", required=True)
     payment_type = Selection([('receivable','Recibo'),('payable','Orden de pago')], string="Tipo de pago", required=True)
