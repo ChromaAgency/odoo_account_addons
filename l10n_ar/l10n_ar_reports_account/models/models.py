@@ -11,7 +11,7 @@ class AccountPaymentGroup(Model):
     _inherit = 'account.payment.group'
     
     sequence_id = Many2one(related="receipt_book_id.sequence_id", string="Secuencia")
-    receipt_book_id = Many2one("account.payment.receipt_book", string="Talonario de recibos", required=True)
+    receipt_book_id = Many2one("account.payment.receipt_book", string="Talonario de recibos",domain="[('payment_type','=',payment_type)]", required=True)
     payment_total_in_letters = Char('Recibimos')
 
     @onchange('partner_id')
