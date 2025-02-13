@@ -77,7 +77,7 @@ class AccountMove(Model):
                                        doc_number_to=self.sequence_number, buyer_doc_code=doc_code, buyer_nif=nif, buyer_full_name=self.partner_id.display_name, 
                                        total_amount=amount_total, other_amount=amount_total_of_excluded_lines, non_categorized_perception=0, 
                                        tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, national_perceptions_amount=0, iibb_perceptions_amount=0, city_perceptions_amount=0,internal_taxes_amount=0,
-                                       currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,
+                                       currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.invoice_currency_rate, 6) , IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,
                                        due_date=self.invoice_date_due, )
                                         ]        
     def _prepare_afip_compras_comprobantes(self):
@@ -111,7 +111,7 @@ class AccountMove(Model):
                                        total_amount=amount_total, other_amount=amount_total_of_excluded_lines, dispatch_number=dispatch_number,
                                        tax_excluded_operation_amount=amount_untaxed_of_excluded_lines, iibb_perceptions_amount=iibb_perceptions_amount, 
                                        city_perceptions_amount=city_perceptions_amount,internal_taxes_amount=0,
-                                       currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.l10n_ar_currency_rate, 6) , 
+                                       currency_code=self.currency_id.l10n_ar_afip_code, exchange_rate=float_as_integer_without_separator(self.invoice_currency_rate, 6) , 
                                        IVA_rates_amount=amount_of_rates, op_code=0, other_taxes=0,perceptions_or_payment_IVA_amount=perceptions_or_payment_IVA_amount,
                                        another_national_perceptions_amount=another_national_perceptions_amounts,
                                          computable_fiscal_credit=computable_fiscal_credit, emisor_vat=self.partner_id.vat, emisor_denomination=self.partner_id.name, vat_commission=0,  )
