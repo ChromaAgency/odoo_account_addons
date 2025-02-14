@@ -71,6 +71,10 @@ class ResPartner(Model):
             raise UserError(_("No data was found for this CUIT. %s" % partner_data))
         if not partner_data['datosGenerales']:
             raise UserError(_("No datosGenerales was found. %s" % partner_data))
+        if partner_data['datosGenerales']['razonSocial']:
+            name = partner_data['datosGenerales']['razonSocial']
+        else:
+            name = partner_data['datosGenerales']['nombre'] + ' ' + partner_data['datosGenerales']['apellido']
         address_info = partner_data['datosGenerales']['domicilioFiscal']
         postal_code = address_info['codPostal']
         province = address_info['idProvincia']
@@ -81,6 +85,7 @@ class ResPartner(Model):
 
         cuit_type = self.env['l10n_latam.identification.type'].search([('name','=',cuit_type)]).id
         self.write({
+            'name': name,
             'street': street,
             'zip': postal_code,
             'l10n_ar_afip_responsibility_type_id': afip_responsibility,
