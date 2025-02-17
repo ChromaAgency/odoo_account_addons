@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+     <record id="res_partner_account_view_form_inherit_parallel_accounting" model="ir.ui.view">
+      <field name="name">res.partner.view.form.inherit</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="account.view_partner_property_form"/>
+      <field name="arch" type="xml">
+          <field name="property_account_receivable_id" position="after">
+            <field name="property_receivables_secondary_account_id" />
+          </field>
+          <field name="property_account_payable_id" position="after">
+            <field name="property_payables_secondary_account_id" />
+          </field>
+      </field>
+    </record>
+  </data>
+</odoo>
