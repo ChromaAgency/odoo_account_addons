@@ -1,0 +1,55 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* parallel_accounting
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e-20250207\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-17 13:09+0000\n"
+"PO-Revision-Date: 2025-02-17 13:09+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: parallel_accounting
+#: model:ir.model,name:parallel_accounting.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: parallel_accounting
+#: model:ir.model.fields,field_description:parallel_accounting.field_product_product__property_expenses_secondary_account_id
+#: model:ir.model.fields,field_description:parallel_accounting.field_product_template__property_expenses_secondary_account_id
+msgid "Expenses Secondary Account"
+msgstr "Gastos Cuenta Secundaria"
+
+#. module: parallel_accounting
+#: model:ir.model.fields,field_description:parallel_accounting.field_product_product__property_income_secondary_account_id
+#: model:ir.model.fields,field_description:parallel_accounting.field_product_template__property_income_secondary_account_id
+msgid "Income Secondary Account"
+msgstr "Ingresos Cuenta Secundaria"
+
+#. module: parallel_accounting
+#: model:ir.model,name:parallel_accounting.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
+
+#. module: parallel_accounting
+#: model:ir.model.fields,field_description:parallel_accounting.field_res_partner__property_payables_secondary_account_id
+#: model:ir.model.fields,field_description:parallel_accounting.field_res_users__property_payables_secondary_account_id
+msgid "Payables Secondary Account Property"
+msgstr "Cuentas por pagar Cuenta Secundaria"
+
+#. module: parallel_accounting
+#: model:ir.model,name:parallel_accounting.model_product_template
+msgid "Product"
+msgstr "Producto"
+
+#. module: parallel_accounting
+#: model:ir.model.fields,field_description:parallel_accounting.field_res_partner__property_receivables_secondary_account_id
+#: model:ir.model.fields,field_description:parallel_accounting.field_res_users__property_receivables_secondary_account_id
+msgid "Receivables Secondary Account Property"
+msgstr "Cuentas por cobrar Cuenta Secundaria"
